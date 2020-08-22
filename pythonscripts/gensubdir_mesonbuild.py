@@ -39,10 +39,10 @@ def main(argv):
     filenames = [ f for f in listdir(directory) if isfile(join(directory, f))]
     checkmatch = ".*\." + extension
     filematches = [f for f in filenames if re.match(checkmatch, f)]
-    outfilestring = aliasname + " = files(["
+    outfilestring = aliasname + " = files("
     for f in filematches:
         outfilestring = outfilestring + "'" + f + "'" +  ", "
-    outfilestring = outfilestring + "])"
+    outfilestring = outfilestring + ")"
     if isfile(join(directory, 'meson.build')):
         with open(join(directory,'meson.build'), 'r') as f:
             if f.read() == outfilestring:
