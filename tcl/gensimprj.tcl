@@ -46,7 +46,6 @@ proc add_files_to_set { filesettype filetype args} {
         puts "exiting due to missing files"
         exit
     }
-    puts "files: $files"
     add_files -norecurse -fileset $obj $files
     foreach filename $files {
 	set file_obj [get_files -of_objects [get_filesets $filesettype] $filename]
@@ -55,8 +54,11 @@ proc add_files_to_set { filesettype filetype args} {
 }
 
 proc add_const_files_to_set { isScoped order args } {
-    add_files_to_set constrs_1 "XDC" $args
-    set files $args
+    add_files_to_set constrs_1 "XDC" [join $args]
+    set files []
+    foreach filename [join $args] {
+        lappend files [file normalize $filename]
+    }
     foreach filename [join $files] {
 	if { $isScoped } {
 	    set_property SCOPED_TO_REF [file rootname [file tail $file]] [get_files $filename]
@@ -97,19 +99,19 @@ if {[checkForKey scopedearlyconstraints $argv]} {
     add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey scopednormalconstraints $argv]} {
-    add_const_files_to_set true normal [getDef scopedearlyconstraints $argv]
+    add_const_files_to_set true normal [getDef scopednormalconstraints $argv]
 }
 if {[checkForKey scopedlateconstraints $argv]} {
-    add_const_files_to_set true late [getDef scopedearlyconstraints $argv]
+    add_const_files_to_set true late [getDef scopedlateconstraints $argv]
 }
 if {[checkForKey unscopedearlyconstraints $argv]} {
-    add_const_files_to_set false early [getDef scopedearlyconstraints $argv]
+    add_const_files_to_set false early [getDef unscopedearlyconstraints $argv]
 }
 if {[checkForKey unscopednormalconstraints $argv]} {
-    add_const_files_to_set false normal [getDef scopedearlyconstraints $argv]
+    add_const_files_to_set false normal [getDef unscopednormalconstraints $argv]
 }
 if {[checkForKey unscopedlateconstraints $argv]} {
-    add_const_files_to_set false late [getDef scopedearlyconstraints $argv]
+    add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
 }
 
 puts "Completed Execution of $argv0"

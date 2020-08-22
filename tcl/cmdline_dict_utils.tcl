@@ -12,6 +12,9 @@ proc getKeys { args } {
 }
 
 proc getDef { key args} {
+    if {![checkForKey $key [join $args]]} {
+        return {}
+    }
     set index 0
     while {$index != [llength [join $args]] && ![string match "-$key" [lindex [join $args] $index]]} {
 	incr index

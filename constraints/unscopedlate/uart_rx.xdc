@@ -1,0 +1,1 @@
+set_false_path -from [get_ports uart_rx]
