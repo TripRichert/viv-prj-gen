@@ -33,10 +33,18 @@ requireKey partname $argv
 proc add_files_to_set { filesettype filetype args} {
     set obj [get_filesets $filesettype]
     set files []
-    puts "add files args: $args"
+    set missingFiles []
     foreach filename [join $args] {
-        puts "filename: $filename"
-        lappend files [file normalize $filename]
+        if {[file exists $filename]} {
+            lappend files [file normalize $filename]
+        } else {
+            lappend missingFiles $filename
+        }
+    }
+    if {[llength $missingFiles]} {
+        puts "these files don't exist yet :'( $missingFiles"
+        puts "exiting due to missing files"
+        exit
     }
     puts "files: $files"
     add_files -norecurse -fileset $obj $files
