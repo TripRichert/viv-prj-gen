@@ -32,10 +32,16 @@ requireKey partname $argv
 
 proc add_files_to_set { filesettype filetype args} {
     set obj [get_filesets $filesettype]
-    set files [list $args]
+    set files []
+    puts "add files args: $args"
+    foreach filename [join $args] {
+        puts "filename: $filename"
+        lappend files [file normalize $filename]
+    }
+    puts "files: $files"
     add_files -norecurse -fileset $obj $files
-    foreach {file $files} {
-	set file_obj [get_files -of_objects [get_filesets $filesettype] [list $file]]
+    foreach filename $files {
+	set file_obj [get_files -of_objects [get_filesets $filesettype] $filename]
 	set_property file_type $filetype $file_obj
     }
 }
@@ -80,22 +86,22 @@ if {[checkForKey vhdl08simfiles $argv]} {
 }
 
 if {[checkForKey scopedearlyconstraints $argv]} {
-    add_const_files_to_set true early [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey scopednormalconstraints $argv]} {
-    add_const_files_to_set true normal [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set true normal [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey scopedlateconstraints $argv]} {
-    add_const_files_to_set true late [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set true late [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey unscopedearlyconstraints $argv]} {
-    add_const_files_to_set false early [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set false early [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey unscopednormalconstraints $argv]} {
-    add_const_files_to_set false normal [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set false normal [getDef scopedearlyconstraints $argv]
 }
 if {[checkForKey unscopedlateconstraints $argv]} {
-    add_const_files_to_set false late [getDev scopedearlyconstraints $argv]
+    add_const_files_to_set false late [getDef scopedearlyconstraints $argv]
 }
 
 puts "Completed Execution of $argv0"
