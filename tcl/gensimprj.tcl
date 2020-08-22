@@ -12,23 +12,47 @@ if {[info exists ::env(MESON_BUILD_ROOT)]} {
 if { $argc == 0 } {
     puts "No arguments!"
     puts "execution suspended of $argv0"
-    exit
+    exit 2
 }
 if {[hasDuplicates [getKeys $argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
-    exit
+    exit 3
 }
 proc requireKey { key args} {
     if {![checkForKey $key [join $args]]} {
 	puts "no $key defined"
         set keys [getKeys [join $args]]
         puts "in keys: $keys"
-	exit
+	exit 4
     }
 }
-requireKey prjname $argv
-requireKey partname $argv
+
+set requiredKeys [list prjname partname]
+set allowedKeys [list target_language vhdl08synthfiles \
+                   vhdl08simfiles scopedearlyconstraints scopednormalconstraints \
+                   scopedlateconstraints unscopedearlyconstraints \
+                   unscopednormalconstraints unscopedlateconstraints \
+                   ]
+foreach key $requiredKeys {
+    lappend allowedKeys $key
+}
+
+foreach requiredKey $requiredKeys {
+    requireKey $requiredKey $argv
+}
+set unrecognizedKeys []
+foreach key [getKeys $argv] {
+    if {[lsearch $allowedKeys $key] == -1} {
+        lappend unrecognizedKeys $key
+    }
+}
+if {[llength $unrecognizedKeys]} {
+    puts "did not recognize keys $unrecognizedKeys"
+	puts "allowed keys are: $allowedKeys"
+	puts "execution suspended of $argv0"
+	exit 5
+}
 
 proc add_files_to_set { filesettype filetype args} {
     set obj [get_filesets $filesettype]
