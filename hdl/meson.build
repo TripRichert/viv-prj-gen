@@ -1,1 +1,1 @@
-hdlfiles = files('DFlipFlop.vhdl')
+hdlfiles = files('DFlipFlop.vhdl', 'GenericDFlipFlop.vhdl')

@@ -49,12 +49,12 @@ proc add_files_to_set { filesettype filetype args} {
 proc add_const_files_to_set { isScoped order args } {
     add_files_to_set constrs_1 "XDC" $args
     set files $args
-    foreach file $files {
-	if { isScoped } {
-	    set_property SCOPED_TO_REF [file rootname [file tail $file]] [get_files $file]
+    foreach filename [join $files] {
+	if { $isScoped } {
+	    set_property SCOPED_TO_REF [file rootname [file tail $file]] [get_files $filename]
 	}
     }
-    set_property PROCESSING_ORDER $order [get_files $files]	
+    set_property PROCESSING_ORDER $order [get_files [join $files]]	
 }
 
 create_project [getDef prjname $argv]
