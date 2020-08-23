@@ -123,22 +123,34 @@ if {[checkForKey vhdl08simfiles $argv]} {
 }
 
 if {[checkForKey scopedearlyconstraints $argv]} {
-    add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
+    if {[getDef scopedearlyconstraints $argv] != ""} {
+	add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
+    }
 }
 if {[checkForKey scopednormalconstraints $argv]} {
-    add_const_files_to_set true normal [getDef scopednormalconstraints $argv]
+    if {[getDef scopednormalconstraints $argv] != ""} {
+	add_const_files_to_set true normal [getDef scopednormalconstraints $argv]
+    }
 }
 if {[checkForKey scopedlateconstraints $argv]} {
-    add_const_files_to_set true late [getDef scopedlateconstraints $argv]
+    if {[getDef scopedlateconstraints $argv] != ""} {
+	add_const_files_to_set true late [getDef scopedlateconstraints $argv]
+    }
 }
 if {[checkForKey unscopedearlyconstraints $argv]} {
-    add_const_files_to_set false early [getDef unscopedearlyconstraints $argv]
+    if {[getDef unscopedearlyconstraints $argv] != ""} {
+	add_const_files_to_set false early [getDef unscopedearlyconstraints $argv]
+    }
 }
 if {[checkForKey unscopednormalconstraints $argv]} {
-    add_const_files_to_set false normal [getDef unscopednormalconstraints $argv]
+    if {[getDef unscopednormalconstraints $argv] != ""} {
+	add_const_files_to_set false normal [getDef unscopednormalconstraints $argv]
+    }
 }
 if {[checkForKey unscopedlateconstraints $argv]} {
-    add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
+    if {[getDef unscopedlateconstraints $argv] != ""} {
+	add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
+    }
 }
 
 puts "Completed Execution of $argv0"
