@@ -62,7 +62,7 @@ proc add_files_to_set { filesettype filetype args} {
     if {[llength $missingFiles]} {
         puts "these files don't exist yet :'( $missingFiles"
         puts "exiting due to missing files"
-        exit
+        exit 6
     }
     add_files -norecurse -fileset $obj $files
     foreach filename $files {
@@ -85,7 +85,12 @@ proc add_const_files_to_set { isScoped order args } {
     set_property PROCESSING_ORDER $order [get_files [join $files]]	
 }
 
-cd [getDef builddir $argv]
+if {[getDef builddir $argv] != ""} {
+    cd [getDef builddir $argv]
+} else {
+    puts "builddir failed"
+    exit 7
+}
 file mkdir [getDef prjname $argv]
 cd [getDef prjname $argv]
 
