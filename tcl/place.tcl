@@ -1,0 +1,6 @@
+opt_design
+power_opt_design
+place_design
+phys_opt_design
+write_checkpoint -force post_place
+report_timing_summary -file post_place_timing_summary.rpt

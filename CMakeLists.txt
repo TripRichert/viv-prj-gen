@@ -10,3 +10,25 @@ add_custom_target(genvivprj
 	)
 
 
+set(nonprjscripts ${nonprjscripts}
+		  "tcl/synth.tcl"
+		  "tcl/place.tcl"
+		  "tcl/route.tcl"
+		  "tcl/writebit.tcl"
+		  )
+
+set(nonprjname "nonprjdemo")
+file(GLOB nonprjbuildscript "tcl/buildnonprj.tcl")
+file(GLOB synthfile "tcl/synth.tcl")
+file(GLOB placefile "tcl/place.tcl")
+file(GLOB routefile "tcl/route.tcl")
+file(GLOB writebitfile "tcl/writebit.tcl")
+
+add_custom_command(OUTPUT ${nonprjname}/${nonprjname}.bit
+			  COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${nonprjname} -partname ${partname} -topname demo_top -vhdlsynthfiles ${hdlfiles} -unscopedlateconstraints ${unscopedLateConstrFiles} -buildscripts ${synthfile} ${placefile} ${routefile} ${writebitfile} -builddir ${CMAKE_BINARY_DIR}
+			  DEPENDS ${nonprjbuildscript} ${hdlfiles} ${unscopedLateConstrFiles} ${nonprjscripts}
+			  )
+add_custom_target(nonprj
+	DEPENDS ${nonprjname}/${nonprjname}.bit
+	)
+

@@ -79,7 +79,7 @@ proc add_const_files_to_set { isScoped order args } {
     }
     foreach filename [join $files] {
 	if { $isScoped } {
-	    set_property SCOPED_TO_REF [file rootname [file tail $file]] [get_files $filename]
+	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] [get_files $filename]
 	}
     }
     set_property PROCESSING_ORDER $order [get_files [join $files]]	
