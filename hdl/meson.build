@@ -1,1 +1,0 @@
-hdlfiles = files('DFlipFlop.vhdl', 'GenericDFlipFlop.vhdl', )

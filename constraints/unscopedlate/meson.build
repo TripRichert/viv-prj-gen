@@ -1,1 +1,0 @@
-unscopedLateConstrFiles = files('uart_rx.xdc')
