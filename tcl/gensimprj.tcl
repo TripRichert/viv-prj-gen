@@ -3,12 +3,6 @@ puts "argv is:$argv"
 
 source [file join [file dirname [info script]] "cmdline_dict_utils.tcl"]
 
-if {[info exists ::env(MESON_BUILD_ROOT)]} {
-    cd $::env(MESON_BUILD_ROOT)
-} else {
-    puts "no build directory, building at ."
-}
-
 if { $argc == 0 } {
     puts "No arguments!"
     puts "execution suspended of $argv0"
@@ -28,7 +22,7 @@ proc requireKey { key args} {
     }
 }
 
-set requiredKeys [list prjname partname]
+set requiredKeys [list builddir prjname partname]
 set allowedKeys [list target_language vhdl08synthfiles \
                    vhdl08simfiles scopedearlyconstraints scopednormalconstraints \
                    scopedlateconstraints unscopedearlyconstraints \
@@ -90,6 +84,10 @@ proc add_const_files_to_set { isScoped order args } {
     }
     set_property PROCESSING_ORDER $order [get_files [join $files]]	
 }
+
+cd [getDef builddir $argv]
+file mkdir [getDef prjname $argv]
+cd [getDef prjname $argv]
 
 create_project [getDef prjname $argv]
 #set_proj_dir [get_property directory [current_project]]
