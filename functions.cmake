@@ -38,6 +38,7 @@ file(GLOB default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/place.tcl")
 file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/route.tcl")
 file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/writebit.tcl")
 file(GLOB nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
+file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/cmdline_dict_procs.tcl")
 
 
 function(vivnonprjbitgen_func)
@@ -103,8 +104,56 @@ function(vivnonprjbitgen_func)
 
 	add_custom_command(OUTPUT ${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
 			  COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname demo_top -vhdlsynthfiles ${vivnonprj_VHDLFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} -buildscripts ${scriptlist} -builddir ${CMAKE_BINARY_DIR}
-			  DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist}
+			  DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript}
 			  )
 endfunction()
-	    
 
+file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_ip.tcl")
+file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/viv_prj_procs.tcl")
+
+function(genip_func)
+	set(options NODELETE)
+	set(args IPNAME PARTNAME TOPNAME LIBNAME)
+	set(list_args VHDLFILES)
+	CMAKE_PARSE_ARGUMENTS(
+		PARSE_ARGV 0
+		genip
+		"${options}"
+		"${args}"
+		"${list_args}"
+		)
+	foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+		    message(WARNING "Unparsed argument: ${arg}")
+	endforeach()
+
+	message(STATUS "genip IPNAME ${genip_IPNAME}")
+	message(STATUS "genip PARTNAME ${genip_PARTNAME}")
+	message(STATUS "genip VHDLFILES ${genip_VHDLFILES}")
+	message(STATUS "genip TOPNAME ${genip_TOPNAME}")
+	message(STATUS "genip LIBNAME ${genip_LIBNAME}")
+	
+	set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME})
+	set(laststring "")
+	if (NODELETE)
+	  set(laststring "--nodelete")
+	endif()
+	
+	set(newvhdlfiles "")
+	foreach(filename IN LISTS genip_VHDLFILES)
+	  get_filename_component(name ${filename} NAME)
+	  list(APPEND newvhdlfiles ${ipdir}/hdl/${name})
+	  add_custom_command(OUTPUT ${ipdir}/hdl/${name}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo/${genip_LIBNAME}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_LIBNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_LIBNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME}/hdl
+	    COMMAND ${CMAKE_COMMAND} -E copy ${filename} ${ipdir}/hdl/${name}
+	    DEPENDS ${filename}) 
+	endforeach()
+
+	add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
+	  COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles}  -topname ${genip_TOPNAME} -ipdir ${ipdir} ${laststring}
+	  DEPENDS ${newvhdlfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript}
+		)
+endfunction()

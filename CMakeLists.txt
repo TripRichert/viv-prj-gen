@@ -39,3 +39,14 @@ add_custom_target(nonprj
 	DEPENDS ${nonprjname}/${nonprjname}.bit
 	)
 
+genip_func(
+  IPNAME genff
+  PARTNAME ${partname}
+  LIBNAME test
+  VHDLFILES ${hdlfiles}
+  TOPNAME GenericDFlipFlop
+  )
+      
+add_custom_target(ip ALL
+	DEPENDS ${CMAKE_BINARY_DIR}/${partname}/ip_repo/test/genff/component.xml
+	)
