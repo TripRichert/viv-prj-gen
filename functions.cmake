@@ -146,8 +146,8 @@ function(genip_func)
 	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}
 	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo
 	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo/${genip_LIBNAME}
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_LIBNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME}
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_LIBNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME}/hdl
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
 	    COMMAND ${CMAKE_COMMAND} -E copy ${filename} ${ipdir}/hdl/${name}
 	    DEPENDS ${filename}) 
 	endforeach()
