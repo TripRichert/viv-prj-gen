@@ -30,6 +30,7 @@ file(GLOB writebitfile "tcl/writebit.tcl")
 
 vivnonprjbitgen_func(
   PRJNAME ${nonprjname}
+  TOPNAME demo_top
   PARTNAME ${partname}
   VHDLFILES ${hdlfiles}
   UNSCOPEDLATEXDC ${unscopedLateConstrFiles}

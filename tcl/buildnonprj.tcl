@@ -1,7 +1,7 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
-source [file join [file dirname [info script]] "cmdline_dict_utils.tcl"]
+source [file join [file dirname [info script]] "cmdline_dict_procs.tcl"]
 
 if { $argc == 0 } {
     puts "No arguments!"
@@ -26,7 +26,8 @@ set requiredKeys [list builddir prjname partname topname buildscripts]
 set allowedKeys [list target_language vhdlsynthfiles \
                    scopedearlyconstraints scopednormalconstraints \
                    scopedlateconstraints unscopedearlyconstraints \
-                   unscopednormalconstraints unscopedlateconstraints \
+		   unscopednormalconstraints unscopedlateconstraints \
+		   -vhdl2008
                    ]
 foreach key $requiredKeys {
     lappend allowedKeys $key
@@ -59,10 +60,13 @@ cd [getDef prjname $argv]
 
 create_project -in_memory -part [getDef partname $argv]
 
-
 if {[checkForKey vhdlsynthfiles $argv]} {
     foreach filename [getDef vhdlsynthfiles $argv] {
-	read_vhdl $filename
+	if {[checkForKey -vhdl2008 $argv]} {
+	    read_vhdl -vhdl2008 $filename
+	} else {
+	    read_vhdl $filename
+	}
     }
 }
 
@@ -96,7 +100,9 @@ if {[checkForKey scopedlateconstraints $argv]} {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
+puts "argv $argv"
 set topname [getDef topname $argv]
+puts "topname $topname"
 set partname [getDef partname $argv]
 set prjname [getDef prjname $argv]
 
