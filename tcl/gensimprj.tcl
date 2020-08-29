@@ -25,9 +25,12 @@ proc requireKey { key args} {
 
 set requiredKeys [list builddir prjname partname]
 set allowedKeys [list target_language vhdl08synthfiles \
-                   vhdl08simfiles scopedearlyconstraints scopednormalconstraints \
-                   scopedlateconstraints unscopedearlyconstraints \
-                   unscopednormalconstraints unscopedlateconstraints \
+		     vhdl08simfiles vhdlsynthfiles vhdlsimfiles\
+		     verilogsynthfiles verilogsimfiles \
+		     systemverilogsynthfiles systemverilogsimfiles \
+		     scopedearlyconstraints scopednormalconstraints \
+		     scopedlateconstraints unscopedearlyconstraints \
+		     unscopednormalconstraints unscopedlateconstraints \
                    ]
 foreach key $requiredKeys {
     lappend allowedKeys $key
@@ -77,7 +80,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
     create_fileset -srcset sources_1
 }
 
-
 if {[checkForKey vhdl08synthfiles $argv]} {
     if {[getDef vhdl08synthfiles $argv] != ""} {
 	add_files_to_set sources_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
@@ -90,6 +92,46 @@ if {[checkForKey vhdl08simfiles $argv]} {
 	add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08simfiles $argv]
     }
 }
+
+if {[checkForKey vhdlsynthfiles $argv]} {
+    if {[getDef vhdlsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "VHDL" [getDef vhdlsynthfiles $argv]
+	add_files_to_set sim_1 "VHDL" [getDef vhdlsynthfiles $argv]
+    }
+}
+
+if {[checkForKey vhdlsimfiles $argv]} {
+    if {[getDef vhdlsimfiles $argv] != ""} {
+	add_files_to_set sim_1 "VHDL" [getDef vhdlsimfiles $argv]
+    }
+}
+
+if {[checkForKey verilogsynthfiles $argv]} {
+    if {[getDef verilogsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "Verilog" [getDef verilogsynthfiles $argv]
+	add_files_to_set sim_1 "Verilog" [getDef verilogsynthfiles $argv]
+    }
+}
+
+if {[checkForKey verilogsimfiles $argv]} {
+    if {[getDef verilogsimfiles $argv] != ""} {
+	add_files_to_set sim_1 "Verilog" [getDef verilogsimfiles $argv]
+    }
+}
+
+if {[checkForKey systemverilogsynthfiles $argv]} {
+    if {[getDef systemverilogsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "SystemVerilog" [getDef systemverilogsynthfiles $argv]
+	add_files_to_set sim_1 "SystemVerilog" [getDef systemverilogsynthfiles $argv]
+    }
+}
+
+if {[checkForKey systemverilogsimfiles $argv]} {
+    if {[getDef systemverilogsimfiles $argv] != ""} {
+	add_files_to_set sim_1 "SystemVerilog" [getDef systemverilogsimfiles $argv]
+    }
+}
+
 
 if {[checkForKey scopedearlyconstraints $argv]} {
     if {[getDef scopedearlyconstraints $argv] != ""} {

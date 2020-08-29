@@ -3,7 +3,7 @@ include(CMakeParseArguments)
 file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gensimprj.tcl")
 
 function(genvivprj_func)
-	set(options)
+	set(options NOVHDL2008)
 	set(args PRJNAME PARTNAME )
 	set(list_args VHDLSYNTHFILES VHDLSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
 	CMAKE_PARSE_ARGUMENTS(
@@ -27,9 +27,15 @@ function(genvivprj_func)
         message(STATUS "genvivprj SCOPEDEARLYXDC ${genviv_SCOPEDEARLYXDC}")
         message(STATUS "genvivprj SCOPEDNORMALXDC ${genviv_SCOPEDNORMALXDC}")
         message(STATUS "genvivprj SCOPEDLATEXDC ${genviv_SCOPEDLATEXDC}")
+
+	if (NOVHDL2008)
+	  set(vhdlfileopts -vhdlsynthfiles ${genviv_VHDLSYNTHFILES} -vhdlsimfiles ${genviv_VHDLSIMFILES})
+	else()
+	  set(vhdlfileopts -vhdl08synthfiles ${genviv_VHDLSYNTHFILES} -vhdl08simfiles ${genviv_VHDLSIMFILES})
+	endif()
 	
 	add_custom_target(${genviv_PRJNAME}_genvivprj
-		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} -vhdl08synthfiles ${genviv_VHDLSYNTHFILES} -vhdl08simfiles ${genviv_VHDLSIMFILES} -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -builddir ${CMAKE_BINARY_DIR}
+		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -builddir ${CMAKE_BINARY_DIR}
 		)
 endfunction()
 
