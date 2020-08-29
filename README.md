@@ -1,9 +1,9 @@
 # viv-prj-gen
 
-tcl scripts invoked through calls to functions in an included cmake file to generate vivado projects, to build a bit file with vivado nonprject mode, and generate IPXACT component.xml and xgui meta data that IP integrator can understand.
+Vivado projects can be hard to version control.  The goal of this project is to make that easier by automating generation of vivado projects, to have a similar process for nonproject builds using vivado, and to automate generation of the ipxact meta data (components.xml and xgui).  This is meant to be crossplatform, but only has been tested on linux.
 
-The goal is for this to be crossplatform, but it is untested on windows.
+tcl scripts invoked through calls to functions in an included cmake file.
 
-To use it, create your own CMakeLists.txt, include viv-prj-gen/functions.cmake, and use the provided cmake functions.
+To use it, create your own CMakeLists.txt, include viv-prj-gen/functions.cmake, and use the provided cmake functions.  There are examples in the demos directory.
 
 Vivado's cmake version is too old to work with functions.cmake.  Use your system's /usr/bin/cmake instead of vivado's.  
