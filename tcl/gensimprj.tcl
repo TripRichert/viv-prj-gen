@@ -14,14 +14,6 @@ if {[hasDuplicates [getKeys $argv]]} {
     puts "execution suspended of $argv0"
     exit 3
 }
-proc requireKey { key args} {
-    if {![checkForKey $key [join $args]]} {
-	puts "no $key defined"
-        set keys [getKeys [join $args]]
-        puts "in keys: $keys"
-	exit 4
-    }
-}
 
 set requiredKeys [list builddir prjname partname]
 set allowedKeys [list target_language vhdl08synthfiles \
@@ -32,6 +24,7 @@ set allowedKeys [list target_language vhdl08synthfiles \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
                    ]
+
 foreach key $requiredKeys {
     lappend allowedKeys $key
 }

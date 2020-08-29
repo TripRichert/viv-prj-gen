@@ -13,14 +13,6 @@ if {[hasDuplicates [getKeys $argv]]} {
     puts "execution suspended of $argv0"
     exit 3
 }
-proc requireKey { key args} {
-    if {![checkForKey $key [join $args]]} {
-	puts "no $key defined"
-        set keys [getKeys [join $args]]
-        puts "in keys: $keys"
-	exit 4
-    }
-}
 
 set requiredKeys [list builddir prjname partname topname buildscripts]
 set allowedKeys [list target_language vhdlsynthfiles \
@@ -100,9 +92,7 @@ if {[checkForKey scopedlateconstraints $argv]} {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
-puts "argv $argv"
 set topname [getDef topname $argv]
-puts "topname $topname"
 set partname [getDef partname $argv]
 set prjname [getDef prjname $argv]
 

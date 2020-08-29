@@ -46,3 +46,20 @@ proc checkForKey { key args } {
 	return false
     }
 }
+
+proc requireKey { key args} {
+    set fail false
+    if {![checkForKey $key [join $args]]} {
+	set fail true
+    } else {
+	if {[getDef $key [join $args]] == ""} {
+	    set fail true
+	}
+    }
+    if {$fail} {	
+	puts "no $key defined"
+        set keys [getKeys [join $args]]
+        puts "in keys: $keys"
+	exit 4
+    } 
+}
