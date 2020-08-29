@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(project)
 
-include(functions.cmake)
+include(../../functions.cmake)
 
 file(GLOB hdlfiles "hdl/*.vhdl")
 set(partname "XC7Z020-1CLG484")
