@@ -79,12 +79,16 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 
 if {[checkForKey vhdl08synthfiles $argv]} {
-    add_files_to_set sources_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
-    add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
+    if {[getDef vhdl08synthfiles $argv] != ""} {
+	add_files_to_set sources_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
+	add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
+    }
 }
 
 if {[checkForKey vhdl08simfiles $argv]} {
-    add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08simfiles $argv]
+    if {[getDef vhdl08simfiles $argv] != ""} {
+	add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08simfiles $argv]
+    }
 }
 
 if {[checkForKey scopedearlyconstraints $argv]} {

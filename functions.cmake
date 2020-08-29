@@ -5,7 +5,7 @@ file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gensimprj.tcl")
 function(genvivprj_func)
 	set(options)
 	set(args PRJNAME PARTNAME )
-	set(list_args VHDLFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
+	set(list_args VHDLSYNTHFILES VHDLSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
 	CMAKE_PARSE_ARGUMENTS(
 		PARSE_ARGV 0
 		genviv
@@ -19,7 +19,8 @@ function(genvivprj_func)
 
 	message(STATUS "genvivprj PRJNAME ${genviv_PRJNAME}")
 	message(STATUS "genvivprj PARTNAME ${genviv_PARTNAME}")
-	message(STATUS "genvivprj VHDLFILES ${genviv_VHDLFILES}")
+	message(STATUS "genvivprj VHDLSYNTHFILES ${genviv_VHDLSYNTHFILES}")
+	message(STATUS "genvivprj VHDLSIMFILES ${genviv_VHDLSIMFILES}")
 	message(STATUS "genvivprj UNSCOPEDEARLYXDC ${genviv_UNSCOPEDEARLYXDC}")
         message(STATUS "genvivprj UNSCOPEDNORMALXDC ${genviv_UNSCOPEDNORMALXDC}")
         message(STATUS "genvivprj UNSCOPEDLATEXDC ${genviv_UNSCOPEDLATEXDC}")
@@ -28,7 +29,7 @@ function(genvivprj_func)
         message(STATUS "genvivprj SCOPEDLATEXDC ${genviv_SCOPEDLATEXDC}")
 	
 	add_custom_target(${genviv_PRJNAME}_genvivprj
-		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} -vhdl08synthfiles ${genviv_VHDLFILES} -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -builddir ${CMAKE_BINARY_DIR}
+		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} -vhdl08synthfiles ${genviv_VHDLSYNTHFILES} -vhdl08simfiles ${genviv_VHDLSIMFILES} -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -builddir ${CMAKE_BINARY_DIR}
 		)
 endfunction()
 

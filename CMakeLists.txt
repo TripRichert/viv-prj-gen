@@ -10,7 +10,7 @@ file(GLOB unscopedLateConstrFiles "constraints/unscopedlate/*.xdc")
 genvivprj_func(
   PRJNAME testprj
   PARTNAME ${partname}
-  VHDLFILES ${hdlfiles}
+  VHDLSYNTHFILES ${hdlfiles}
   UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
   )
 
