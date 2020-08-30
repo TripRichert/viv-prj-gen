@@ -5,7 +5,7 @@ file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gensimprj.tcl")
 function(genvivprj_func)
 	set(options NOVHDL2008)
 	set(args PRJNAME PARTNAME )
-	set(list_args VHDLSYNTHFILES VHDLSIMFILES VERILOGSYNTHFILES VERILOGSIMFILES SVSYNTHFILES SVSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
+	set(list_args VHDLSYNTHFILES VHDLSIMFILES VERILOGSYNTHFILES VERILOGSIMFILES SVSYNTHFILES SVSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC DATAFILES)
 	CMAKE_PARSE_ARGUMENTS(
 		PARSE_ARGV 0
 		genviv
@@ -31,6 +31,7 @@ function(genvivprj_func)
         message(STATUS "genvivprj SCOPEDEARLYXDC ${genviv_SCOPEDEARLYXDC}")
         message(STATUS "genvivprj SCOPEDNORMALXDC ${genviv_SCOPEDNORMALXDC}")
         message(STATUS "genvivprj SCOPEDLATEXDC ${genviv_SCOPEDLATEXDC}")
+	message(STATUS "genvivprj DATAFILES ${genviv_DATAFILES}")
 
 	if (NOVHDL2008)
 	  set(vhdlfileopts -vhdlsynthfiles ${genviv_VHDLSYNTHFILES} -vhdlsimfiles ${genviv_VHDLSIMFILES})
@@ -39,7 +40,7 @@ function(genvivprj_func)
 	endif()
 	
 	add_custom_target(${genviv_PRJNAME}_genvivprj
-		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${genviv_VERILOGSYNTHFILES} -verilogsimfiles ${genviv_VERILOGSIMFILES} -systemverilogsynthfiles ${genviv_SVSYNTHFILES} -systemverilogsimfiles ${genviv_SVSIMFILES}  -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -builddir ${CMAKE_BINARY_DIR}
+		COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${genviv_VERILOGSYNTHFILES} -verilogsimfiles ${genviv_VERILOGSIMFILES} -systemverilogsynthfiles ${genviv_SVSYNTHFILES} -systemverilogsimfiles ${genviv_SVSIMFILES}  -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -datafiles ${genviv_DATAFILES} -builddir ${CMAKE_BINARY_DIR}
 		)
 endfunction()
 

@@ -23,6 +23,7 @@ set allowedKeys [list target_language vhdl08synthfiles \
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
+		     datafiles
                    ]
 
 foreach key $requiredKeys {
@@ -154,6 +155,12 @@ if {[checkForKey unscopednormalconstraints $argv]} {
 if {[checkForKey unscopedlateconstraints $argv]} {
     if {[getDef unscopedlateconstraints $argv] != ""} {
 	add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
+    }
+}
+
+if {[checkForKey datafiles $argv]} {
+    if {[getDef datafiles $argv] != ""} {
+	add_files_to_set sim_1 "Data Files" [getDef datafiles ${argv}]
     }
 }
 
