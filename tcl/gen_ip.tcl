@@ -16,7 +16,7 @@ if {[hasDuplicates [getKeys $argv]]} {
 }
 
 set requiredKeys [list ipdir ipname partname  topname]
-set allowedKeys [list target_language vhdlsynthfiles verilogsynthfiles svsynthfiles]
+set allowedKeys [list target_language vhdlsynthfiles verilogsynthfiles svsynthfiles preipxscripts postipxscripts miscparams]
 
 foreach key $requiredKeys {
     lappend allowedKeys $key
@@ -94,14 +94,31 @@ update_compile_order -fileset sources_1
 
 set root_dir [getDef ipdir $argv]
 
+set miscparams [getDef miscparams $argv]
+
+if {[checkForKey preipxscripts $argv] and ([getDef preipxscripts $argv] != "")} {
+    foreach script [getDef preipxscripts $argv] {
+	source ${script}
+    }
+}
+
 ipx::package_project -root_dir $root_dir  -vendor NTA -library user -taxonomy /UserIP
 
 set_property core_revision 2 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
+
+if {[checkForKey postipxscripts $argv] and ([getDef postipxscripts $argv] != "")} {
+    foreach script [getDef postipxscripts $argv] {
+	source ${script}
+    }
+}
+
 ipx::save_core [ipx::current_core]
 set_property  ip_repo_paths  $root_dir [current_project]
 update_ip_catalog
+
+
 
 close_project
 

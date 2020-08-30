@@ -16,11 +16,11 @@ if {[hasDuplicates [getKeys $argv]]} {
 
 set requiredKeys [list builddir prjname partname topname buildscripts]
 set allowedKeys [list target_language vhdlsynthfiles \
-		   verilogsynthfiles svsynthfiles \
-                   scopedearlyconstraints scopednormalconstraints \
-                   scopedlateconstraints unscopedearlyconstraints \
-		   unscopednormalconstraints unscopedlateconstraints \
-		   -vhdl2008
+		     verilogsynthfiles svsynthfiles \
+		     scopedearlyconstraints scopednormalconstraints \
+		     scopedlateconstraints unscopedearlyconstraints \
+		     unscopednormalconstraints unscopedlateconstraints \
+		     miscparams  -vhdl2008
                    ]
 foreach key $requiredKeys {
     lappend allowedKeys $key
@@ -109,6 +109,7 @@ if {[checkForKey scopedlateconstraints $argv]} {
 set topname [getDef topname $argv]
 set partname [getDef partname $argv]
 set prjname [getDef prjname $argv]
+set miscparams [getDef miscparams $argv]
 
 foreach scriptname [getDef buildscripts $argv] {
     source $scriptname
