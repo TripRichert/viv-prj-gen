@@ -15,8 +15,8 @@ if {[hasDuplicates [getKeys $argv]]} {
     exit 3
 }
 
-set requiredKeys [list ipdir ipname partname vhdlsynthfiles verilogsynthfiles svsynthfiles topname]
-set allowedKeys [list target_language]
+set requiredKeys [list ipdir ipname partname  topname]
+set allowedKeys [list target_language vhdlsynthfiles verilogsynthfiles svsynthfiles]
 
 foreach key $requiredKeys {
     lappend allowedKeys $key

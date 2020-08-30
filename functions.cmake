@@ -165,6 +165,24 @@ function(genip_func)
 	    COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
 	    DEPENDS ${filename}) 
 	endforeach()
+	foreach(filename IN LISTS genip_VERILOGFILES)
+	  get_filename_component(name ${filename} NAME)
+	  list(APPEND newverilogfiles ${ipdir}/hdl/${name})
+	  add_custom_command(OUTPUT ${ipdir}/hdl/${name}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
+	    COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
+	    COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
+	    DEPENDS ${filename}) 
+	endforeach()
+	foreach(filename IN LISTS genip_SYSTEMVERILOGFILES)
+	  get_filename_component(name ${filename} NAME)
+	  list(APPEND newsvfiles ${ipdir}/hdl/${name})
+	  add_custom_command(OUTPUT ${ipdir}/hdl/${name}
+	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
+	    COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
+	    COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
+	    DEPENDS ${filename}) 
+	endforeach()
 
 	add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
 	  COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} ${laststring}
