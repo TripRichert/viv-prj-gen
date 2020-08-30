@@ -16,6 +16,7 @@ if {[hasDuplicates [getKeys $argv]]} {
 
 set requiredKeys [list builddir prjname partname topname buildscripts]
 set allowedKeys [list target_language vhdlsynthfiles \
+		   verilogsynthfiles svsynthfiles \
                    scopedearlyconstraints scopednormalconstraints \
                    scopedlateconstraints unscopedearlyconstraints \
 		   unscopednormalconstraints unscopedlateconstraints \
@@ -61,6 +62,19 @@ if {[checkForKey vhdlsynthfiles $argv]} {
 	}
     }
 }
+
+if {[checkForKey verilogsynthfiles $argv]} {
+    foreach filename [getDef verilogsynthfiles $argv] {
+	read_verilog $filename
+    }
+}
+
+if {[checkForKey svsynthfiles $argv]} {
+    foreach filename [getDef svsynthfiles $argv] {
+	read_vhdl -sv $filename
+    }
+}
+
 
 if {[checkForKey unscopedearlyconstraints $argv]} {
     foreach filename [getDef unscopedearlyconstraints $argv] {

@@ -55,7 +55,7 @@ file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/cmdline_dict_pro
 function(vivnonprjbitgen_func)
 	set(options VHDL2008)
 	set(args PRJNAME PARTNAME TOPNAME PRESYNTHSCRIPT SYNTHSCRIPT PLACESCRIPT ROUTESCRIPT WRBITSCRIPT)
-	set(list_args VHDLFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
+	set(list_args VHDLFILES VERILOGFILES SYSTEMVERILOGFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC)
 	CMAKE_PARSE_ARGUMENTS(
 		PARSE_ARGV 0
 		vivnonprj
@@ -71,6 +71,8 @@ function(vivnonprjbitgen_func)
 	message(STATUS "vivnonprjgenbit PARTNAME ${vivnonprj_PARTNAME}")
 	message(STATUS "vivnonprjgenbit TOPNAME ${vivnonprj_TOPNAME}")
 	message(STATUS "vivnonprjgenbit VHDLFILES ${vivnonprj_VHDLFILES}")
+	message(STATUS "vivnonprjgenbit VERILOGFILES ${vivnonprj_VERILOGFILES}")
+	message(STATUS "vivnonprjgenbit SYSTEMVERILOGFILES ${vivnonprj_SYSTEMVERILOGFILES}")
 	message(STATUS "vivnonprjgenbit UNSCOPEDEARLYXDC ${vivnonprj_UNSCOPEDEARLYXDC}")
         message(STATUS "vivnonprjgenbit UNSCOPEDNORMALXDC ${vivnonprj_UNSCOPEDNORMALXDC}")
         message(STATUS "vivnonprjgenbit UNSCOPEDLATEXDC ${vivnonprj_UNSCOPEDLATEXDC}")
@@ -114,7 +116,7 @@ function(vivnonprjbitgen_func)
 	endif()
 
 	add_custom_command(OUTPUT ${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
-			  COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
+			  COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
 			  DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript}
 			  )
 endfunction()
@@ -125,7 +127,7 @@ file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/viv_prj_procs.tcl")
 function(genip_func)
 	set(options NODELETE)
 	set(args IPNAME PARTNAME TOPNAME LIBNAME)
-	set(list_args VHDLFILES)
+	set(list_args VHDLFILES VERILOGFILES SYSTEMVERILOGFILES)
 	CMAKE_PARSE_ARGUMENTS(
 		PARSE_ARGV 0
 		genip
@@ -140,6 +142,8 @@ function(genip_func)
 	message(STATUS "genip IPNAME ${genip_IPNAME}")
 	message(STATUS "genip PARTNAME ${genip_PARTNAME}")
 	message(STATUS "genip VHDLFILES ${genip_VHDLFILES}")
+	message(STATUS "genip VERILOGFILES ${genip_VERILOGFILES}")
+	message(STATUS "genip SYSTEMVERILOGFILES ${genip_SYSTEMVERILOGFILES}")
 	message(STATUS "genip TOPNAME ${genip_TOPNAME}")
 	message(STATUS "genip LIBNAME ${genip_LIBNAME}")
 	
@@ -150,14 +154,12 @@ function(genip_func)
 	endif()
 	
 	set(newvhdlfiles "")
+	set(newverilogfiles "")
+	set(newsvfiles "")
 	foreach(filename IN LISTS genip_VHDLFILES)
 	  get_filename_component(name ${filename} NAME)
 	  list(APPEND newvhdlfiles ${ipdir}/hdl/${name})
 	  add_custom_command(OUTPUT ${ipdir}/hdl/${name}
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${genip_PARTNAME}/ip_repo/${genip_LIBNAME}
-	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}
 	    COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
 	    COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
 	    COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
@@ -165,7 +167,7 @@ function(genip_func)
 	endforeach()
 
 	add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
-	  COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles}  -topname ${genip_TOPNAME} -ipdir ${ipdir} ${laststring}
-	  DEPENDS ${newvhdlfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript}
+	  COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} ${laststring}
+	  DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript}
 		)
 endfunction()

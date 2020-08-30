@@ -15,7 +15,7 @@ if {[hasDuplicates [getKeys $argv]]} {
     exit 3
 }
 
-set requiredKeys [list ipdir ipname partname vhdlsynthfiles topname]
+set requiredKeys [list ipdir ipname partname vhdlsynthfiles verilogsynthfiles svsynthfiles topname]
 set allowedKeys [list target_language]
 
 foreach key $requiredKeys {
@@ -72,7 +72,21 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 
 if {[checkForKey vhdlsynthfiles $argv]} {
-    add_files_to_set sources_1 "VHDL" [getDef vhdlsynthfiles $argv]
+    if {[getDef vhdlsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "VHDL" [getDef vhdlsynthfiles $argv]
+    }
+}
+
+if {[checkForKey verilogsynthfiles $argv]} {
+    if {[getDef verilogsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "Verilog" [getDef verilogsynthfiles $argv]
+    }
+}
+
+if {[checkForKey svsynthfiles $argv]} {
+    if {[getDef svsynthfiles $argv] != ""} {
+	add_files_to_set sources_1 "SystemVerilog" [getDef svsynthfiles $argv]
+    }
 }
 
 set_property top [getDef topname $argv] [current_fileset]
