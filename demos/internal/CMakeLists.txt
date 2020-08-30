@@ -48,6 +48,6 @@ genip_func(
   TOPNAME GenericDFlipFlop
   )
       
-add_custom_target(ip ALL
-	DEPENDS ${CMAKE_BINARY_DIR}/${partname}/ip_repo/test/genff/component.xml
+add_custom_target(test_ip ALL
+	DEPENDS ${ipxact_${partname}_test_targets}
 	)

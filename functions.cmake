@@ -188,5 +188,8 @@ function(genip_func)
 	add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
 	  COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} ${laststring}
 	  DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript}
-		)
+	  )
+
+	list(APPEND ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipdir}/component.xml)
+	set(ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets} PARENT_SCOPE)
 endfunction()
