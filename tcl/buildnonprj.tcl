@@ -109,7 +109,8 @@ if {[checkForKey scopedlateconstraints $argv]} {
 set topname [getDef topname $argv]
 set partname [getDef partname $argv]
 set prjname [getDef prjname $argv]
-set miscparams [getDef miscparams $argv]
+set miscparams [join [getDef miscparams $argv]]
+set tcltopdirname [file dirname [info script]]
 
 foreach scriptname [getDef buildscripts $argv] {
     source $scriptname
