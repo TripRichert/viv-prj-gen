@@ -96,9 +96,11 @@ set root_dir [getDef ipdir $argv]
 
 set miscparams [getDef miscparams $argv]
 
-if {[checkForKey preipxscripts $argv] and ([getDef preipxscripts $argv] != "")} {
-    foreach script [getDef preipxscripts $argv] {
-	source ${script}
+if {[checkForKey preipxscripts $argv]} {
+    if {[getDef preipxscripts $argv] != ""} {
+	foreach script [getDef preipxscripts $argv] {
+	    source ${script}
+	}
     }
 }
 
@@ -108,17 +110,17 @@ set_property core_revision 2 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 
-if {[checkForKey postipxscripts $argv] and ([getDef postipxscripts $argv] != "")} {
-    foreach script [getDef postipxscripts $argv] {
-	source ${script}
+if {[checkForKey postipxscripts $argv]} {
+    if {[getDef postipxscripts $argv] != ""} {
+	foreach script [getDef postipxscripts $argv] {
+	    source ${script}
+	}
     }
 }
 
 ipx::save_core [ipx::current_core]
 set_property  ip_repo_paths  $root_dir [current_project]
 update_ip_catalog
-
-
 
 close_project
 

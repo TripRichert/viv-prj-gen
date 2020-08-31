@@ -1,5 +1,4 @@
 include(CMakeParseArguments)
-
 file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gensimprj.tcl")
 
 function(genvivprj_func)
@@ -56,11 +55,11 @@ file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/cmdline_dict_pro
 function(vivnonprjbitgen_func)
         set(options VHDL2008)
         set(args PRJNAME PARTNAME TOPNAME PRESYNTHSCRIPT SYNTHSCRIPT PLACESCRIPT ROUTESCRIPT WRBITSCRIPT)
-        set(list_args \
-	    VHDLFILES VERILOGFILES SYSTEMVERILOGFILES \
-	    UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC\
-	    SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC \
-	    SCRIPTDEPS \
+        set(list_args 
+	    VHDLFILES VERILOGFILES SYSTEMVERILOGFILES 
+	    UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC
+	    SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC 
+	    SCRIPTDEPS 
 	    MISCPARAMS)
         CMAKE_PARSE_ARGUMENTS(
                 PARSE_ARGV 0
@@ -142,14 +141,12 @@ file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/viv_prj_procs.tcl")
 function(genip_func)
         set(options NODELETE)
         set(args IPNAME PARTNAME TOPNAME LIBNAME)
-        set(list_args \
-                                    VHDLFILES \
-                                    VERILOGFILES \
-                                    SYSTEMVERILOGFILES \
-                                    PREIPXSCRIPTS \ #run before ipx generated
-                                    POSTIPXSCRIPTS \ #run after ipx generated
-                                    SCRIPTDEPS \ #not passed to tcl, is deps
-                                    MISCPARAMS\ #used for preipx and postipx
+        set(list_args  VHDLFILES  VERILOGFILES 
+                                    SYSTEMVERILOGFILES 
+                                    PREIPXSCRIPTS  #run before ipx generated
+                                    POSTIPXSCRIPTS #run after ipx generated
+                                    SCRIPTDEPS #not passed to tcl, is deps
+                                    MISCPARAMS #used for preipx and postipx
                                     )
         CMAKE_PARSE_ARGUMENTS(
                 PARSE_ARGV 0
