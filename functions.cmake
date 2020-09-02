@@ -90,8 +90,8 @@ function(vivnonprjbitgen_func)
         message(STATUS "vivnonprjgenbit PLACESCRIPT ${vivnonprj_PLACESCRIPT}")
         message(STATUS "vivnonprjgenbit ROUTESCRIPT ${vivnonprj_ROUTESCRIPT}")
         message(STATUS "vivnonprjgenbit WRBITSCRIPT ${vivnonprj_WRBITSCRIPT}")
-        message(STATUS "genip vivnonprjgenbit MISCPARAMS ${vivnonprj_MISCPARAMS}")
-        message(STATUS "genip vivnonprjgenbit SCRIPTDEPS ${vivnonprj_SCRIPTDEPS}")
+        message(STATUS "vivnonprjgenbit MISCPARAMS ${vivnonprj_MISCPARAMS}")
+        message(STATUS "vivnonprjgenbit SCRIPTDEPS ${vivnonprj_SCRIPTDEPS}")
 
         
         set(scriptlist)
