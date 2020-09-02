@@ -44,7 +44,7 @@ if {[getDef gendir $argv] != ""} {
     exit 7
 }
 
-file mkdir [getDef xciname $argv]
+#file mkdir [getDef xciname $argv]
 #cd [getDef xciname $argv]
 
 create_project -in_memory -part [getDef partname $argv]

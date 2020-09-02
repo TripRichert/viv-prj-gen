@@ -57,7 +57,7 @@ function(vivnonprjbitgen_func)
         set(options VHDL2008)
         set(args PRJNAME PARTNAME TOPNAME PRESYNTHSCRIPT SYNTHSCRIPT PLACESCRIPT ROUTESCRIPT WRBITSCRIPT)
         set(list_args 
-	    VHDLFILES VERILOGFILES SYSTEMVERILOGFILES 
+	    VHDLFILES VERILOGFILES SYSTEMVERILOGFILES XCIFILES
 	    UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC
 	    SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC 
 	    SCRIPTDEPS 
@@ -79,6 +79,7 @@ function(vivnonprjbitgen_func)
         message(STATUS "vivnonprjgenbit VHDLFILES ${vivnonprj_VHDLFILES}")
         message(STATUS "vivnonprjgenbit VERILOGFILES ${vivnonprj_VERILOGFILES}")
         message(STATUS "vivnonprjgenbit SYSTEMVERILOGFILES ${vivnonprj_SYSTEMVERILOGFILES}")
+	message(STATUS "vivnonprjgenbit XCIFILES ${vivnonprj_XCIFILES}")
         message(STATUS "vivnonprjgenbit UNSCOPEDEARLYXDC ${vivnonprj_UNSCOPEDEARLYXDC}")
         message(STATUS "vivnonprjgenbit UNSCOPEDNORMALXDC ${vivnonprj_UNSCOPEDNORMALXDC}")
         message(STATUS "vivnonprjgenbit UNSCOPEDLATEXDC ${vivnonprj_UNSCOPEDLATEXDC}")
@@ -92,6 +93,7 @@ function(vivnonprjbitgen_func)
         message(STATUS "vivnonprjgenbit WRBITSCRIPT ${vivnonprj_WRBITSCRIPT}")
         message(STATUS "vivnonprjgenbit MISCPARAMS ${vivnonprj_MISCPARAMS}")
         message(STATUS "vivnonprjgenbit SCRIPTDEPS ${vivnonprj_SCRIPTDEPS}")
+	
 
         
         set(scriptlist)
@@ -134,8 +136,8 @@ function(vivnonprjbitgen_func)
 	endif()
 
         add_custom_command(OUTPUT ${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
-                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
-                          DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
+                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
+                          DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_VERILOGFILES} ${vivnonprj_SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
                           )
 endfunction()
 
@@ -261,7 +263,7 @@ function(genxci_func)
 	  set(targetlangstr "")
 	endif()
 
-	 add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/created.stamp
+	 add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci
              COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
              COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
 	     COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}

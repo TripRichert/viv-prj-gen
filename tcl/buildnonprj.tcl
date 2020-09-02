@@ -16,7 +16,7 @@ if {[hasDuplicates [getKeys $argv]]} {
 
 set requiredKeys [list builddir prjname partname topname buildscripts]
 set allowedKeys [list target_language vhdlsynthfiles \
-		     verilogsynthfiles svsynthfiles \
+		     verilogsynthfiles svsynthfiles xcifiles \
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
@@ -72,6 +72,13 @@ if {[checkForKey verilogsynthfiles $argv]} {
 if {[checkForKey svsynthfiles $argv]} {
     foreach filename [getDef svsynthfiles $argv] {
 	read_vhdl -sv $filename
+    }
+}
+
+if {[checkForKey xcifiles $argv]} {
+    foreach filename [getDef xcifiles $argv] {
+	puts "importing ip $filename"
+	read_ip $filename
     }
 }
 
