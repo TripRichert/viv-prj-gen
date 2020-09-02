@@ -19,7 +19,7 @@ proc getDef { key args} {
     while {$index != [llength [join $args]] && ![string match "-$key" [lindex [join $args] $index]]} {
 	incr index
     }
-    if {$index == [llength args]} {
+    if {$index == [llength [join $args]]} {
 	return {}
     }
     set deflist {}

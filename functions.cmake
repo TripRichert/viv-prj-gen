@@ -122,15 +122,22 @@ function(vivnonprjbitgen_func)
           set(vhdl2008option --vhdl2008)
         endif()
 
-	if (NOT ${vivnonprj_MISCPARAMS} STREQUAL "")
-	  #braces forces join, but allows nested dictionary with args as spacer
-	  set(miscparamstring -miscparams {args ${vivnonprj_MISCPARAMS}})
-	else()
+	message(STATUS "no quote")
+	message(STATUS ${vivnonprj_MISCPARAMS})
+	message(STATUS "quoted")
+	message(STATUS "${vivnonprj_MISCPARAMS}")
+	if (vivnonprj_MISCPARAMS STREQUAL "")
+	  set(miscparamkey "")
 	  set(miscparamstring "")
+	else()
+	  #braces forces join, but allows nested dictionary with args as spacer
+	  set(miscparamkey "-miscparams")
+	  set(miscparamstring "arg ${vivnonprj_MISCPARAMS}")
+	  string(REPLACE ";" " " miscparamstring "${miscparamstring}")
 	endif()
 
         add_custom_command(OUTPUT ${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
-                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
+                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
                           DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
                           )
 endfunction()
@@ -208,19 +215,61 @@ function(genip_func)
             DEPENDS ${filename}) 
         endforeach()
 
-	if (NOT ${vivnonprj_MISCPARAMS} STREQUAL "")
-	  #braces forces join, but allows nested dictionary with args as spacer
-	  set(miscparamstring -miscparams {args ${vivnonprj_MISCPARAMS}})
-	else()
+	if (genip_MISCPARAMS STREQUAL "")
+	  set(miscparamkey "")
 	  set(miscparamstring "")
+	else()
+	  #braces forces join, but allows nested dictionary with args as spacer
+	  set(miscparamkey "-miscparams")
+	  set(miscparamstring args ${genip_MISCPARAMS})
 	endif()
 
 
         add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
-          COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} -miscparams ${genip_MISCPARAMS} ${laststring}
+          COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} ${miscparamkey} {${miscparamstring}} ${laststring}
           DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript} ${genip_SCRIPTDEPS} ${genip_PREIPXSCRIPTS} ${genip_POSTIPXSCRIPTS}
           )
 
         list(APPEND ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipdir}/component.xml)
         set(ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets} PARENT_SCOPE)
 endfunction()
+
+file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/genxci.tcl)
+function(genxci_func)
+        set(options VERILOG)
+        set(args XCINAME PARTNAME XCIGENSCRIPT)
+        set(list_args  
+                                    )
+        CMAKE_PARSE_ARGUMENTS(
+                PARSE_ARGV 0
+                genxci
+                "${options}"
+                "${args}"
+                "${list_args}"
+                )
+        foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+                    message(WARNING "Unparsed argument: ${arg}")
+        endforeach()
+
+        message(STATUS "genxci XCINAME ${genxci_XCINAME}")
+        message(STATUS "genxci PARTNAME ${genxci_PARTNAME}")
+	message(STATUS "gensci XCIGENSCRIPT ${gensci_XCIGENSCRIPT}")
+
+
+	set(xcidir ${CMAKE_BINARY_DIR}/${genxci_PARTNAME}/xcidir)
+
+	if (VERILOG)
+	  set(targetlangstr -target_language Verilog)
+	else()
+	  set(targetlangstr "")
+	endif()
+
+	add_custom_command(${xcidir}/${genxci_XCINAME}/created.stamp
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
+            COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
+	    COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
+	    DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
+	    )
+endfunction()
+	  
+	
