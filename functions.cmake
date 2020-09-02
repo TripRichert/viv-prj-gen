@@ -31,8 +31,9 @@ function(genvivprj_func)
         message(STATUS "genvivprj SCOPEDNORMALXDC ${genviv_SCOPEDNORMALXDC}")
         message(STATUS "genvivprj SCOPEDLATEXDC ${genviv_SCOPEDLATEXDC}")
         message(STATUS "genvivprj DATAFILES ${genviv_DATAFILES}")
+	message(STATUS "genvivprj NOVHDL2008 ${genviv_NOVHDL2008}")
 
-        if (NOVHDL2008)
+        if (genviv_NOVHDL2008)
           set(vhdlfileopts -vhdlsynthfiles ${genviv_VHDLSYNTHFILES} -vhdlsimfiles ${genviv_VHDLSIMFILES})
         else()
           set(vhdlfileopts -vhdl08synthfiles ${genviv_VHDLSYNTHFILES} -vhdl08simfiles ${genviv_VHDLSIMFILES})
@@ -118,14 +119,10 @@ function(vivnonprjbitgen_func)
           set(scriptlist ${scriptlist} ${default_wrbitfile})
         endif()
         
-        if (NOVHDL2008)
+        if (vivnonprj_VHDL2008)
           set(vhdl2008option --vhdl2008)
         endif()
 
-	message(STATUS "no quote")
-	message(STATUS ${vivnonprj_MISCPARAMS})
-	message(STATUS "quoted")
-	message(STATUS "${vivnonprj_MISCPARAMS}")
 	if (vivnonprj_MISCPARAMS STREQUAL "")
 	  set(miscparamkey "")
 	  set(miscparamstring "")
@@ -180,7 +177,7 @@ function(genip_func)
         
         set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME})
         set(laststring "")
-        if (NODELETE)
+        if (genip_NODELETE)
           set(laststring "--nodelete")
         endif()
         
@@ -215,15 +212,15 @@ function(genip_func)
             DEPENDS ${filename}) 
         endforeach()
 
-	if (genip_MISCPARAMS STREQUAL "")
+	if (vivnonprj_MISCPARAMS STREQUAL "")
 	  set(miscparamkey "")
 	  set(miscparamstring "")
 	else()
 	  #braces forces join, but allows nested dictionary with args as spacer
 	  set(miscparamkey "-miscparams")
-	  set(miscparamstring args ${genip_MISCPARAMS})
+	  set(miscparamstring "arg ${vivnonprj_MISCPARAMS}")
+	  string(REPLACE ";" " " miscparamstring "${miscparamstring}")
 	endif()
-
 
         add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
           COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} ${miscparamkey} {${miscparamstring}} ${laststring}
@@ -238,8 +235,7 @@ file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/genxci.tcl)
 function(genxci_func)
         set(options VERILOG)
         set(args XCINAME PARTNAME XCIGENSCRIPT)
-        set(list_args  
-                                    )
+        set(list_args )
         CMAKE_PARSE_ARGUMENTS(
                 PARSE_ARGV 0
                 genxci
@@ -254,22 +250,23 @@ function(genxci_func)
         message(STATUS "genxci XCINAME ${genxci_XCINAME}")
         message(STATUS "genxci PARTNAME ${genxci_PARTNAME}")
 	message(STATUS "gensci XCIGENSCRIPT ${gensci_XCIGENSCRIPT}")
+	message(STATUS "gensci VERILOG ${genxci_VERILOG}")
 
 
 	set(xcidir ${CMAKE_BINARY_DIR}/${genxci_PARTNAME}/xcidir)
 
-	if (VERILOG)
+	if (genxci_VERILOG)
 	  set(targetlangstr -target_language Verilog)
 	else()
 	  set(targetlangstr "")
 	endif()
 
-	add_custom_command(${xcidir}/${genxci_XCINAME}/created.stamp
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
-            COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
-	    COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
-	    DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
-	    )
+	 add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/created.stamp
+             COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
+             COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
+	     COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
+	     DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
+	     )
 endfunction()
 	  
 	

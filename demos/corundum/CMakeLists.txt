@@ -23,6 +23,19 @@ file(GLOB xcigenfiles corundum/fpga/mqnic/ExaNIC_X10/fpga/ip/*.tcl)
 
 set(hdlfiles ${commonverilog} ${axisverilog} ${ethverilog} ${pcieverilog} ${axisverilog} ${boardfiles})
 
+foreach(filename ${xcigenfiles})
+  get_filename_component(xciname ${filename} NAME_WE)
+  genxci_func(
+    XCINAME ${xciname}
+    PARTNAME ${partname}
+    XCIGENSCRIPT ${filename}
+    VERILOG true
+    )
+   add_custom_target(${xciname}_xci ALL
+     DEPENDS ${CMAKE_BINARY_DIR}/${partname}/xcidir/${xciname}/created.stamp
+     )
+endforeach()
+
 
 file(GLOB postsynthtcl corundum/fpga/lib/eth/syn/mii_phy_if.tcl 
   corundum/fpga/lib/eth/syn/eth_mac_1g_rgmii.tcl 
@@ -37,29 +50,29 @@ file(GLOB postsynthtcl corundum/fpga/lib/eth/syn/mii_phy_if.tcl
   corundum/fpga/common/syn/tdma_ber_ch.tcl)
 
 
-genvivprj_func(
-  PRJNAME corundum
-  VERILOGSYNTHFILES ${hdlfiles}
-  PARTNAME ${partname}
-  NOVHDL2008
-  )
+# genvivprj_func(
+#   PRJNAME corundum
+#   VERILOGSYNTHFILES ${hdlfiles}
+#   PARTNAME ${partname}
+#   NOVHDL2008
+#   )
 
-file(GLOB synthscript tcl/synth.tcl)
-file(GLOB basesynthscript ../../tcl/synth.tcl)
-message(STATUS "basesynth "${basesynthscript})
-set(nonprjname nic_x10)
-set(miscparam -synthbasescript ${basesynthscript})
-vivnonprjbitgen_func(
-  PRJNAME ${nonprjname}
-  PARTNAME ${partname}
-  TOPNAME fpga
-  VERILOGFILES ${hdlfiles}
-  UNSCOPEDNORMALXDC ${constrfiles}
-  SYNTHSCRIPT ${synthscript}
-  SCRIPTDEPS ${basesynthscript}
-  MISCPARAMS ${miscparam}
-  )
+# file(GLOB synthscript tcl/synth.tcl)
+# file(GLOB basesynthscript ../../tcl/synth.tcl)
+# message(STATUS "basesynth "${basesynthscript})
+# set(nonprjname nic_x10)
+# set(miscparam -synthbasescript ${basesynthscript})
+# vivnonprjbitgen_func(
+#   PRJNAME ${nonprjname}
+#   PARTNAME ${partname}
+#   TOPNAME fpga
+#   VERILOGFILES ${hdlfiles}
+#   UNSCOPEDNORMALXDC ${constrfiles}
+#   SYNTHSCRIPT ${synthscript}
+#   SCRIPTDEPS ${basesynthscript}
+#   MISCPARAMS ${miscparam}
+#   )
 
-add_custom_target(nonprj
-	DEPENDS ${nonprjname}/${nonprjname}.bit
-	)
+# add_custom_target(nonprj
+# 	DEPENDS ${nonprjname}/${nonprjname}.bit
+# 	)

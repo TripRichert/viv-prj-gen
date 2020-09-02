@@ -45,18 +45,17 @@ if {[getDef gendir $argv] != ""} {
 }
 
 file mkdir [getDef xciname $argv]
-cd [getDef xciname $argv]
+#cd [getDef xciname $argv]
 
 create_project -in_memory -part [getDef partname $argv]
 if {[getDef xcigenscript $argv] != ""} {
     source [getDef xcigenscript $argv]
 }
-set_property generate_synth_checkpoint false [get_files *.xci]
 if {[checkForKey target_language $argv]} {
     set_property target_language [getDef target_language $argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
-generate_target all [get_files *.xci]
+generate_target all [get_ips]
 
 
