@@ -45,10 +45,10 @@ function(genvivprj_func)
 endfunction()
 
 
-file(GLOB default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/synth.tcl")
-file(GLOB default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/place.tcl")
-file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/route.tcl")
-file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/writebit.tcl")
+file(GLOB default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_synth.tcl")
+file(GLOB default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_place.tcl")
+file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_route.tcl")
+file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
 file(GLOB nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
 file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/cmdline_dict_procs.tcl")
 

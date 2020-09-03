@@ -123,7 +123,7 @@ file(GLOB postsynthtcl
 #   )
 
 file(GLOB synthscript tcl/synth.tcl)
-file(GLOB basesynthscript ../../tcl/synth.tcl)
+file(GLOB basesynthscript ../../tcl/default_scripts/nonprj_synth.tcl)
 message(STATUS "basesynth "${basesynthscript})
 set(nonprjname nic_x10)
 set(miscparam -synthbasescript ${basesynthscript})
