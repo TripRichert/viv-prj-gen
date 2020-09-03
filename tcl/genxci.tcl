@@ -48,6 +48,7 @@ if {[getDef gendir $argv] != ""} {
 #cd [getDef xciname $argv]
 
 create_project -in_memory -part [getDef partname $argv]
+set ip_gen_dir [pwd]
 if {[getDef xcigenscript $argv] != ""} {
     source [getDef xcigenscript $argv]
 }

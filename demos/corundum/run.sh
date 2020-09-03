@@ -1,6 +1,6 @@
-git clone git://github.com/corundum/corundum
+git clone git://github.com/TripRichert/corundum
 cd corundum
-git checkout d58a9cc
+git checkout 210016e
 cd ..
 mkdir build
 cd build
