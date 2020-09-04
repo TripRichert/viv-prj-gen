@@ -16,7 +16,9 @@ if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
 }
 
 set requiredKeys [list ipdir ipname partname  topname]
-set allowedKeys [list target_language vhdlsynthfiles verilogsynthfiles svsynthfiles preipxscripts postipxscripts miscparams]
+set allowedKeys [list target_language \
+		     vhdlsynthfiles verilogsynthfiles svsynthfiles \
+		     preipxscripts postipxscripts miscparams]
 
 foreach key $requiredKeys {
     lappend allowedKeys $key
@@ -57,8 +59,9 @@ create_project "delete_me"
 set obj [current_project]
 set partname [dict::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]
-if {[dict::checkForKey target_language {*}$argv]} {
-    set_property target_language [dict::getDef target_language {*}$argv] [current_project]
+if {[dict::checkForKeyPair target_language {*}$argv]} {
+    set_property target_language \
+	[dict::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
@@ -71,22 +74,19 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 }
 
 
-if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
-    if {[dict::getDef vhdlsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair vhdlsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKey verilogsynthfiles {*}$argv]} {
-    if {[dict::getDef verilogsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair verilogsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"Verilog" [dict::getDef verilogsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKey svsynthfiles {*}$argv]} {
-    if {[dict::getDef svsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "SystemVerilog" [dict::getDef svsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair svsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"SystemVerilog" [dict::getDef svsynthfiles {*}$argv]
 }
 
 set_property top [dict::getDef topname {*}$argv] [current_fileset]
@@ -96,25 +96,21 @@ set root_dir [dict::getDef ipdir {*}$argv]
 
 set miscparams [dict::getDef miscparams {*}$argv]
 
-if {[dict::checkForKey preipxscripts {*}$argv]} {
-    if {[dict::getDef preipxscripts {*}$argv] != ""} {
-	foreach script [dict::getDef preipxscripts {*}$argv] {
-	    source ${script}
-	}
+if {[dict::checkForKeyPair preipxscripts {*}$argv]} {
+    foreach script [dict::getDef preipxscripts {*}$argv] {
+	source ${script}
     }
 }
 
 ipx::package_project -root_dir $root_dir  -vendor NTA -library user -taxonomy /UserIP
 
-set_property core_revision 2 [ipx::current_core]
+set_property core_revision 1 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 
-if {[dict::checkForKey postipxscripts {*}$argv]} {
-    if {[dict::getDef postipxscripts {*}$argv] != ""} {
-	foreach script [dict::getDef postipxscripts {*}$argv] {
-	    source ${script}
-	}
+if {[dict::checkForKeyPair postipxscripts {*}$argv]} {
+    foreach script [dict::getDef postipxscripts {*}$argv] {
+	source ${script}
     }
 }
 

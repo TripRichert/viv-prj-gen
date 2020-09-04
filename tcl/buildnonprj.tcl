@@ -21,7 +21,8 @@ set allowedKeys [list target_language vhdlsynthfiles \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
 		     miscparams  -vhdl2008
-                   ]
+		]
+
 foreach key $requiredKeys {
     lappend allowedKeys $key
 }

@@ -63,7 +63,7 @@ proc dict::hasDuplicates { args } {
 # \param args string of -key value pairs
 # \return true if match is detected
 proc dict::checkForKey { key args } {
-    set keys [dict::getKeys [join $args]]
+    set keys [dict::getKeys {*}$args]
     if {[lsearch $keys $key] != -1} {
 	return true
     } else {
@@ -71,22 +71,37 @@ proc dict::checkForKey { key args } {
     }
 }
 
+## checkForKeyPair
+# \brief checks dictionary string to see if -key is a key and has a value
+# \param key is the -key to search for
+# \param args string of -key value pairs
+# \return true if match is detected
+proc dict::checkForKeyPair { key args } {
+    if {[dict::checkForKey $key {*}$args]} {
+	if {[dict::getDef $key {*}$args] != ""} {
+	    return true
+	}
+    }
+    return false
+}
+
+
 ## requireKey
 # \brief exits program if passed key is not in dictionary
 # \param key is the -key to search for
 # \param args string of -key value pairs
 proc dict::requireKey { key args} {
     set fail false
-    if {![dict::checkForKey $key [join $args]]} {
+    if {![dict::checkForKey $key {*}$args]} {
 	set fail true
     } else {
-	if {[dict::getDef $key [join $args]] == ""} {
+	if {[dict::getDef $key {*}$args] == ""} {
 	    set fail true
 	}
     }
     if {$fail} {	
 	puts "no $key defined"
-        set keys [dict::getKeys [join $args]]
+        set keys [dict::getKeys {*}$args]
         puts "in keys: $keys"
 	exit 4
     }

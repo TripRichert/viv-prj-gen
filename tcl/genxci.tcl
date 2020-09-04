@@ -50,11 +50,10 @@ set ip_gen_dir [pwd]
 if {[dict::getDef xcigenscript {*}$argv] != ""} {
     source [dict::getDef xcigenscript {*}$argv]
 }
-if {[dict::checkForKey target_language {*}$argv]} {
-    set_property target_language [dict::getDef target_language {*}$argv] [current_project]
+if {[dict::checkForKeyPair target_language {*}$argv]} {
+    set_property target_language \
+	[dict::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
 generate_target all [get_ips]
-
-

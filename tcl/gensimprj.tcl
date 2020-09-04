@@ -81,87 +81,75 @@ if {[dict::checkForKey vhdl08synthfiles {*}$argv]} {
     }
 }
 
-if {[dict::checkForKey vhdl08simfiles {*}$argv]} {
-    if {[dict::getDef vhdl08simfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sim_1 "VHDL 2008" [dict::getDef vhdl08simfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair vhdl08simfiles {*}$argv]} {
+    vivprj::add_files_to_set sim_1 \
+	"VHDL 2008" [dict::getDef vhdl08simfiles {*}$argv]
 }
 
-if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
-    if {[dict::getDef vhdlsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
-	vivprj::add_files_to_set sim_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair vhdlsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
+    vivprj::add_files_to_set sim_1 \
+	"VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKey vhdlsimfiles {*}$argv]} {
-    if {[dict::getDef vhdlsimfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sim_1 "VHDL" [dict::getDef vhdlsimfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair vhdlsimfiles {*}$argv]} {
+    vivprj::add_files_to_set sim_1 "VHDL" [dict::getDef vhdlsimfiles {*}$argv]
 }
 
-if {[dict::checkForKey verilogsynthfiles {*}$argv]} {
-    if {[dict::getDef verilogsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
-	vivprj::add_files_to_set sim_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair verilogsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"Verilog" [dict::getDef verilogsynthfiles {*}$argv]
+    vivprj::add_files_to_set sim_1 \
+	"Verilog" [dict::getDef verilogsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKey verilogsimfiles {*}$argv]} {
-    if {[dict::getDef verilogsimfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sim_1 "Verilog" [dict::getDef verilogsimfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair verilogsimfiles {*}$argv]} {
+    vivprj::add_files_to_set sim_1 \
+	"Verilog" [dict::getDef verilogsimfiles {*}$argv]
 }
 
-if {[dict::checkForKey systemverilogsynthfiles {*}$argv]} {
-    if {[dict::getDef systemverilogsynthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
-	vivprj::add_files_to_set sim_1 "SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair systemverilogsynthfiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
+    vivprj::add_files_to_set sim_1 \
+	"SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKey systemverilogsimfiles {*}$argv]} {
-    if {[dict::getDef systemverilogsimfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sim_1 "SystemVerilog" [dict::getDef systemverilogsimfiles {*}$argv]
-    }
+if {[dict::checkForKeyPair systemverilogsimfiles {*}$argv]} {
+    vivprj::add_files_to_set sim_1 \
+	"SystemVerilog" [dict::getDef systemverilogsimfiles {*}$argv]
 }
 
 
-if {[dict::checkForKey scopedearlyconstraints {*}$argv]} {
-    if {[dict::getDef scopedearlyconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set true early [dict::getDef scopedearlyconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair scopedearlyconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set true \
+	early [dict::getDef scopedearlyconstraints {*}$argv]
 }
-if {[dict::checkForKey scopednormalconstraints {*}$argv]} {
-    if {[dict::getDef scopednormalconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set true normal [dict::getDef scopednormalconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair scopednormalconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set true \
+	normal [dict::getDef scopednormalconstraints {*}$argv]
 }
-if {[dict::checkForKey scopedlateconstraints {*}$argv]} {
-    if {[dict::getDef scopedlateconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set true late [dict::getDef scopedlateconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair scopedlateconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set true \
+	late [dict::getDef scopedlateconstraints {*}$argv]
 }
-if {[dict::checkForKey unscopedearlyconstraints {*}$argv]} {
-    if {[dict::getDef unscopedearlyconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set false early [dict::getDef unscopedearlyconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair unscopedearlyconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set false \
+	early [dict::getDef unscopedearlyconstraints {*}$argv]
 }
-if {[dict::checkForKey unscopednormalconstraints {*}$argv]} {
-    if {[dict::getDef unscopednormalconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set false normal [dict::getDef unscopednormalconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair unscopednormalconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set false \
+	normal [dict::getDef unscopednormalconstraints {*}$argv]
 }
-if {[dict::checkForKey unscopedlateconstraints {*}$argv]} {
-    if {[dict::getDef unscopedlateconstraints {*}$argv] != ""} {
-	vivprj::add_const_files_to_set false late [dict::getDef unscopedlateconstraints {*}$argv]
-    }
+if {[dict::checkForKeyPair unscopedlateconstraints {*}$argv]} {
+    vivprj::add_const_files_to_set false \
+	late [dict::getDef unscopedlateconstraints {*}$argv]
 }
 
-if {[dict::checkForKey datafiles {*}$argv]} {
-    if {[dict::getDef datafiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sim_1 "Data Files" [dict::getDef datafiles {*}$argv]
-    }
+if {[dict::checkForKeyPair datafiles {*}$argv]} {
+    vivprj::add_files_to_set sim_1 \
+	"Data Files" [dict::getDef datafiles {*}$argv]
 }
 
 puts "Completed Execution of $argv0"
