@@ -2,14 +2,14 @@ puts "executing $argv0"
 puts "argv is:$argv"
 
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
-source [file join [file dirname [info script]] "helper_procs/vivprj_files.tcl"]
+source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
 if { $argc == 0 } {
     puts "No arguments!"
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[hasDuplicates [getKeys $argv]]} {
+if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -23,10 +23,10 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    requireKey $requiredKey $argv
+    dict::requireKey $requiredKey {*}$argv
 }
 set unrecognizedKeys []
-foreach key [getKeys $argv] {
+foreach key [dict::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -38,8 +38,8 @@ if {[llength $unrecognizedKeys]} {
 	exit 5
 }
 
-if {[getDef ipdir $argv] != ""} {
-    cd [getDef ipdir $argv]
+if {[dict::getDef ipdir {*}$argv] != ""} {
+    cd [dict::getDef ipdir {*}$argv]
 } else {
     puts "ipdir failed"
     exit 7
@@ -55,10 +55,10 @@ cd delete_me
 create_project "delete_me"
 
 set obj [current_project]
-set partname [getDef partname $argv]
+set partname [dict::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]
-if {[checkForKey target_language $argv]} {
-    set_property target_language [getDef target_language $argv] [current_project]
+if {[dict::checkForKey target_language {*}$argv]} {
+    set_property target_language [dict::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
@@ -71,34 +71,34 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 }
 
 
-if {[checkForKey vhdlsynthfiles $argv]} {
-    if {[getDef vhdlsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "VHDL" [getDef vhdlsynthfiles $argv]
+if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
+    if {[dict::getDef vhdlsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
     }
 }
 
-if {[checkForKey verilogsynthfiles $argv]} {
-    if {[getDef verilogsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "Verilog" [getDef verilogsynthfiles $argv]
+if {[dict::checkForKey verilogsynthfiles {*}$argv]} {
+    if {[dict::getDef verilogsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
     }
 }
 
-if {[checkForKey svsynthfiles $argv]} {
-    if {[getDef svsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "SystemVerilog" [getDef svsynthfiles $argv]
+if {[dict::checkForKey svsynthfiles {*}$argv]} {
+    if {[dict::getDef svsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "SystemVerilog" [dict::getDef svsynthfiles {*}$argv]
     }
 }
 
-set_property top [getDef topname $argv] [current_fileset]
+set_property top [dict::getDef topname {*}$argv] [current_fileset]
 update_compile_order -fileset sources_1
 
-set root_dir [getDef ipdir $argv]
+set root_dir [dict::getDef ipdir {*}$argv]
 
-set miscparams [getDef miscparams $argv]
+set miscparams [dict::getDef miscparams {*}$argv]
 
-if {[checkForKey preipxscripts $argv]} {
-    if {[getDef preipxscripts $argv] != ""} {
-	foreach script [getDef preipxscripts $argv] {
+if {[dict::checkForKey preipxscripts {*}$argv]} {
+    if {[dict::getDef preipxscripts {*}$argv] != ""} {
+	foreach script [dict::getDef preipxscripts {*}$argv] {
 	    source ${script}
 	}
     }
@@ -110,9 +110,9 @@ set_property core_revision 2 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 
-if {[checkForKey postipxscripts $argv]} {
-    if {[getDef postipxscripts $argv] != ""} {
-	foreach script [getDef postipxscripts $argv] {
+if {[dict::checkForKey postipxscripts {*}$argv]} {
+    if {[dict::getDef postipxscripts {*}$argv] != ""} {
+	foreach script [dict::getDef postipxscripts {*}$argv] {
 	    source ${script}
 	}
     }
@@ -124,7 +124,7 @@ update_ip_catalog
 
 close_project
 
-if {![checkForKey "-nodelete" $argv]} {
+if {![dict::checkForKey "-nodelete" {*}$argv]} {
     file delete -force "$root_dir/delete_me"
 }
 

@@ -2,14 +2,14 @@ puts "executing $argv0"
 puts "argv is:$argv"
 
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
-source [file join [file dirname [info script]] "helper_procs/vivprj_files.tcl"]
+source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
 if { $argc == 0 } {
     puts "No arguments!"
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[hasDuplicates [getKeys $argv]]} {
+if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -31,10 +31,10 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    requireKey $requiredKey $argv
+    dict::requireKey $requiredKey {*}$argv
 }
 set unrecognizedKeys []
-foreach key [getKeys $argv] {
+foreach key [dict::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -47,22 +47,22 @@ if {[llength $unrecognizedKeys]} {
 }
 
 
-if {[getDef builddir $argv] != ""} {
-    cd [getDef builddir $argv]
+if {[dict::getDef builddir {*}$argv] != ""} {
+    cd [dict::getDef builddir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
-file mkdir [getDef prjname $argv]
-cd [getDef prjname $argv]
+file mkdir [dict::getDef prjname {*}$argv]
+cd [dict::getDef prjname {*}$argv]
 
-create_project [getDef prjname $argv]
+create_project [dict::getDef prjname {*}$argv]
 #set_proj_dir [get_property directory [current_project]]
 set obj [current_project]
-set partname [getDef partname $argv]
+set partname [dict::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]
-if {[checkForKey target_language $argv]} {
-    set_property target_language [getDef target_language $argv] [current_project]
+if {[dict::checkForKey target_language {*}$argv]} {
+    set_property target_language [dict::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
@@ -74,93 +74,93 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
     create_fileset -srcset sources_1
 }
 
-if {[checkForKey vhdl08synthfiles $argv]} {
-    if {[getDef vhdl08synthfiles $argv] != ""} {
-	add_files_to_set sources_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
-	add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08synthfiles $argv]
+if {[dict::checkForKey vhdl08synthfiles {*}$argv]} {
+    if {[dict::getDef vhdl08synthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "VHDL 2008" [dict::getDef vhdl08synthfiles {*}$argv]
+	vivprj::add_files_to_set sim_1 "VHDL 2008" [dict::getDef vhdl08synthfiles {*}$argv]
     }
 }
 
-if {[checkForKey vhdl08simfiles $argv]} {
-    if {[getDef vhdl08simfiles $argv] != ""} {
-	add_files_to_set sim_1 "VHDL 2008" [getDef vhdl08simfiles $argv]
+if {[dict::checkForKey vhdl08simfiles {*}$argv]} {
+    if {[dict::getDef vhdl08simfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sim_1 "VHDL 2008" [dict::getDef vhdl08simfiles {*}$argv]
     }
 }
 
-if {[checkForKey vhdlsynthfiles $argv]} {
-    if {[getDef vhdlsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "VHDL" [getDef vhdlsynthfiles $argv]
-	add_files_to_set sim_1 "VHDL" [getDef vhdlsynthfiles $argv]
+if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
+    if {[dict::getDef vhdlsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
+	vivprj::add_files_to_set sim_1 "VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
     }
 }
 
-if {[checkForKey vhdlsimfiles $argv]} {
-    if {[getDef vhdlsimfiles $argv] != ""} {
-	add_files_to_set sim_1 "VHDL" [getDef vhdlsimfiles $argv]
+if {[dict::checkForKey vhdlsimfiles {*}$argv]} {
+    if {[dict::getDef vhdlsimfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sim_1 "VHDL" [dict::getDef vhdlsimfiles {*}$argv]
     }
 }
 
-if {[checkForKey verilogsynthfiles $argv]} {
-    if {[getDef verilogsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "Verilog" [getDef verilogsynthfiles $argv]
-	add_files_to_set sim_1 "Verilog" [getDef verilogsynthfiles $argv]
+if {[dict::checkForKey verilogsynthfiles {*}$argv]} {
+    if {[dict::getDef verilogsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
+	vivprj::add_files_to_set sim_1 "Verilog" [dict::getDef verilogsynthfiles {*}$argv]
     }
 }
 
-if {[checkForKey verilogsimfiles $argv]} {
-    if {[getDef verilogsimfiles $argv] != ""} {
-	add_files_to_set sim_1 "Verilog" [getDef verilogsimfiles $argv]
+if {[dict::checkForKey verilogsimfiles {*}$argv]} {
+    if {[dict::getDef verilogsimfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sim_1 "Verilog" [dict::getDef verilogsimfiles {*}$argv]
     }
 }
 
-if {[checkForKey systemverilogsynthfiles $argv]} {
-    if {[getDef systemverilogsynthfiles $argv] != ""} {
-	add_files_to_set sources_1 "SystemVerilog" [getDef systemverilogsynthfiles $argv]
-	add_files_to_set sim_1 "SystemVerilog" [getDef systemverilogsynthfiles $argv]
+if {[dict::checkForKey systemverilogsynthfiles {*}$argv]} {
+    if {[dict::getDef systemverilogsynthfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sources_1 "SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
+	vivprj::add_files_to_set sim_1 "SystemVerilog" [dict::getDef systemverilogsynthfiles {*}$argv]
     }
 }
 
-if {[checkForKey systemverilogsimfiles $argv]} {
-    if {[getDef systemverilogsimfiles $argv] != ""} {
-	add_files_to_set sim_1 "SystemVerilog" [getDef systemverilogsimfiles $argv]
+if {[dict::checkForKey systemverilogsimfiles {*}$argv]} {
+    if {[dict::getDef systemverilogsimfiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sim_1 "SystemVerilog" [dict::getDef systemverilogsimfiles {*}$argv]
     }
 }
 
 
-if {[checkForKey scopedearlyconstraints $argv]} {
-    if {[getDef scopedearlyconstraints $argv] != ""} {
-	add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
+if {[dict::checkForKey scopedearlyconstraints {*}$argv]} {
+    if {[dict::getDef scopedearlyconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set true early [dict::getDef scopedearlyconstraints {*}$argv]
     }
 }
-if {[checkForKey scopednormalconstraints $argv]} {
-    if {[getDef scopednormalconstraints $argv] != ""} {
-	add_const_files_to_set true normal [getDef scopednormalconstraints $argv]
+if {[dict::checkForKey scopednormalconstraints {*}$argv]} {
+    if {[dict::getDef scopednormalconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set true normal [dict::getDef scopednormalconstraints {*}$argv]
     }
 }
-if {[checkForKey scopedlateconstraints $argv]} {
-    if {[getDef scopedlateconstraints $argv] != ""} {
-	add_const_files_to_set true late [getDef scopedlateconstraints $argv]
+if {[dict::checkForKey scopedlateconstraints {*}$argv]} {
+    if {[dict::getDef scopedlateconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set true late [dict::getDef scopedlateconstraints {*}$argv]
     }
 }
-if {[checkForKey unscopedearlyconstraints $argv]} {
-    if {[getDef unscopedearlyconstraints $argv] != ""} {
-	add_const_files_to_set false early [getDef unscopedearlyconstraints $argv]
+if {[dict::checkForKey unscopedearlyconstraints {*}$argv]} {
+    if {[dict::getDef unscopedearlyconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set false early [dict::getDef unscopedearlyconstraints {*}$argv]
     }
 }
-if {[checkForKey unscopednormalconstraints $argv]} {
-    if {[getDef unscopednormalconstraints $argv] != ""} {
-	add_const_files_to_set false normal [getDef unscopednormalconstraints $argv]
+if {[dict::checkForKey unscopednormalconstraints {*}$argv]} {
+    if {[dict::getDef unscopednormalconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set false normal [dict::getDef unscopednormalconstraints {*}$argv]
     }
 }
-if {[checkForKey unscopedlateconstraints $argv]} {
-    if {[getDef unscopedlateconstraints $argv] != ""} {
-	add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
+if {[dict::checkForKey unscopedlateconstraints {*}$argv]} {
+    if {[dict::getDef unscopedlateconstraints {*}$argv] != ""} {
+	vivprj::add_const_files_to_set false late [dict::getDef unscopedlateconstraints {*}$argv]
     }
 }
 
-if {[checkForKey datafiles $argv]} {
-    if {[getDef datafiles $argv] != ""} {
-	add_files_to_set sim_1 "Data Files" [getDef datafiles ${argv}]
+if {[dict::checkForKey datafiles {*}$argv]} {
+    if {[dict::getDef datafiles {*}$argv] != ""} {
+	vivprj::add_files_to_set sim_1 "Data Files" [dict::getDef datafiles {*}$argv]
     }
 }
 

@@ -1,4 +1,14 @@
-proc add_files_to_set { filesettype filetype args} {
+## \file vivprj.tcl
+# \brief adds files to vivado project
+
+namespace eval vivprj {}
+
+## add_files_to_set
+# \brief adds passed filenames to project fileset
+# \param filesettype the fileset to add to (e.g. sources_1)
+# \param filetype the type of file (e.g. VHDL)
+# \param args list of files
+proc vivprj::add_files_to_set { filesettype filetype args} {
     set obj [get_filesets $filesettype]
     set files []
     set missingFiles []
@@ -19,10 +29,16 @@ proc add_files_to_set { filesettype filetype args} {
 	set file_obj [get_files -of_objects [get_filesets $filesettype] $filename]
 	set_property file_type $filetype $file_obj
     }
+    return
 }
 
-proc add_const_files_to_set { isScoped order args } {
-    add_files_to_set constrs_1 "XDC" [join $args]
+## add_const_files_to_set
+# \brief adds xdc filenames to project fileset
+# \param isScoped true if constraint is scoped to ref of its own filename
+# \param order when the constraint is applied (early, normal, or late)
+# \param args list of files
+proc vivprj::add_const_files_to_set { isScoped order args } {
+    vivprj::add_files_to_set constrs_1 "XDC" [join $args]
     set files []
     foreach filename [join $args] {
         lappend files [file normalize $filename]
@@ -32,5 +48,6 @@ proc add_const_files_to_set { isScoped order args } {
 	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] [get_files $filename]
 	}
     }
-    set_property PROCESSING_ORDER $order [get_files [join $files]]	
+    set_property PROCESSING_ORDER $order [get_files [join $files]]
+    return
 }

@@ -141,8 +141,8 @@ function(vivnonprjbitgen_func)
                           )
 endfunction()
 
-file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_ip.tcl")
-file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj__files.tcl")
+file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
+file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.tcl")
 
 function(genip_func)
         set(options NODELETE)

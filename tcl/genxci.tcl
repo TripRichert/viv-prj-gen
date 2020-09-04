@@ -1,5 +1,5 @@
 puts "executing $argv0"
-puts "argv is:$argv"
+puts "argv is: $argv"
 
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
 
@@ -9,7 +9,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[hasDuplicates [getKeys $argv]]} {
+if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -22,36 +22,36 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    requireKey $requiredKey $argv
+    dict::requireKey $requiredKey {*}$argv
 }
 
 set unrecognizedKeys []
-foreach key [getKeys $argv] {
+foreach key [dict::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
 }
-if {[llength $unrecognizedKeys]} {
+if {[llength {*}$unrecognizedKeys]} {
     puts "did not recognize keys $unrecognizedKeys"
 	puts "allowed keys are: $allowedKeys"
 	puts "execution suspended of $argv0"
 	exit 5
 }
 
-if {[getDef gendir $argv] != ""} {
-    cd [getDef gendir $argv]
+if {[dict::getDef gendir {*}$argv] != ""} {
+    cd [dict::getDef gendir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
 
-create_project -in_memory -part [getDef partname $argv]
+create_project -in_memory -part [dict::getDef partname {*}$argv]
 set ip_gen_dir [pwd]
-if {[getDef xcigenscript $argv] != ""} {
-    source [getDef xcigenscript $argv]
+if {[dict::getDef xcigenscript {*}$argv] != ""} {
+    source [dict::getDef xcigenscript {*}$argv]
 }
-if {[checkForKey target_language $argv]} {
-    set_property target_language [getDef target_language $argv] [current_project]
+if {[dict::checkForKey target_language {*}$argv]} {
+    set_property target_language [dict::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }

@@ -1,4 +1,14 @@
-proc getKeys { args } {
+## \file cmdline_dict.tcl
+# \brief Defines dictionary for commandline arguments
+# pass the dictionary string as a series of pairs of -key value 
+
+namespace eval dict {}
+
+## getKeys
+# \brief returns keys of passed dictionary
+# \param args string of -key value pairs
+# \return string of keys
+proc dict::getKeys { args } {
     set keylist {}
     foreach arg [join $args] {
 	if {[string match -* $arg]} {
@@ -11,8 +21,13 @@ proc getKeys { args } {
     return $keylist
 }
 
-proc getDef { key args} {
-    if {![checkForKey $key [join $args]]} {
+## getDef
+# \brief returns keys of passed dictionary
+# \param key to search for to get corresponding definition
+# \param args string of -key value pairs
+# \return value associated with passed key or "" if not found
+proc dict::getDef { key args} {
+    if {![dict::checkForKey $key [join $args]]} {
         return {}
     }
     set index 0
@@ -31,15 +46,24 @@ proc getDef { key args} {
     return $deflist 
 }
 
-proc hasDuplicates { args } {
+## hasDuplicates
+# \brief checks for duplicate -key in passed string
+# \param args string of -key value pairs
+# \return true if duplicates are detected
+proc dict::hasDuplicates { args } {
     if {[llength [lsort -unique [join $args]]] != [llength [join $args]]} {
 	return true
     }
     return false
 }
 
-proc checkForKey { key args } {
-    set keys [getKeys [join $args]]
+## checkForKey
+# \brief checks dictionary string to see if -key is a key
+# \param key is the -key to search for
+# \param args string of -key value pairs
+# \return true if match is detected
+proc dict::checkForKey { key args } {
+    set keys [dict::getKeys [join $args]]
     if {[lsearch $keys $key] != -1} {
 	return true
     } else {
@@ -47,19 +71,24 @@ proc checkForKey { key args } {
     }
 }
 
-proc requireKey { key args} {
+## requireKey
+# \brief exits program if passed key is not in dictionary
+# \param key is the -key to search for
+# \param args string of -key value pairs
+proc dict::requireKey { key args} {
     set fail false
-    if {![checkForKey $key [join $args]]} {
+    if {![dict::checkForKey $key [join $args]]} {
 	set fail true
     } else {
-	if {[getDef $key [join $args]] == ""} {
+	if {[dict::getDef $key [join $args]] == ""} {
 	    set fail true
 	}
     }
     if {$fail} {	
 	puts "no $key defined"
-        set keys [getKeys [join $args]]
+        set keys [dict::getKeys [join $args]]
         puts "in keys: $keys"
 	exit 4
-    } 
+    }
+    return
 }

@@ -8,7 +8,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[hasDuplicates [getKeys $argv]]} {
+if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -27,10 +27,10 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    requireKey $requiredKey $argv
+    dict::requireKey $requiredKey {*}$argv
 }
 set unrecognizedKeys []
-foreach key [getKeys $argv] {
+foreach key [dict::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -42,20 +42,20 @@ if {[llength $unrecognizedKeys]} {
 	exit 5
 }
 
-if {[getDef builddir $argv] != ""} {
-    cd [getDef builddir $argv]
+if {[dict::getDef builddir {*}$argv] != ""} {
+    cd [dict::getDef builddir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
-file mkdir [getDef prjname $argv]
-cd [getDef prjname $argv]
+file mkdir [dict::getDef prjname {*}$argv]
+cd [dict::getDef prjname {*}$argv]
 
-create_project -in_memory -part [getDef partname $argv]
+create_project -in_memory -part [dict::getDef partname {*}$argv]
 
-if {[checkForKey vhdlsynthfiles $argv]} {
-    foreach filename [getDef vhdlsynthfiles $argv] {
-	if {[checkForKey -vhdl2008 $argv]} {
+if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
+    foreach filename [dict::getDef vhdlsynthfiles {*}$argv] {
+	if {[dict::checkForKey -vhdl2008 {*}$argv]} {
 	    read_vhdl -vhdl2008 $filename
 	} else {
 	    read_vhdl $filename
@@ -63,63 +63,63 @@ if {[checkForKey vhdlsynthfiles $argv]} {
     }
 }
 
-if {[checkForKey verilogsynthfiles $argv]} {
-    foreach filename [getDef verilogsynthfiles $argv] {
+if {[dict::checkForKey verilogsynthfiles {*}$argv]} {
+    foreach filename [dict::getDef verilogsynthfiles {*}$argv] {
 	read_verilog $filename
     }
 }
 
-if {[checkForKey svsynthfiles $argv]} {
-    foreach filename [getDef svsynthfiles $argv] {
+if {[dict::checkForKey svsynthfiles {*}$argv]} {
+    foreach filename [dict::getDef svsynthfiles {*}$argv] {
 	read_vhdl -sv $filename
     }
 }
 
-if {[checkForKey xcifiles $argv]} {
-    foreach filename [getDef xcifiles $argv] {
+if {[dict::checkForKey xcifiles {*}$argv]} {
+    foreach filename [dict::getDef xcifiles {*}$argv] {
 	puts "importing ip $filename"
 	read_ip $filename
     }
 }
 
 
-if {[checkForKey unscopedearlyconstraints $argv]} {
-    foreach filename [getDef unscopedearlyconstraints $argv] {
+if {[dict::checkForKey unscopedearlyconstraints {*}$argv]} {
+    foreach filename [dict::getDef unscopedearlyconstraints {*}$argv] {
 	read_xdc $filename
     }
 }
-if {[checkForKey scopedearlyconstraints $argv]} {
-    foreach filename [getDef scopedearlyconstraints $argv] {
+if {[dict::checkForKey scopedearlyconstraints {*}$argv]} {
+    foreach filename [dict::getDef scopedearlyconstraints {*}$argv] {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
-if {[checkForKey unscopednormalconstraints $argv]} {
-    foreach filename [getDef unscopednormalconstraints $argv] {
+if {[dict::checkForKey unscopednormalconstraints {*}$argv]} {
+    foreach filename [dict::getDef unscopednormalconstraints {*}$argv] {
 	read_xdc $filename
     }
 }
-if {[checkForKey scopednormalconstraints $argv]} {
-    foreach filename [getDef scopednormalconstraints $argv] {
+if {[dict::checkForKey scopednormalconstraints {*}$argv]} {
+    foreach filename [dict::getDef scopednormalconstraints {*}$argv] {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
-if {[checkForKey unscopedlateconstraints $argv]} {
-    foreach filename [getDef unscopedlateconstraints $argv] {
+if {[dict::checkForKey unscopedlateconstraints {*}$argv]} {
+    foreach filename [dict::getDef unscopedlateconstraints {*}$argv] {
 	read_xdc $filename
     }
 }
-if {[checkForKey scopedlateconstraints $argv]} {
-    foreach filename [getDef scopedlateconstraints $argv] {
+if {[dict::checkForKey scopedlateconstraints {*}$argv]} {
+    foreach filename [dict::getDef scopedlateconstraints {*}$argv] {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
-set topname [getDef topname $argv]
-set partname [getDef partname $argv]
-set prjname [getDef prjname $argv]
-set miscparams [join [getDef miscparams $argv]]
+set topname [dict::getDef topname {*}$argv]
+set partname [dict::getDef partname {*}$argv]
+set prjname [dict::getDef prjname {*}$argv]
+set miscparams [join [dict::getDef miscparams {*}$argv]]
 set tcltopdirname [file dirname [info script]]
 
-foreach scriptname [getDef buildscripts $argv] {
+foreach scriptname [dict::getDef buildscripts {*}$argv] {
     source $scriptname
 }
 
