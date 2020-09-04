@@ -1,7 +1,9 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
+#get procs to parse cmdline arguments
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
+#procs to add files to vivado projects
 source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
 if { $argc == 0 } {
@@ -26,6 +28,7 @@ set allowedKeys [list target_language vhdl08synthfiles \
 		     datafiles
                    ]
 
+#all required keys are allowed
 foreach key $requiredKeys {
     lappend allowedKeys $key
 }
@@ -57,7 +60,7 @@ file mkdir [dict::getDef prjname {*}$argv]
 cd [dict::getDef prjname {*}$argv]
 
 create_project [dict::getDef prjname {*}$argv]
-#set_proj_dir [get_property directory [current_project]]
+
 set obj [current_project]
 set partname [dict::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]

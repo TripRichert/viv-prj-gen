@@ -140,5 +140,5 @@ vivnonprjbitgen_func(
   )
 
 add_custom_target(nonprj
-	DEPENDS ${nonprjname}/${nonprjname}.bit
+	DEPENDS vivnonprj_${nonprjname}/${nonprjname}.bit
 	)

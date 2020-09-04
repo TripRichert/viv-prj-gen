@@ -1,6 +1,7 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
+#get procs to parse cmdline arguments
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
 
 if { $argc == 0 } {
@@ -14,7 +15,11 @@ if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
     exit 3
 }
 
+#topname name of top level module of project to be build
+#buildscripts list of tcl scripts to be called after files are loaded
 set requiredKeys [list builddir prjname partname topname buildscripts]
+
+#miscparams is used to pass data from commandline to the build scripts.
 set allowedKeys [list target_language vhdlsynthfiles \
 		     verilogsynthfiles svsynthfiles xcifiles \
 		     scopedearlyconstraints scopednormalconstraints \
@@ -23,13 +28,16 @@ set allowedKeys [list target_language vhdlsynthfiles \
 		     miscparams  -vhdl2008
 		]
 
+#all required keys are allowed
 foreach key $requiredKeys {
     lappend allowedKeys $key
 }
 
+#exit program if required key is missing
 foreach requiredKey $requiredKeys {
     dict::requireKey $requiredKey {*}$argv
 }
+#exit program if any keys aren't allowed
 set unrecognizedKeys []
 foreach key [dict::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
@@ -43,17 +51,20 @@ if {[llength $unrecognizedKeys]} {
 	exit 5
 }
 
+#navigate to build directory, create prj directory, and navigate to it
 if {[dict::getDef builddir {*}$argv] != ""} {
     cd [dict::getDef builddir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
-file mkdir [dict::getDef prjname {*}$argv]
-cd [dict::getDef prjname {*}$argv]
+set prjname [dict::getDef prjname {*}$argv]
+file mkdir "vivnonprj_$prjname"
+cd "vivnonprj_$prjname"
 
 create_project -in_memory -part [dict::getDef partname {*}$argv]
 
+#add the source files
 if {[dict::checkForKey vhdlsynthfiles {*}$argv]} {
     foreach filename [dict::getDef vhdlsynthfiles {*}$argv] {
 	if {[dict::checkForKey -vhdl2008 {*}$argv]} {
@@ -114,12 +125,15 @@ if {[dict::checkForKey scopedlateconstraints {*}$argv]} {
 	read_xdc -ref [file rootname [file tail $filename]] $filename
     }
 }
+
+#set up variables the called scripts might need
 set topname [dict::getDef topname {*}$argv]
 set partname [dict::getDef partname {*}$argv]
 set prjname [dict::getDef prjname {*}$argv]
 set miscparams [join [dict::getDef miscparams {*}$argv]]
 set tcltopdirname [file dirname [info script]]
 
+#call each of the passed list of scripts in order
 foreach scriptname [dict::getDef buildscripts {*}$argv] {
     source $scriptname
 }

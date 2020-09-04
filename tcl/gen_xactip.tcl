@@ -1,7 +1,10 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
+#get dictionary procs to process commandline arguments
 source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
+
+#get procs to add files to vivado
 source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
 if { $argc == 0 } {
@@ -20,6 +23,7 @@ set allowedKeys [list target_language \
 		     vhdlsynthfiles verilogsynthfiles svsynthfiles \
 		     preipxscripts postipxscripts miscparams]
 
+#all required keys are allowed
 foreach key $requiredKeys {
     lappend allowedKeys $key
 }
@@ -52,6 +56,7 @@ file delete components.xml
 file delete -force xgui
 file delete -force delete_me
 
+#need temporary project to manage files wrapped into generated xactip
 file mkdir delete_me
 cd delete_me
 create_project "delete_me"
@@ -93,9 +98,9 @@ set_property top [dict::getDef topname {*}$argv] [current_fileset]
 update_compile_order -fileset sources_1
 
 set root_dir [dict::getDef ipdir {*}$argv]
-
 set miscparams [dict::getDef miscparams {*}$argv]
 
+#optional list of scripts to run before xactip is wrapped
 if {[dict::checkForKeyPair preipxscripts {*}$argv]} {
     foreach script [dict::getDef preipxscripts {*}$argv] {
 	source ${script}
@@ -108,6 +113,7 @@ set_property core_revision 1 [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 
+#optional list of scripts to run after xactip is created (use ipx cmds)
 if {[dict::checkForKeyPair postipxscripts {*}$argv]} {
     foreach script [dict::getDef postipxscripts {*}$argv] {
 	source ${script}
