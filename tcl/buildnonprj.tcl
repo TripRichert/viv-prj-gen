@@ -1,7 +1,7 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
-source [file join [file dirname [info script]] "cmdline_dict_procs.tcl"]
+source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
 
 if { $argc == 0 } {
     puts "No arguments!"
