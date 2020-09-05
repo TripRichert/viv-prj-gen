@@ -14,7 +14,7 @@ proc vivprj::add_files_to_set { filesettype filetype args} {
     set missingFiles []
     foreach filename $args {
         if {[file exists [join $filename]]} {
-	    regsub -all {\s} "[file normalize $filename]" {\ } newfilename
+	    regsub -all { } "[file normalize $filename]" {\ } newfilename
             lappend files $newfilename
         } else {
             lappend missingFiles $filename
