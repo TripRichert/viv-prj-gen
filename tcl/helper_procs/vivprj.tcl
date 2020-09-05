@@ -20,7 +20,7 @@ proc vivprj::add_files_to_set { filesettype filetype args} {
         }
     }
     if {[llength $missingFiles]} {
-        puts "these files don't exist yet :'( $missingFiles"
+        puts "these files don't exist yet : $missingFiles"
         puts "exiting due to missing files"
         exit 6
     }
