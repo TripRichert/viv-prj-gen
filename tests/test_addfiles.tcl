@@ -29,7 +29,7 @@ proc cleanup_prj {} {
 test getKeys_vivprj {
 } -body {
     set filelist ""
-#    catch {
+    catch {
 	setup_prj
 	vivprj::add_files_to_set sources_1 VHDL "$filename"
 
@@ -38,7 +38,7 @@ test getKeys_vivprj {
 	foreach pathname $tmplist {
 	    lappend filelist [file tail $pathname]
 	}
-#    } 
+    } 
     cleanup_prj
     set filelist $filelist
 } -result "DFlipFlop.vhdl"
