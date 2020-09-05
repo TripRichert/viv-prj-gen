@@ -1,5 +1,5 @@
 include(CMakeParseArguments)
-file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gensimprj.tcl")
+file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 
 function(genvivprj_func)
         set(options NOVHDL2008)
@@ -233,7 +233,7 @@ function(genip_func)
         set(ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets} PARENT_SCOPE)
 endfunction()
 
-file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/genxci.tcl)
+file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
 function(genxci_func)
         set(options VERILOG)
         set(args XCINAME PARTNAME XCIGENSCRIPT)
