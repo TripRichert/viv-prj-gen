@@ -4,7 +4,7 @@ namespace import ::tcltest::*
 source [file join [file dirname [info script]] \
 	    "../tcl/helper_procs/vivprj.tcl"]
 set filename [file normalize [file join [file dirname [info script]]\
-				  hdl DFlipFlop.vhdl]]
+				  "hdl files" DFlipFlop.vhdl]]
 
 proc tcltest::cleanupTestsHook {} {
     variable numTests
@@ -28,17 +28,17 @@ proc cleanup_prj {} {
 
 test getKeys_vivprj {
 } -body {
-    set fileset ""
-    catch {
+    set filelist ""
+#    catch {
 	setup_prj
-	vivprj::add_files_to_set sources_1 VHDL $filename
+	vivprj::add_files_to_set sources_1 VHDL "$filename"
 
 	set tmplist [get_files -of_objects [get_filesets sources_1]]
 	set filelist ""
 	foreach pathname $tmplist {
 	    lappend filelist [file tail $pathname]
 	}
-    } 
+#    } 
     cleanup_prj
     set filelist $filelist
 } -result "DFlipFlop.vhdl"
