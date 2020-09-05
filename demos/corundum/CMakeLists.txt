@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.3)
 project(project)
 
 set(webpack_parts XCKU035 XCKU3P XCU50 XCU280)

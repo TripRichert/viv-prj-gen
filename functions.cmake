@@ -6,11 +6,11 @@ function(genvivprj_func)
         set(args PRJNAME PARTNAME )
         set(list_args VHDLSYNTHFILES VHDLSIMFILES VERILOGSYNTHFILES VERILOGSIMFILES SVSYNTHFILES SVSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC DATAFILES)
         CMAKE_PARSE_ARGUMENTS(
-                PARSE_ARGV 0
                 genviv
                 "${options}"
                 "${args}"
                 "${list_args}"
+		"${ARGN}"
                 )
         foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
                     message(WARNING "Unparsed argument: ${arg}")
@@ -63,11 +63,11 @@ function(vivnonprjbitgen_func)
 	    SCRIPTDEPS 
 	    MISCPARAMS)
         CMAKE_PARSE_ARGUMENTS(
-                PARSE_ARGV 0
                 vivnonprj
                 "${options}"
                 "${args}"
                 "${list_args}"
+		"${ARGN}"
                 )
         foreach(arg IN LISTS vivnonprj_UNPARSED_ARGUMENTS)
                     message(WARNING "Unparsed argument: ${arg}")
@@ -155,11 +155,11 @@ function(genip_func)
                                     MISCPARAMS #used for preipx and postipx
                                     )
         CMAKE_PARSE_ARGUMENTS(
-                PARSE_ARGV 0
                 genip
                 "${options}"
                 "${args}"
                 "${list_args}"
+		"${ARGN}"
                 )
         foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
                     message(WARNING "Unparsed argument: ${arg}")
