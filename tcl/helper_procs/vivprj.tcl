@@ -44,14 +44,17 @@ proc vivprj::add_const_files_to_set { isScoped order args } {
     vivprj::add_files_to_set constrs_1 "XDC" {*}$args
     set files []
     foreach filename $args {
-        lappend files [file normalize $filename]
+	regsub -all { } "[file normalize $filename]" {\ } newfilename
+	lappend files $newfilename
     }
-    foreach filename [join $files] {
+    
+    foreach filename $files {
 	if { $isScoped } {
-	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] [get_files $filename]
+	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] \
+		[get_files $filename]
 	}
     }
-    set_property PROCESSING_ORDER $order [get_files $files]
+    set_property PROCESSING_ORDER $order [get_files [join $files]]
     return
 }
 

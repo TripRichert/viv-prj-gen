@@ -3,8 +3,13 @@ namespace import ::tcltest::*
 
 source [file join [file dirname [info script]] \
 	    "../tcl/helper_procs/vivprj.tcl"]
+
+
 set filename [file normalize [file join [file dirname [info script]]\
 				  "hdl files" DFlipFlop.vhdl]]
+
+set constrfile [file normalize [file join [file dirname [info script]]\
+				  "constraints" "test space.xdc"]]
 
 proc tcltest::cleanupTestsHook {} {
     variable numTests
@@ -26,7 +31,7 @@ proc cleanup_prj {} {
 }
 
 
-test getKeys_vivprj {
+test addFiles_spacepath {
 } -body {
     set filelist ""
     catch {
@@ -42,6 +47,22 @@ test getKeys_vivprj {
     cleanup_prj
     set filelist $filelist
 } -result "DFlipFlop.vhdl"
+
+test addConst_spacepath {
+} -body {
+    set filelist ""
+    catch {
+	setup_prj
+	vivprj::add_const_files_to_set false normal "$constrfile"
+	set tmplist [get_files -of_objects [get_filesets constrs_1]]
+	set filelist ""
+	foreach pathname $tmplist {
+	    lappend filelist [file tail $pathname]
+	}
+    } 
+    cleanup_prj
+    set filelist $filelist
+} -result "{test space.xdc}"
 
 tcltest::runAllTests
 file delete vivado.jou
