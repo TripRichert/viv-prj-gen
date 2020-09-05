@@ -9,7 +9,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
+if {[diction::hasDuplicates [diction::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -22,11 +22,11 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    dict::requireKey $requiredKey {*}$argv
+    diction::requireKey $requiredKey {*}$argv
 }
 
 set unrecognizedKeys []
-foreach key [dict::getKeys {*}$argv] {
+foreach key [diction::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -38,21 +38,21 @@ if {[llength {*}$unrecognizedKeys]} {
 	exit 5
 }
 
-if {[dict::getDef gendir {*}$argv] != ""} {
-    cd [dict::getDef gendir {*}$argv]
+if {[diction::getDef gendir {*}$argv] != ""} {
+    cd [diction::getDef gendir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
 
-create_project -in_memory -part [dict::getDef partname {*}$argv]
+create_project -in_memory -part [diction::getDef partname {*}$argv]
 set ip_gen_dir [pwd]
-if {[dict::getDef xcigenscript {*}$argv] != ""} {
-    source [dict::getDef xcigenscript {*}$argv]
+if {[diction::getDef xcigenscript {*}$argv] != ""} {
+    source [diction::getDef xcigenscript {*}$argv]
 }
-if {[dict::checkForKeyPair target_language {*}$argv]} {
+if {[diction::checkForKeyPair target_language {*}$argv]} {
     set_property target_language \
-	[dict::getDef target_language {*}$argv] [current_project]
+	[diction::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }

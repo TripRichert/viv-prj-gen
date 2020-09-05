@@ -12,7 +12,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[dict::hasDuplicates [dict::getKeys {*}$argv]]} {
+if {[diction::hasDuplicates [diction::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -29,10 +29,10 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    dict::requireKey $requiredKey {*}$argv
+    diction::requireKey $requiredKey {*}$argv
 }
 set unrecognizedKeys []
-foreach key [dict::getKeys {*}$argv] {
+foreach key [diction::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -44,8 +44,8 @@ if {[llength $unrecognizedKeys]} {
 	exit 5
 }
 
-if {[dict::getDef ipdir {*}$argv] != ""} {
-    cd [dict::getDef ipdir {*}$argv]
+if {[diction::getDef ipdir {*}$argv] != ""} {
+    cd [diction::getDef ipdir {*}$argv]
 } else {
     puts "ipdir failed"
     exit 7
@@ -62,11 +62,11 @@ cd delete_me
 create_project "delete_me"
 
 set obj [current_project]
-set partname [dict::getDef partname {*}$argv]
+set partname [diction::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]
-if {[dict::checkForKeyPair target_language {*}$argv]} {
+if {[diction::checkForKeyPair target_language {*}$argv]} {
     set_property target_language \
-	[dict::getDef target_language {*}$argv] [current_project]
+	[diction::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
@@ -79,30 +79,30 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 }
 
 
-if {[dict::checkForKeyPair vhdlsynthfiles {*}$argv]} {
+if {[diction::checkForKeyPair vhdlsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"VHDL" [dict::getDef vhdlsynthfiles {*}$argv]
+	"VHDL" [diction::getDef vhdlsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKeyPair verilogsynthfiles {*}$argv]} {
+if {[diction::checkForKeyPair verilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"Verilog" [dict::getDef verilogsynthfiles {*}$argv]
+	"Verilog" [diction::getDef verilogsynthfiles {*}$argv]
 }
 
-if {[dict::checkForKeyPair svsynthfiles {*}$argv]} {
+if {[diction::checkForKeyPair svsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"SystemVerilog" [dict::getDef svsynthfiles {*}$argv]
+	"SystemVerilog" [diction::getDef svsynthfiles {*}$argv]
 }
 
-set_property top [dict::getDef topname {*}$argv] [current_fileset]
+set_property top [diction::getDef topname {*}$argv] [current_fileset]
 update_compile_order -fileset sources_1
 
-set root_dir [dict::getDef ipdir {*}$argv]
-set miscparams [dict::getDef miscparams {*}$argv]
+set root_dir [diction::getDef ipdir {*}$argv]
+set miscparams [diction::getDef miscparams {*}$argv]
 
 #optional list of scripts to run before xactip is wrapped
-if {[dict::checkForKeyPair preipxscripts {*}$argv]} {
-    foreach script [dict::getDef preipxscripts {*}$argv] {
+if {[diction::checkForKeyPair preipxscripts {*}$argv]} {
+    foreach script [diction::getDef preipxscripts {*}$argv] {
 	source ${script}
     }
 }
@@ -114,8 +114,8 @@ ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 
 #optional list of scripts to run after xactip is created (use ipx cmds)
-if {[dict::checkForKeyPair postipxscripts {*}$argv]} {
-    foreach script [dict::getDef postipxscripts {*}$argv] {
+if {[diction::checkForKeyPair postipxscripts {*}$argv]} {
+    foreach script [diction::getDef postipxscripts {*}$argv] {
 	source ${script}
     }
 }
@@ -126,7 +126,7 @@ update_ip_catalog
 
 close_project
 
-if {![dict::checkForKey "-nodelete" {*}$argv]} {
+if {![diction::checkForKey "-nodelete" {*}$argv]} {
     file delete -force "$root_dir/delete_me"
 }
 
