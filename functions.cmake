@@ -244,6 +244,7 @@ function(genxci_func)
                 "${options}"
                 "${args}"
                 "${list_args}"
+		"${ARGN}"
                 )
         foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
                     message(WARNING "Unparsed argument: ${arg}")
