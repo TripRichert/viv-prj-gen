@@ -79,80 +79,80 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 if {[diction::checkForKey vhdl08synthfiles {*}$argv]} {
     if {[diction::getDef vhdl08synthfiles {*}$argv] != ""} {
-	vivprj::add_files_to_set sources_1 "VHDL 2008" [diction::getDef vhdl08synthfiles {*}$argv]
-	vivprj::add_files_to_set sim_1 "VHDL 2008" [diction::getDef vhdl08synthfiles {*}$argv]
+	vivprj::add_files_to_set sources_1 "VHDL 2008" {*}[diction::getDef vhdl08synthfiles {*}$argv]
+	vivprj::add_files_to_set sim_1 "VHDL 2008" {*}[diction::getDef vhdl08synthfiles {*}$argv]
     }
 }
 
 if {[diction::checkForKeyPair vhdl08simfiles {*}$argv]} {
     vivprj::add_files_to_set sim_1 \
-	"VHDL 2008" [diction::getDef vhdl08simfiles {*}$argv]
+	"VHDL 2008" {*}[diction::getDef vhdl08simfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair vhdlsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"VHDL" [diction::getDef vhdlsynthfiles {*}$argv]
+	"VHDL" {*}[diction::getDef vhdlsynthfiles {*}$argv]
     vivprj::add_files_to_set sim_1 \
-	"VHDL" [diction::getDef vhdlsynthfiles {*}$argv]
+	"VHDL" {*}[diction::getDef vhdlsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair vhdlsimfiles {*}$argv]} {
-    vivprj::add_files_to_set sim_1 "VHDL" [diction::getDef vhdlsimfiles {*}$argv]
+    vivprj::add_files_to_set sim_1 "VHDL" {*}[diction::getDef vhdlsimfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair verilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"Verilog" [diction::getDef verilogsynthfiles {*}$argv]
+	"Verilog" {*}[diction::getDef verilogsynthfiles {*}$argv]
     vivprj::add_files_to_set sim_1 \
-	"Verilog" [diction::getDef verilogsynthfiles {*}$argv]
+	"Verilog" {*}[diction::getDef verilogsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair verilogsimfiles {*}$argv]} {
     vivprj::add_files_to_set sim_1 \
-	"Verilog" [diction::getDef verilogsimfiles {*}$argv]
+	"Verilog" {*}[diction::getDef verilogsimfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair systemverilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"SystemVerilog" [diction::getDef systemverilogsynthfiles {*}$argv]
+	"SystemVerilog" {*}[diction::getDef systemverilogsynthfiles {*}$argv]
     vivprj::add_files_to_set sim_1 \
-	"SystemVerilog" [diction::getDef systemverilogsynthfiles {*}$argv]
+	"SystemVerilog" {*}[diction::getDef systemverilogsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair systemverilogsimfiles {*}$argv]} {
     vivprj::add_files_to_set sim_1 \
-	"SystemVerilog" [diction::getDef systemverilogsimfiles {*}$argv]
+	"SystemVerilog" {*}[diction::getDef systemverilogsimfiles {*}$argv]
 }
 
 
 if {[diction::checkForKeyPair scopedearlyconstraints {*}$argv]} {
     vivprj::add_const_files_to_set true \
-	early [diction::getDef scopedearlyconstraints {*}$argv]
+	early {*}[diction::getDef scopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopednormalconstraints {*}$argv]} {
     vivprj::add_const_files_to_set true \
-	normal [diction::getDef scopednormalconstraints {*}$argv]
+	normal {*}[diction::getDef scopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopedlateconstraints {*}$argv]} {
     vivprj::add_const_files_to_set true \
-	late [diction::getDef scopedlateconstraints {*}$argv]
+	late {*}[diction::getDef scopedlateconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedearlyconstraints {*}$argv]} {
     vivprj::add_const_files_to_set false \
-	early [diction::getDef unscopedearlyconstraints {*}$argv]
+	early {*}[diction::getDef unscopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopednormalconstraints {*}$argv]} {
     vivprj::add_const_files_to_set false \
-	normal [diction::getDef unscopednormalconstraints {*}$argv]
+	normal {*}[diction::getDef unscopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedlateconstraints {*}$argv]} {
     vivprj::add_const_files_to_set false \
-	late [diction::getDef unscopedlateconstraints {*}$argv]
+	late {*}[diction::getDef unscopedlateconstraints {*}$argv]
 }
 
 if {[diction::checkForKeyPair datafiles {*}$argv]} {
     vivprj::add_files_to_set sim_1 \
-	"Data Files" [diction::getDef datafiles {*}$argv]
+	"Data Files" {*}[diction::getDef datafiles {*}$argv]
 }
 
 puts "Completed Execution of $argv0"

@@ -12,7 +12,7 @@ proc vivprj::add_files_to_set { filesettype filetype args} {
     set obj [get_filesets $filesettype]
     set files []
     set missingFiles []
-    foreach filename [join $args] {
+    foreach filename $args {
         if {[file exists $filename]} {
             lappend files [file normalize $filename]
         } else {
@@ -38,9 +38,9 @@ proc vivprj::add_files_to_set { filesettype filetype args} {
 # \param order when the constraint is applied (early, normal, or late)
 # \param args list of files
 proc vivprj::add_const_files_to_set { isScoped order args } {
-    vivprj::add_files_to_set constrs_1 "XDC" [join $args]
+    vivprj::add_files_to_set constrs_1 "XDC" {*}$args
     set files []
-    foreach filename [join $args] {
+    foreach filename $args {
         lappend files [file normalize $filename]
     }
     foreach filename [join $files] {
@@ -48,6 +48,6 @@ proc vivprj::add_const_files_to_set { isScoped order args } {
 	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] [get_files $filename]
 	}
     }
-    set_property PROCESSING_ORDER $order [get_files [join $files]]
+    set_property PROCESSING_ORDER $order [get_files $files]
     return
 }

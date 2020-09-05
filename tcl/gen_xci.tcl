@@ -9,7 +9,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[diction::hasDuplicates [diction::getKeys {*}$argv]]} {
+if {[diction::hasDuplicates {*}[diction::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3

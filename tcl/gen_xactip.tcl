@@ -12,7 +12,7 @@ if { $argc == 0 } {
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[diction::hasDuplicates [diction::getKeys {*}$argv]]} {
+if {[diction::hasDuplicates {*}[diction::getKeys {*}$argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -81,17 +81,17 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 if {[diction::checkForKeyPair vhdlsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"VHDL" [diction::getDef vhdlsynthfiles {*}$argv]
+	"VHDL" {*}[diction::getDef vhdlsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair verilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"Verilog" [diction::getDef verilogsynthfiles {*}$argv]
+	"Verilog" {*}[diction::getDef verilogsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair svsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"SystemVerilog" [diction::getDef svsynthfiles {*}$argv]
+	"SystemVerilog" {*}[diction::getDef svsynthfiles {*}$argv]
 }
 
 set_property top [diction::getDef topname {*}$argv] [current_fileset]
