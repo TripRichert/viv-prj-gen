@@ -91,19 +91,10 @@ proc diction::checkForKeyPair { key args } {
 # \param key is the -key to search for
 # \param args string of -key value pairs
 proc diction::requireKey { key args} {
-    set fail false
-    if {![diction::checkForKey $key {*}$args]} {
-	set fail true
-    } else {
-	if {[diction::getDef $key {*}$args] == ""} {
-	    set fail true
-	}
-    }
-    if {$fail} {	
+    if {![diction::checkForKeyPair $key {*}$args]} {
 	puts "no $key defined"
         set keys [diction::getKeys {*}$args]
         puts "in keys: $keys"
 	exit 4
     }
-    return
 }
