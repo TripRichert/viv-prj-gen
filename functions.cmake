@@ -239,7 +239,6 @@ function(genxci_func)
         set(args XCINAME PARTNAME XCIGENSCRIPT)
         set(list_args )
         CMAKE_PARSE_ARGUMENTS(
-                PARSE_ARGV 0
                 genxci
                 "${options}"
                 "${args}"

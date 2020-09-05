@@ -31,7 +31,7 @@ foreach key [diction::getKeys {*}$argv] {
         lappend unrecognizedKeys $key
     }
 }
-if {[llength {*}$unrecognizedKeys]} {
+if {[llength $unrecognizedKeys]} {
     puts "did not recognize keys $unrecognizedKeys"
 	puts "allowed keys are: $allowedKeys"
 	puts "execution suspended of $argv0"
