@@ -10,7 +10,7 @@ namespace eval diction {}
 # \return string of keys
 proc diction::getKeys { args } {
     set keylist {}
-    foreach arg [join $args] {
+    foreach arg $args {
 	if {[string match -* $arg]} {
 	    if {[string match --* $arg]} {
 	    } else {
@@ -27,20 +27,20 @@ proc diction::getKeys { args } {
 # \param args string of -key value pairs
 # \return value associated with passed key or "" if not found
 proc diction::getDef { key args} {
-    if {![diction::checkForKey $key [join $args]]} {
+    if {![diction::checkForKey $key {*}$args]} {
         return {}
     }
     set index 0
-    while {$index != [llength [join $args]] && ![string match "-$key" [lindex [join $args] $index]]} {
+    while {$index != [llength $args] && ![string match "-$key" [lindex  $args $index]]} {
 	incr index
     }
-    if {$index == [llength [join $args]]} {
+    if {$index == [llength $args]} {
 	return {}
     }
     set deflist {}
     incr index
-    while {$index != [llength [join $args]] && ![string match "-*" [lindex [join $args] $index]]} {
-	lappend deflist [lindex [join $args] $index]
+    while {$index != [llength $args] && ![string match "-*" [lindex $args $index]]} {
+	lappend deflist [lindex $args $index]
 	incr index
     }
     return $deflist 
