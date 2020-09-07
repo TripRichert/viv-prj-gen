@@ -47,11 +47,12 @@ proc vivprj::add_const_files_to_set { isScoped order args } {
 	regsub -all { } "[file normalize $filename]" {\ } newfilename
 	lappend files $newfilename
     }
-    
+    puts $files
     foreach filename $files {
 	if { $isScoped } {
-	    set_property SCOPED_TO_REF [file rootname [file tail $filename]] \
-		[get_files $filename]
+	    set module_name "[file rootname [file tail $filename]]"
+	    regsub -all {\\\s} $module_name {_} module_name
+	    set_property SCOPED_TO_REF $module_name "[get_files $filename]"
 	}
     }
     set_property PROCESSING_ORDER $order [get_files [join $files]]
