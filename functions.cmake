@@ -99,17 +99,26 @@ function(vivnonprjbitgen_func)
 	  ROUTESCRIPT
 	  WRBITSCRIPT
 	  )
-        set(list_args 
+	set(src_file_types
 	  VHDLFILES
 	  VERILOGFILES
 	  SYSTEMVERILOGFILES
-	  XCIFILES 
 	  UNSCOPEDEARLYXDC
 	  UNSCOPEDNORMALXDC
 	  UNSCOPEDLATEXDC
 	  SCOPEDEARLYXDC
 	  SCOPEDNORMALXDC
-	  SCOPEDLATEXDC 
+	  SCOPEDLATEXDC
+	  )
+	set(gen_file_types "")
+	foreach(file_type ${src_file_types})
+	  list(APPEND gen_file_types ${file_type}_GEN)
+	endforeach()
+	  
+        set(list_args
+	  ${src_file_types}
+	  ${gen_file_types}
+	  XCIFILES 
 	  SCRIPTDEPS 
 	  MISCPARAMS
 	  )
@@ -124,29 +133,33 @@ function(vivnonprjbitgen_func)
                     message(WARNING "Unparsed argument: ${arg}")
         endforeach()
 
-        message(STATUS "vivnonprjgenbit PRJNAME ${vivnonprj_PRJNAME}")
-        message(STATUS "vivnonprjgenbit PARTNAME ${vivnonprj_PARTNAME}")
-        message(STATUS "vivnonprjgenbit TOPNAME ${vivnonprj_TOPNAME}")
-        message(STATUS "vivnonprjgenbit VHDLFILES ${vivnonprj_VHDLFILES}")
-        message(STATUS "vivnonprjgenbit VERILOGFILES ${vivnonprj_VERILOGFILES}")
-        message(STATUS "vivnonprjgenbit SYSTEMVERILOGFILES ${vivnonprj_SYSTEMVERILOGFILES}")
-	message(STATUS "vivnonprjgenbit XCIFILES ${vivnonprj_XCIFILES}")
-        message(STATUS "vivnonprjgenbit UNSCOPEDEARLYXDC ${vivnonprj_UNSCOPEDEARLYXDC}")
-        message(STATUS "vivnonprjgenbit UNSCOPEDNORMALXDC ${vivnonprj_UNSCOPEDNORMALXDC}")
-        message(STATUS "vivnonprjgenbit UNSCOPEDLATEXDC ${vivnonprj_UNSCOPEDLATEXDC}")
-        message(STATUS "vivnonprjgenbit SCOPEDEARLYXDC ${vivnonprj_SCOPEDEARLYXDC}")
-        message(STATUS "vivnonprjgenbit SCOPEDNORMALXDC ${vivnonprj_SCOPEDNORMALXDC}")
-        message(STATUS "vivnonprjgenbit SCOPEDLATEXDC ${vivnonprj_SCOPEDLATEXDC}")
-        message(STATUS "vivnonprjgenbit PRESYNTHSCRIPT ${vivnonprj_PRESYNTHSCRIPT}")
-        message(STATUS "vivnonprjgenbit SYNTHSCRIPT ${vivnonprj_SYNTHSCRIPT}")
-        message(STATUS "vivnonprjgenbit PLACESCRIPT ${vivnonprj_PLACESCRIPT}")
-        message(STATUS "vivnonprjgenbit ROUTESCRIPT ${vivnonprj_ROUTESCRIPT}")
-        message(STATUS "vivnonprjgenbit WRBITSCRIPT ${vivnonprj_WRBITSCRIPT}")
-        message(STATUS "vivnonprjgenbit MISCPARAMS ${vivnonprj_MISCPARAMS}")
-        message(STATUS "vivnonprjgenbit SCRIPTDEPS ${vivnonprj_SCRIPTDEPS}")
-	
+	if(printFuncParams)
+	  foreach(arg ${args})
+	    message(STATUS "vivnonprjgenbit ${arg} ${vivnonprj_${arg}}")
+	  endforeach()
+	  foreach(arg ${list_args})
+	    message(STATUS "vivnonprjgenbit ${arg} ${vivnonprj_${arg}}")
+	  endforeach()
+	  message(STATUS "vivnonprjgenbit VHDL2008 ${vivnonprj_VHDL2008}")
+	endif()
 
-        
+	foreach(file_type ${src_file_types})
+	  foreach(filename ${vivnonprj_${file_type}})
+	    if(NOT ${filename} STREQUAL "")
+	      if(NOT EXISTS ${filename})
+		message(send_error "missing file ${filename}")
+	      endif()
+	    endif()
+	  endforeach()
+	endforeach()
+
+	foreach(file_type ${src_file_types})
+	  set(${file_type} ${vivnonprj_${file_type}} 
+						  ${vivnonprj_${file_type}_GEN})
+	endforeach()
+
+
+	        
         set(scriptlist)
         if (NOT ${vivnonprj_PRESYNTHSCRIPT} STREQUAL "")
           set(scriptlist ${scriptlist} ${vivnonprj_PRESYNTHSCRIPT})
@@ -187,8 +200,8 @@ function(vivnonprjbitgen_func)
 	endif()
 
         add_custom_command(OUTPUT vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
-                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${vivnonprj_VHDLFILES} -verilogsynthfiles ${vivnonprj_VERILOGFILES} -svsynthfiles ${vivnonprj_SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${vivnonprj_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${vivnonprj_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${vivnonprj_UNSCOPEDLATEXDC} -scopedearlyconstraints ${vivnonprj_SCOPEDEARLYXDC} -scopednormalconstraints ${vivnonprj_SCOPEDNORMALXDC} -scopedlateconstraints ${vivnonprj_SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
-                          DEPENDS ${nonprjbuildscript} ${vivnonprj_VHDLFILES} ${vivnonprj_VERILOGFILES} ${vivnonprj_SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${vivnonprj_UNSCOPEDEARLYXDC} ${vivnonprj_UNSCOPEDNORMALXDC} ${vivnonprj_UNSCOPEDLATEXDC} ${vivnonprj_SCOPEDEARLYXDC} ${vivnonprj_SCOPEDNORMALXDC} ${vivnonprj_SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
+                          COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
+                          DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
                           )
 endfunction()
 
