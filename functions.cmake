@@ -5,8 +5,25 @@ file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 
 function(genvivprj_func)
         set(options NOVHDL2008)
-        set(args PRJNAME PARTNAME )
-        set(list_args VHDLSYNTHFILES VHDLSIMFILES VERILOGSYNTHFILES VERILOGSIMFILES SVSYNTHFILES SVSIMFILES UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC DATAFILES)
+        set(args
+	  PRJNAME
+	  PARTNAME
+	  )
+        set(list_args
+	  VHDLSYNTHFILES
+	  VHDLSIMFILES
+	  VERILOGSYNTHFILES
+	  VERILOGSIMFILES
+	  SVSYNTHFILES
+	  SVSIMFILES
+	  UNSCOPEDEARLYXDC
+	  UNSCOPEDNORMALXDC
+	  UNSCOPEDLATEXDC
+	  SCOPEDEARLYXDC
+	  SCOPEDNORMALXDC
+	  SCOPEDLATEXDC
+	  DATAFILES
+	  )
         CMAKE_PARSE_ARGUMENTS(
                 genviv
                 "${options}"
@@ -57,13 +74,30 @@ file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/cmd
 
 function(vivnonprjbitgen_func)
         set(options VHDL2008)
-        set(args PRJNAME PARTNAME TOPNAME PRESYNTHSCRIPT SYNTHSCRIPT PLACESCRIPT ROUTESCRIPT WRBITSCRIPT)
+        set(args
+	  PRJNAME
+	  PARTNAME
+	  TOPNAME
+	  PRESYNTHSCRIPT
+	  SYNTHSCRIPT
+	  PLACESCRIPT
+	  ROUTESCRIPT
+	  WRBITSCRIPT
+	  )
         set(list_args 
-	    VHDLFILES VERILOGFILES SYSTEMVERILOGFILES XCIFILES
-	    UNSCOPEDEARLYXDC UNSCOPEDNORMALXDC UNSCOPEDLATEXDC
-	    SCOPEDEARLYXDC SCOPEDNORMALXDC SCOPEDLATEXDC 
-	    SCRIPTDEPS 
-	    MISCPARAMS)
+	  VHDLFILES
+	  VERILOGFILES
+	  SYSTEMVERILOGFILES
+	  XCIFILES 
+	  UNSCOPEDEARLYXDC
+	  UNSCOPEDNORMALXDC
+	  UNSCOPEDLATEXDC
+	  SCOPEDEARLYXDC
+	  SCOPEDNORMALXDC
+	  SCOPEDLATEXDC 
+	  SCRIPTDEPS 
+	  MISCPARAMS
+	  )
         CMAKE_PARSE_ARGUMENTS(
                 vivnonprj
                 "${options}"
@@ -149,13 +183,15 @@ file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.
 function(genip_func)
         set(options NODELETE)
         set(args IPNAME PARTNAME TOPNAME LIBNAME)
-        set(list_args  VHDLFILES  VERILOGFILES 
-                                    SYSTEMVERILOGFILES 
-                                    PREIPXSCRIPTS  #run before ipx generated
-                                    POSTIPXSCRIPTS #run after ipx generated
-                                    SCRIPTDEPS #not passed to tcl, is deps
-                                    MISCPARAMS #used for preipx and postipx
-                                    )
+        set(list_args
+	  VHDLFILES
+	  VERILOGFILES 
+          SYSTEMVERILOGFILES 
+          PREIPXSCRIPTS  #run before ipx generated
+          POSTIPXSCRIPTS #run after ipx generated
+          SCRIPTDEPS #not passed to tcl, is deps
+          MISCPARAMS #used for preipx and postipx
+          )
         CMAKE_PARSE_ARGUMENTS(
                 genip
                 "${options}"
@@ -238,7 +274,11 @@ endfunction()
 file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
 function(genxci_func)
         set(options VERILOG)
-        set(args XCINAME PARTNAME XCIGENSCRIPT)
+        set(args
+	  XCINAME
+	  PARTNAME
+	  XCIGENSCRIPT
+	  )
         set(list_args )
         CMAKE_PARSE_ARGUMENTS(
                 genxci
