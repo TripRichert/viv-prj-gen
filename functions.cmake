@@ -6,10 +6,10 @@ file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 function(genvivprj_func)
         set(options NOVHDL2008)
         set(args
-	  PRJNAME
-	  PARTNAME
+	  PRJNAME #name of vivado project to be created
+	  PARTNAME #partname of xilinx fpga
 	  )
-        set(list_args
+	set(file_types
 	  VHDLSYNTHFILES
 	  VHDLSIMFILES
 	  VERILOGSYNTHFILES
@@ -24,6 +24,14 @@ function(genvivprj_func)
 	  SCOPEDLATEXDC
 	  DATAFILES
 	  )
+	set(gen_file_types "")
+	foreach(file_type ${file_types})
+	  list(APPEND gen_file_types ${file_type}_GEN)
+	endforeach()
+        set(list_args
+	  ${file_types}
+	  ${gen_file_types}
+	  )
         CMAKE_PARSE_ARGUMENTS(
                 genviv
                 "${options}"
@@ -32,34 +40,41 @@ function(genvivprj_func)
 		"${ARGN}"
                 )
         foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
-                    message(WARNING "Unparsed argument: ${arg}")
+          message(WARNING "Unparsed argument: ${arg}")
         endforeach()
 
-        message(STATUS "genvivprj PRJNAME ${genviv_PRJNAME}")
-        message(STATUS "genvivprj PARTNAME ${genviv_PARTNAME}")
-        message(STATUS "genvivprj VHDLSYNTHFILES ${genviv_VHDLSYNTHFILES}")
-        message(STATUS "genvivprj VHDLSIMFILES ${genviv_VHDLSIMFILES}")
-        message(STATUS "genvivprj VERILOGSYNTHFILES ${genviv_VERILOGSYNTHFILES}")
-        message(STATUS "genvivprj VERILOGSIMFILES ${genviv_VERILOGSIMFILES}")
-        message(STATUS "genvivprj SVSYNTHFILES ${genviv_SVSYNTHFILES}")
-        message(STATUS "genvivprj SVSIMFILES ${genviv_SVSIMFILES}")
-        message(STATUS "genvivprj UNSCOPEDEARLYXDC ${genviv_UNSCOPEDEARLYXDC}")
-        message(STATUS "genvivprj UNSCOPEDNORMALXDC ${genviv_UNSCOPEDNORMALXDC}")
-        message(STATUS "genvivprj UNSCOPEDLATEXDC ${genviv_UNSCOPEDLATEXDC}")
-        message(STATUS "genvivprj SCOPEDEARLYXDC ${genviv_SCOPEDEARLYXDC}")
-        message(STATUS "genvivprj SCOPEDNORMALXDC ${genviv_SCOPEDNORMALXDC}")
-        message(STATUS "genvivprj SCOPEDLATEXDC ${genviv_SCOPEDLATEXDC}")
-        message(STATUS "genvivprj DATAFILES ${genviv_DATAFILES}")
-	message(STATUS "genvivprj NOVHDL2008 ${genviv_NOVHDL2008}")
+	if(printFuncParams)
+	  foreach(arg ${args})
+	    message(STATUS "genvivprj ${arg} ${genviv_${arg}}")
+	  endforeach()
+	  foreach(arg ${list_args})
+	    message(STATUS "genvivprj ${arg} ${genviv_${arg}}")
+	  endforeach()
+	  message(STATUS "genvivprj NOVHDL2008 ${genviv_NOVHDL2008}")
+	endif()
+
+	foreach(file_type ${file_types})
+	  foreach(filename ${genviv_${file_type}})
+	    if(NOT ${filename} STREQUAL "")
+	      if(NOT EXISTS ${filename})
+		message(send_error "missing file ${filename}")
+	      endif()
+	    endif()
+	  endforeach()
+	endforeach()
+	
+	foreach(file_type ${file_types})
+	  set(${file_type} ${genviv_${file_type}} ${genviv_${file_type}_GEN})
+	endforeach()
 
         if (genviv_NOVHDL2008)
-          set(vhdlfileopts -vhdlsynthfiles ${genviv_VHDLSYNTHFILES} -vhdlsimfiles ${genviv_VHDLSIMFILES})
+          set(vhdlfileopts -vhdlsynthfiles ${VHDLSYNTHFILES} -vhdlsimfiles ${VHDLSIMFILES})
         else()
-          set(vhdlfileopts -vhdl08synthfiles ${genviv_VHDLSYNTHFILES} -vhdl08simfiles ${genviv_VHDLSIMFILES})
+          set(vhdlfileopts -vhdl08synthfiles ${VHDLSYNTHFILES} -vhdl08simfiles ${VHDLSIMFILES})
         endif()
         
         add_custom_target(${genviv_PRJNAME}_genvivprj
-                COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${genviv_VERILOGSYNTHFILES} -verilogsimfiles ${genviv_VERILOGSIMFILES} -systemverilogsynthfiles ${genviv_SVSYNTHFILES} -systemverilogsimfiles ${genviv_SVSIMFILES}  -unscopedearlyconstraints ${genviv_UNSCOPEDEARLYXDC} -unscopednormalconstraints ${genviv_UNSCOPEDNORMALXDC} -unscopedlateconstraints ${genviv_UNSCOPEDLATEXDC} -scopedearlyconstraints ${genviv_SCOPEDEARLYXDC} -scopednormalconstraints ${genviv_SCOPEDNORMALXDC} -scopedlateconstraints ${genviv_SCOPEDLATEXDC} -datafiles ${genviv_DATAFILES} -builddir ${CMAKE_BINARY_DIR}
+                COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES}  -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
                 )
 endfunction()
 
