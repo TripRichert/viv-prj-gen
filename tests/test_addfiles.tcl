@@ -83,6 +83,24 @@ test addConst_scoped {
     set result_str $result_str
 } -result "test_space"
 
+test addFiles_multiple {
+} -body {
+    set filelist ""
+    catch {
+	setup_prj
+	vivprj::add_files_to_set sources_1 VHDL "$vhdl_file" "$vhdlSpace_file"
+
+	set tmplist [get_files -of_objects [get_filesets sources_1]]
+	set filelist ""
+	foreach pathname $tmplist {
+	    lappend filelist [file tail $pathname]
+	}
+    } 
+    cleanup_prj
+    set filelist $filelist
+} -result "DFlipFlop.vhdl {test space.vhdl}"
+
+
 tcltest::runAllTests
 file delete vivado.jou
 file delete vivado.log
