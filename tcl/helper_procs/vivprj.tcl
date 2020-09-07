@@ -50,9 +50,9 @@ proc vivprj::add_const_files_to_set { isScoped order args } {
     puts $files
     foreach filename $files {
 	if { $isScoped } {
-	    set module_name "[file rootname [file tail $filename]]"
-	    regsub -all {\\\s} $module_name {_} module_name
-	    set_property SCOPED_TO_REF $module_name "[get_files $filename]"
+	    set modulename "[file rootname [file tail $filename]]"
+	    regsub -all {\\\s} $modulename {_} modulename
+	    set_property SCOPED_TO_REF $modulename "[get_files $filename]"
 	}
     }
     set_property PROCESSING_ORDER $order [get_files [join $files]]
