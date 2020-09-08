@@ -1,16 +1,19 @@
+#vivado's version of cmake is 3.3
 cmake_minimum_required(VERSION 3.3)
+#do not allow in source build
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
 project(project)
+set(partname "XC7Z020-1CLG484")
 
 include(../../functions.cmake)
+
 set(inclfilevar hdlfiles)
 include(hdl/filelist.cmake)
-#readFilelist(hdlfiles "hdl/filelist.txt")
-
-set(partname "XC7Z020-1CLG484")
 
 set(inclfilevar unscopedLateConstrFiles)
 include(constraints/unscopedlate/filelist.cmake)
-#file(GLOB unscopedLateConstrFiles "constraints/unscopedlate/*.xdc")
 
 genvivprj_func(
   PRJNAME testprj
@@ -18,7 +21,6 @@ genvivprj_func(
   VHDLSYNTHFILES ${hdlfiles}
   UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
   )
-
 
 set(nonprjscripts ${nonprjscripts}
 		  "tcl/synth.tcl"
