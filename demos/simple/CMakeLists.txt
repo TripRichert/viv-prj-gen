@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.3)
 project(project)
 
 include(../../functions.cmake)
+set(inclfilevar hdlfiles)
+include(hdl/filelist.cmake)
+#readFilelist(hdlfiles "hdl/filelist.txt")
 
-file(GLOB hdlfiles "hdl/*.vhdl")
 set(partname "XC7Z020-1CLG484")
-file(GLOB unscopedLateConstrFiles "constraints/unscopedlate/*.xdc")
+
+set(inclfilevar unscopedLateConstrFiles)
+include(constraints/unscopedlate/filelist.cmake)
+#file(GLOB unscopedLateConstrFiles "constraints/unscopedlate/*.xdc")
 
 genvivprj_func(
   PRJNAME testprj
