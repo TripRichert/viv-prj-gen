@@ -1,8 +1,29 @@
 #see copyright notice(s) at bottom of file
 
 include(CMakeParseArguments)
-file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 
+function(watch)
+  set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGV} )
+endfunction()
+
+function(readFilelist filelist fullPathToFile)
+    if(NOT EXISTS ${fullPathToFile})
+        message(FATAL_ERROR "File ${fullPathToFile} does not exist")
+    endif()
+    file(READ ${fullPathToFile} rootNames)
+    STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
+    set(${${filelist}} "")
+    foreach(filename ${rootNames})
+        get_filename_component(pathname ${fullPathToFile} DIRECTORY)
+        set(fullname "${pathname}/${filename}")
+        list(APPEND ${filelist} ${fullname})
+    endforeach()
+    watch(${fullPathToFile})
+    set(${filelist} ${${filelist}} PARENT_SCOPE)
+endfunction()
+
+
+file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 function(genvivprj_func)
         set(options NOVHDL2008)
         set(args
