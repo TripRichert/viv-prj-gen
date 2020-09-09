@@ -8,7 +8,8 @@ function(watch)
   set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGV} )
 endfunction()
 
-## readFilelist converts newline separated entries in the passed file to a list
+## readFilelist converts newline separated entries of filenames in
+# the passed fullPathToFile to a list and stores in filelist
 # \param filelist the filename to store the list in
 # \param fullPathToFile the filename of the file to be read
 # any time the passed file is modified, cmake will rerun
@@ -19,9 +20,13 @@ function(readFilelist filelist fullPathToFile)
   file(READ ${fullPathToFile} rootNames)
   STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
   set(${${filelist}} "")
+  get_filename_component(pathname ${fullPathToFile} DIRECTORY)
   foreach(filename ${rootNames})
-    get_filename_component(pathname ${fullPathToFile} DIRECTORY)
-    set(fullname "${pathname}/${filename}")
+    if(NOT IS_ABSOLUTE ${filename})
+      set(fullname "${pathname}/${filename}")
+    else()
+      set(fullname ${filename})
+    endif()
     list(APPEND ${filelist} ${fullname})
   endforeach()
   watch(${fullPathToFile})
