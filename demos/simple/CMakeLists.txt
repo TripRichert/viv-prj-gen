@@ -9,8 +9,10 @@ set(partname "XC7Z020-1CLG484")
 
 include(../../functions.cmake)
 
-readFilelist(hdlfiles ${CMAKE_CURRENT_SOURCE_DIR}/hdl/filelist.txt)
-readFileList(unscopedLateConstrFiles ${CMAKE_CURRENT_SOURCE_DIR}/constraints/unscopedlate/filelist.txt)
+file(GLOB hdlfilelistname hdl/filelist.txt)
+readFilelist(hdlfiles ${hdlfilelistname})
+file(GLOB unscopedLateConstrFileListName constraints/unscopedlate/filelist.txt)
+readFileList(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
 
 genvivprj_func(
   PRJNAME testprj
