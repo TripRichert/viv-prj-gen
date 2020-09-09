@@ -2,33 +2,79 @@
 
 include(CMakeParseArguments)
 
+## watch forces cmake to rerun when the passed file(s) is/are modified
+# \param filename(s) to monitor for modification
 function(watch)
   set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGV} )
 endfunction()
 
+## readFilelist converts newline separated entries in the passed file to a list
+# \param filelist the filename to store the list in
+# \param fullPathToFile the filename of the file to be read
+# any time the passed file is modified, cmake will rerun
 function(readFilelist filelist fullPathToFile)
-    if(NOT EXISTS ${fullPathToFile})
-        message(FATAL_ERROR "File ${fullPathToFile} does not exist")
-    endif()
-    file(READ ${fullPathToFile} rootNames)
-    STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
-    set(${${filelist}} "")
-    foreach(filename ${rootNames})
-        get_filename_component(pathname ${fullPathToFile} DIRECTORY)
-        set(fullname "${pathname}/${filename}")
-        list(APPEND ${filelist} ${fullname})
-    endforeach()
-    watch(${fullPathToFile})
-    set(${filelist} ${${filelist}} PARENT_SCOPE)
+  if(NOT EXISTS ${fullPathToFile})
+    message(FATAL_ERROR "File ${fullPathToFile} does not exist")
+  endif()
+  file(READ ${fullPathToFile} rootNames)
+  STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
+  set(${${filelist}} "")
+  foreach(filename ${rootNames})
+    get_filename_component(pathname ${fullPathToFile} DIRECTORY)
+    set(fullname "${pathname}/${filename}")
+    list(APPEND ${filelist} ${fullname})
+  endforeach()
+  watch(${fullPathToFile})
+  set(${filelist} ${${filelist}} PARENT_SCOPE)
 endfunction()
 
+###############################################################################
 
+# tcl script for generating vivado projects
 file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
+
+#file used to parse commandline arguments
+file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/cmdline_dict.tcl")
+
+
+## \function genvivprj_func generates a target for generating a vivado project
+# \Description intended for simulation.  Will fail if vivado project already
+# exists.  
+# \param PRJNAME name of vivado project to be created
+# \param PARTNAME xilinx part
+# \param [VHDLSYNTHFILES] vhdl synthesizable files, must exist at config time
+# \param [VHDLSYNTHFILES_GEN] vhdl synthesizable files
+# \param [VERILOGSYNTHFILES] verilog files must exist at config time
+# \param [VERILOGSYNTHFILES_GEN] verilog files, not checked for existance
+# \param [SVSYNTHFILES] system verilog files, must exist at config time
+# \param [SVSYNTHFILES_GEN] system verilogfiles, not checked for existance
+# \param [VHDLSIMFILES] vhdl sim only files, must exist at config time
+# \param [VHDLSIMFILES_GEN] vhdl sim only files, not checked for existance
+# \param [VERILOGSIMFILES] verilog sim only files must exist at config time
+# \param [VERILOGSIMFILES_GEN] verilog sim onlyfiles, not checked for existance
+# \param [SVSIMFILES] system verilog sim only files, must exist at config time
+# \param [SVSIMFILES_GEN] system verilog sim onlyfiles, not checked for existance
+# \param [UNSCOPEDEARLYXDC] unscoped constraint file, must exist config time
+# \param [UNSCOPEDEARLYXDC_GEN] unscoped constraint file
+# \param [UNSCOPEDNORMALXDC] unscoped constraint file, must exist config time
+# \param [UNSCOPEDNORMALXDC_GEN] unscoped constraint file
+# \param [UNSCOPEDLATEXDC] unscoped constraint file, must exist config time
+# \param [UNSCOPEDLATEXDC_GEN] unscoped constraint file
+# \param [SCOPEDEARLYXDC] scoped to ref of same name constr file, must exist config time
+# \param [SCOPEDEARLYXDC_GEN] scoped to ref of same name constr file
+# \param [SCOPEDNORMALXDC] scoped to ref of same name constr file, must exist config time
+# \param [SCOPEDNORMALXDC_GEN] scoped to ref of same name constr file
+# \param [SCOPEDLATEXDC] scoped to ref of same name constr file, must exist config time
+# \param [SCOPEDLATEXDC_GEN] scoped to ref of same name constr file
+# \param [DATAFILES] nonsource files incl in prj for sim, must exist config time
+# \param [DATAFILES_GEN] nonsource files incl in prj for sim
+# \param [NOVHDL2008] (option to use old vhdl, if this option is not passed, vhdl2008 will be used)
+
 function(genvivprj_func)
         set(options NOVHDL2008)
         set(args
-	  PRJNAME #name of vivado project to be created
-	  PARTNAME #partname of xilinx fpga
+	  PRJNAME
+	  PARTNAME
 	  )
 	set(file_types
 	  VHDLSYNTHFILES
@@ -95,17 +141,18 @@ function(genvivprj_func)
         endif()
         
         add_custom_target(${genviv_PRJNAME}_genvivprj
-                COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES}  -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
+          COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES}  -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
+	  DEPENDS ${VHDLSYNTHFILES} ${VHDLSIMFILES} ${VERILOGSYNTHFILES} ${VERILOGSIMFILES} ${SVSYNTHFILES} ${SVSIMFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${DATAFILES} ${genvivprjscript} ${cmdlinedictprocsscript}
                 )
 endfunction()
 
 
+#default nonproject file scripts
 file(GLOB default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_synth.tcl")
 file(GLOB default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_place.tcl")
 file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_route.tcl")
 file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
 file(GLOB nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
-file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/cmdline_dict.tcl")
 
 
 function(vivnonprjbitgen_func)
