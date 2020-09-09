@@ -122,7 +122,7 @@ function(genvivprj_func)
 	  foreach(arg ${list_args})
 	    message(STATUS "genvivprj ${arg} ${genviv_${arg}}")
 	  endforeach()
-	  message(STATUS "genvivprj NOVHDL2008 ${genviv_NOVHDL2008}")
+	  message(STATUS "genvivprj NOVHDL2008? ${genviv_NOVHDL2008}")
 	endif()
 
 	foreach(file_type ${file_types})
@@ -203,7 +203,7 @@ function(vivnonprjbitgen_func)
 		"${ARGN}"
                 )
         foreach(arg IN LISTS vivnonprj_UNPARSED_ARGUMENTS)
-                    message(WARNING "Unparsed argument: ${arg}")
+          message(WARNING "Unparsed argument: ${arg}")
         endforeach()
 
 	if(printFuncParams)
@@ -213,7 +213,7 @@ function(vivnonprjbitgen_func)
 	  foreach(arg ${list_args})
 	    message(STATUS "vivnonprjgenbit ${arg} ${vivnonprj_${arg}}")
 	  endforeach()
-	  message(STATUS "vivnonprjgenbit VHDL2008 ${vivnonprj_VHDL2008}")
+	  message(STATUS "vivnonprjgenbit VHDL2008? ${vivnonprj_VHDL2008}")
 	endif()
 
 	foreach(file_type ${src_file_types})
@@ -231,8 +231,6 @@ function(vivnonprjbitgen_func)
 						  ${vivnonprj_${file_type}_GEN})
 	endforeach()
 
-
-	        
         set(scriptlist)
         if (NOT ${vivnonprj_PRESYNTHSCRIPT} STREQUAL "")
           set(scriptlist ${scriptlist} ${vivnonprj_PRESYNTHSCRIPT})
@@ -284,10 +282,18 @@ file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.
 function(genip_func)
         set(options NODELETE)
         set(args IPNAME PARTNAME TOPNAME LIBNAME)
-        set(list_args
+	set(src_file_types
 	  VHDLFILES
-	  VERILOGFILES 
-          SYSTEMVERILOGFILES 
+	  VERILOGFILES
+	  SYSTEMVERILOGFILES
+	  )
+	set(gen_file_types "")
+	foreach(file_type ${src_file_types})
+	  list(APPEND gen_file_types ${file_type}_GEN)
+	endforeach()
+        set(list_args
+	  ${src_file_types}
+	  ${gen_file_types}
           PREIPXSCRIPTS  #run before ipx generated
           POSTIPXSCRIPTS #run after ipx generated
           SCRIPTDEPS #not passed to tcl, is deps
@@ -301,20 +307,32 @@ function(genip_func)
 		"${ARGN}"
                 )
         foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
-                    message(WARNING "Unparsed argument: ${arg}")
-        endforeach()
+          message(WARNING "Unparsed argument: ${arg}")
+	endforeach()
 
-        message(STATUS "genip IPNAME ${genip_IPNAME}")
-        message(STATUS "genip PARTNAME ${genip_PARTNAME}")
-        message(STATUS "genip VHDLFILES ${genip_VHDLFILES}")
-        message(STATUS "genip VERILOGFILES ${genip_VERILOGFILES}")
-        message(STATUS "genip SYSTEMVERILOGFILES ${genip_SYSTEMVERILOGFILES}")
-        message(STATUS "genip TOPNAME ${genip_TOPNAME}")
-        message(STATUS "genip LIBNAME ${genip_LIBNAME}")
-        message(STATUS "genip PREIPXSCRIPTS ${genip_PREIPXSCRIPTS}")
-        message(STATUS "genip POSTIPXSCRIPTS ${genip_POSTIPXSCRIPTS}")
-        message(STATUS "genip MISCPARAMS ${genip_MISCPARAMS}")
-        message(STATUS "genip SCRIPTDEPS ${genip_SCRIPTDEPS}")
+	if(printFuncParams)
+	  foreach(arg ${args})
+	    message(STATUS "genip ${arg} ${genip_${arg}}")
+	  endforeach()
+	  foreach(arg ${list_args})
+	    message(STATUS "genip ${arg} ${genip_${arg}}")
+	  endforeach()
+	  message(STATUS "genip NODELETE? ${genip_NODELETE}")
+	endif()
+
+	foreach(file_type ${src_file_types})
+	  foreach(filename ${genip_${file_type}})
+	    if(NOT ${filename} STREQUAL "")
+	      if(NOT EXISTS ${filename})
+		message(SEND_ERROR "missing file ${filename}")
+	      endif()
+	    endif()
+	  endforeach()
+	endforeach()
+
+	foreach(file_type ${src_file_types})
+	  set(${file_type} ${genip_${file_type}} ${genip_${file_type}_GEN})
+	endforeach()
         
         set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME})
         set(laststring "")
@@ -396,7 +414,6 @@ function(genxci_func)
         message(STATUS "genxci PARTNAME ${genxci_PARTNAME}")
 	message(STATUS "gensci XCIGENSCRIPT ${gensci_XCIGENSCRIPT}")
 	message(STATUS "gensci VERILOG ${genxci_VERILOG}")
-
 
 	set(xcidir ${CMAKE_BINARY_DIR}/${genxci_PARTNAME}/xcidir)
 
