@@ -3,7 +3,7 @@
 
 == genvivprj_func
 
-[cols='h,7a']
+[cols='h,6a']
 |===
 | Function
 Name 
@@ -12,6 +12,9 @@ Name
 ----
 genvivprj_func
 ----
+| Brief
+| 
+generates a target for generating a vivado project
 
 | Input +
 Parameters
@@ -46,25 +49,21 @@ list [DATAFILES]:: nonsource files incl in prj for sim, must exist config time
 list [DATAFILES_GEN]:: nonsource files incl in prj for sim
 noarg [NOVHDL2008]:: option to use old vhdl, if this option is not passed, vhdl2008 will be used
 
-| TARGETS AND OUTPUTS
+| Targets and +
+Outputs
 |
 *target* ${PRJNAME}_genvivprj:: use make ${PRJNAME}_genvivprj to generate vivado project, does not force, will fail if project already exists
 
 
 | Description
-| 
-generates a target for generating a vivado project
-| Details
 |
 intended for simulation.  Will fail if vivado project already exists.
-----
-----
 
 |===
 
 == vivnonprjbitgen_func
 
-[cols='h,7a']
+[cols='h,6a']
 |===
 | Function Name 
 |
@@ -72,6 +71,10 @@ intended for simulation.  Will fail if vivado project already exists.
 ----
 vivnonprjbitgen_func
 ----
+
+| Brief
+| 
+generates a recipe for a bit file
 
 | Input +
 Parameters
@@ -104,24 +107,20 @@ list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config
 list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
 noargs [VHDL2008]:: option to use vhdl2008
 
-| TARGETS AND OUTPUTS
+| Targets and +
+Outputs
 |
 *output* vivnonprj_${PRJNAME}/${PRJNAME}.bit:: bit file generated from nonprj flow
 
 | Description
-| 
-generates a recipe for a bit file
-| Details
 |
 nonproject generation of a bit file
-----
-----
 |===
 
 
 == genip_func
 
-[cols='h,7a']
+[cols='h,6a']
 |===
 | Function Name 
 |
@@ -129,6 +128,10 @@ nonproject generation of a bit file
 ----
 genip_func
 ----
+
+| Brief
+| 
+generates an ipxact wrapper
 
 | Input +
 Parameters
@@ -159,15 +162,13 @@ Variables
 |
 append ipxact_${PARTNAME}_${LIBNAME}_targets:: path to components.xml output will be appended to this variable
 
-| TARGETS AND OUTPUTS
+| Targets and +
+Outputs
 |
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
 
 
-| Description
-| 
-generates an ipxact wrapper
 | Details
 |
 soft links source files to ipxact wrapper's directory and generates an ipxact wrapper for them
@@ -175,7 +176,7 @@ soft links source files to ipxact wrapper's directory and generates an ipxact wr
 
 == genxci_func
 
-[cols='h,7a']
+[cols='h,6a']
 |===
 | Function Name 
 |
@@ -183,6 +184,11 @@ soft links source files to ipxact wrapper's directory and generates an ipxact wr
 ----
 genxci_func
 ----
+
+| Brief
+| 
+Generates xci file using passed script
+
 
 | Input +
 Parameters
@@ -196,13 +202,11 @@ Variables
 |
 append xci_${genxci_PARTNAME}_targets:: path to xci output will be appended to this variable
 
-| TARGETS AND OUTPUTS
+| Targets and +
+Outputs
 |
 *output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.xci:: Generated xci file
 
-| Description
-| 
-Generates xci file using passed script
 | Details
 |
 Generates xci file using passed script
