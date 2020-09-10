@@ -136,10 +136,10 @@ genip_func
 
 | Parameters
 |
-*in* string IPNAME:: 
+*in* string IPNAME:: name of generated ip
 *in* string PARTNAME:: xilinx part
-*in* string TOPNAME::
-*in* string LIBNAME::
+*in* string TOPNAME:: name of top module wrapped by ip
+*in* string LIBNAME:: subdirectory within ip_repo
 *in* list [VHDLSYNTHFILES]:: vhdl synthesizable files, must exist at config time
 *in* list [VHDLSYNTHFILES_GEN]:: vhdl synthesizable files
 *in* list [VERILOGSYNTHFILES]:: verilog files must exist at config time
@@ -152,18 +152,18 @@ genip_func
 *in* list [VERILOGSIMFILES_GEN]:: verilog sim onlyfiles, not checked for existance
 *in* list [SVSIMFILES]:: system verilog sim only files, must exist at config time
 *in* list [SVSIMFILES_GEN]:: system verilog sim onlyfiles, not checked for existance
-*in* list [PREIPXSCRIPTS]::
-*in* list [POSTIPXSCRIPTS]::
-*in* list [SCRIPTDEPS]::
-*in* list [MISCPARAMS]::
-*in* noargs [NODELETE]:: 
+*in* list [PREIPXSCRIPTS]:: list of tcl scripts to run before ipx core is generated
+*in* list [POSTIPXSCRIPTS]:: list tcl scripts to run after ipx core is generated
+*in* list [SCRIPTDEPS]::  list of dependencies other than source files passed through other parameters
+*in* list [MISCPARAMS]:: any data custom scripts need, will be stored in tcl ${miscparam} variable
+*in* noargs [NODELETE]:: option, when present, project used to generate ip will not be deleted
 
 | TARGETS and OUTPUTS
 |
 [source,cmake]
 ----
-${ipdir}/component.xml
-${ipdir}/xgui
+${CMAKE_BINARY_DIR}/${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml
+${CMAKE_BINARY_DIR}/${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui
 ----
 
 the component.xml file path will be appended to
@@ -171,15 +171,12 @@ the component.xml file path will be appended to
 ----
 ipxact_${PARTNAME}_${LIBNAME}_targets
 ----
-
 | Description
 | 
-generates ip 
+generates an ipxact wrapper
 | Details
 |
-generates ip
-----
-----
+soft links source files to ipxact wrapper's directory and generates an ipxact wrapper for them
 |===
 
 == genxci_func
@@ -195,10 +192,10 @@ genxci_func
 
 | Parameters
 |
-*in* XCINAME::
-*in* PARTNAME::
-*in* XCIGENSCRIPT::
-*in* VERILOG::
+*in* string XCINAME:: name of generated xci module
+*in* string PARTNAME:: name of xilinx part
+*in* string XCIGENSCRIPT:: name of script used to generate xci module, should either generate xci module in current directory or at directory in ${ip_gen_dir} variable
+*in* noarg VERILOG:: option, when present, wrapper generated is in verilog
 
 | TARGETS and OUTPUTS
 |
@@ -208,8 +205,8 @@ genxci_func
 
 | Description
 | 
-xci
+Generates xci file using passed script
 | Details
 |
-xci
+Generates xci file using passed script
 |===
