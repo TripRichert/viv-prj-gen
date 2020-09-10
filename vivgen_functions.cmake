@@ -362,6 +362,9 @@ function(genxci_func)
 	     COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
 	     DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
 	     )
+
+        list(APPEND xci_${genxci_PARTNAME}_targets ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci)
+        set(xci_${genxci_PARTNAME}_targets ${xci_${genxci_PARTNAME}_targets} PARENT_SCOPE)
 endfunction()
 
 ###############################################################################
