@@ -9,7 +9,7 @@ set(webpack_parts XCKU035 XCKU3P XCU50 XCU280)
 
 
 
-include(../../functions.cmake)
+include(../../vivgen_functions.cmake)
 
 #file(GLOB commonverilog corundum/fpga/common/rtl/*.v)
 #file(GLOB axiverilog corundum/fpga/lib/axi/rtl/*.v)

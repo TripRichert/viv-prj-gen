@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(project)
 
-include(../../functions.cmake)
+include(../../vivgen_functions.cmake)
 
 file(GLOB vfiles verilog/src/*.v)
 

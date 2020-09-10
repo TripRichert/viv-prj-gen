@@ -7,7 +7,8 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 project(project)
 set(partname "XC7Z020-1CLG484")
 
-include(../../functions.cmake)
+include(../../vivgen_functions.cmake)
+include(../../util_functions.cmake)
 
 file(GLOB hdlfilelistname hdl/filelist.txt)
 readFilelist(hdlfiles ${hdlfilelistname})
