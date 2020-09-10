@@ -1,7 +1,6 @@
 = vivgen_functions.cmake API Documentation
 :source-highlighter: coderay
-
-== Functions
+:toc:
 
 == genvivprj_func
 
