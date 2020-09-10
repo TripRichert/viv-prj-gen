@@ -5,13 +5,6 @@
 
 [cols='h,6a']
 |===
-| Function
-Name 
-|
-[source,cmake]
-----
-genvivprj_func
-----
 | Brief
 | 
 generates a target for generating a vivado project
@@ -65,13 +58,6 @@ intended for simulation.  Will fail if vivado project already exists.
 
 [cols='h,6a']
 |===
-| Function Name 
-|
-[source,cmake]
-----
-vivnonprjbitgen_func
-----
-
 | Brief
 | 
 generates a recipe for a bit file
@@ -122,13 +108,6 @@ nonproject generation of a bit file
 
 [cols='h,6a']
 |===
-| Function Name 
-|
-[source,cmake]
-----
-genip_func
-----
-
 | Brief
 | 
 generates an ipxact wrapper
@@ -178,13 +157,6 @@ soft links source files to ipxact wrapper's directory and generates an ipxact wr
 
 [cols='h,6a']
 |===
-| Function Name 
-|
-[source,cmake]
-----
-genxci_func
-----
-
 | Brief
 | 
 Generates xci file using passed script
