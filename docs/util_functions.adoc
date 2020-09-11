@@ -25,7 +25,7 @@ user hachanuy on reddit provided this solution https://www.reddit.com/r/cmake/co
 |===
 | Brief
 | 
-stores newline spearated list of files in list
+reads file that contains newline spearated list of filepaths, and stores the full filepaths in a list
 
 | Output +
 Argument
