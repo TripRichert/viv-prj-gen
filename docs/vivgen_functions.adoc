@@ -1,0 +1,185 @@
+= vivgen_functions.cmake API Documentation
+:toc:
+
+== genvivprj_func
+
+[cols='h,6a']
+|===
+| Brief
+| 
+generates a target for generating a vivado project
+
+| Input +
+Parameters
+|
+string PRJNAME:: name of vivado project to be created
+string PARTNAME:: xilinx part
+list [VHDLSYNTHFILES]:: vhdl synthesizable files, must exist at config time
+list [VHDLSYNTHFILES_GEN]:: vhdl synthesizable files
+list [VERILOGSYNTHFILES]:: verilog files must exist at config time
+list [VERILOGSYNTHFILES_GEN]:: verilog files, not checked for existance
+list [SVSYNTHFILES]:: system verilog files, must exist at config time
+list [SVSYNTHFILES_GEN]:: system verilogfiles, not checked for existance
+list [VHDLSIMFILES]:: vhdl sim only files, must exist at config time
+list [VHDLSIMFILES_GEN]:: vhdl sim only files, not checked for existance
+list [VERILOGSIMFILES]:: verilog sim only files must exist at config time
+list [VERILOGSIMFILES_GEN]:: verilog sim onlyfiles, not checked for existance
+list [SVSIMFILES]:: system verilog sim only files, must exist at config time
+list [SVSIMFILES_GEN]:: system verilog sim onlyfiles, not checked for existance
+list [UNSCOPEDEARLYXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDEARLYXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDNORMALXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDNORMALXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDLATEXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDLATEXDC_GEN]:: unscoped constraint file
+list [SCOPEDEARLYXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDEARLYXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDNORMALXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDNORMALXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
+list [DATAFILES]:: nonsource files incl in prj for sim, must exist config time
+list [DATAFILES_GEN]:: nonsource files incl in prj for sim
+noarg [NOVHDL2008]:: option to use old vhdl, if this option is not passed, vhdl2008 will be used
+
+| Targets and +
+Outputs
+|
+*target* ${PRJNAME}_genvivprj:: use make ${PRJNAME}_genvivprj to generate vivado project, does not force, will fail if project already exists
+
+
+| Description
+|
+intended for simulation.  Will fail if vivado project already exists.
+
+|===
+
+== vivnonprjbitgen_func
+
+[cols='h,6a']
+|===
+| Brief
+| 
+generates a recipe for a bit file
+
+| Input +
+Parameters
+|
+string PRJNAME:: name of vivado project to be created
+string PARTNAME:: xilinx part
+list [VHDLSYNTHFILES]:: vhdl synthesizable files, must exist at config time
+list [VHDLSYNTHFILES_GEN]:: vhdl synthesizable files
+list [VERILOGSYNTHFILES]:: verilog files must exist at config time
+list [VERILOGSYNTHFILES_GEN]:: verilog files, not checked for existance
+list [SVSYNTHFILES]:: system verilog files, must exist at config time
+list [SVSYNTHFILES_GEN]:: system verilogfiles, not checked for existance
+list [VHDLSIMFILES]:: vhdl sim only files, must exist at config time
+list [VHDLSIMFILES_GEN]:: vhdl sim only files, not checked for existance
+list [VERILOGSIMFILES]:: verilog sim only files must exist at config time
+list [VERILOGSIMFILES_GEN]:: verilog sim onlyfiles, not checked for existance
+list [SVSIMFILES]:: system verilog sim only files, must exist at config time
+list [SVSIMFILES_GEN]:: system verilog sim onlyfiles, not checked for existance
+list [UNSCOPEDEARLYXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDEARLYXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDNORMALXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDNORMALXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDLATEXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDLATEXDC_GEN]:: unscoped constraint file
+list [SCOPEDEARLYXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDEARLYXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDNORMALXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDNORMALXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
+noargs [VHDL2008]:: option to use vhdl2008
+
+| Targets and +
+Outputs
+|
+*output* vivnonprj_${PRJNAME}/${PRJNAME}.bit:: bit file generated from nonprj flow
+
+| Description
+|
+nonproject generation of a bit file
+|===
+
+
+== genip_func
+
+[cols='h,6a']
+|===
+| Brief
+| 
+generates an ipxact wrapper
+
+| Input +
+Parameters
+|
+string IPNAME:: name of generated ip
+string PARTNAME:: xilinx part
+string TOPNAME:: name of top module wrapped by ip
+string LIBNAME:: subdirectory within ip_repo
+list [VHDLSYNTHFILES]:: vhdl synthesizable files, must exist at config time
+list [VHDLSYNTHFILES_GEN]:: vhdl synthesizable files
+list [VERILOGSYNTHFILES]:: verilog files must exist at config time
+list [VERILOGSYNTHFILES_GEN]:: verilog files, not checked for existance
+list [SVSYNTHFILES]:: system verilog files, must exist at config time
+list [SVSYNTHFILES_GEN]:: system verilogfiles, not checked for existance
+list [VHDLSIMFILES]:: vhdl sim only files, must exist at config time
+list [VHDLSIMFILES_GEN]:: vhdl sim only files, not checked for existance
+list [VERILOGSIMFILES]:: verilog sim only files must exist at config time
+list [VERILOGSIMFILES_GEN]:: verilog sim onlyfiles, not checked for existance
+list [SVSIMFILES]:: system verilog sim only files, must exist at config time
+list [SVSIMFILES_GEN]:: system verilog sim onlyfiles, not checked for existance
+list [PREIPXSCRIPTS]:: list of tcl scripts to run before ipx core is generated
+list [POSTIPXSCRIPTS]:: list tcl scripts to run after ipx core is generated
+list [SCRIPTDEPS]::  list of dependencies other than source files passed through other parameters
+list [MISCPARAMS]:: any data custom scripts need, will be stored in tcl ${miscparam} variable
+noargs [NODELETE]:: option, when present, project used to generate ip will not be deleted
+| Output +
+Variables
+|
+append ipxact_${PARTNAME}_${LIBNAME}_targets:: path to components.xml output will be appended to this variable
+
+| Targets and +
+Outputs
+|
+*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
+*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
+
+
+| Details
+|
+soft links source files to ipxact wrapper's directory and generates an ipxact wrapper for them
+|===
+
+== genxci_func
+
+[cols='h,6a']
+|===
+| Brief
+| 
+Generates xci file using passed script
+
+
+| Input +
+Parameters
+|
+string XCINAME:: name of generated xci module
+string PARTNAME:: name of xilinx part
+string XCIGENSCRIPT:: name of script used to generate xci module, should either generate xci module in current directory or at directory in ${ip_gen_dir} variable
+noarg VERILOG:: option, when present, wrapper generated is in verilog
+| Output +
+Variables
+|
+append xci_${genxci_PARTNAME}_targets:: path to xci output will be appended to this variable
+
+| Targets and +
+Outputs
+|
+*output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.xci:: Generated xci file
+
+| Details
+|
+Generates xci file using passed script
+|===

@@ -1,2 +1,4 @@
 vivado*
 build*/
+docs/vivgen_functions.html
+docs/util_functions.html

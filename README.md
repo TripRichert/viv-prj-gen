@@ -4,6 +4,6 @@ Vivado projects can be hard to version control.  The goal of this project is to 
 
 tcl scripts invoked through calls to functions in an included cmake file.
 
-To use it, create your own CMakeLists.txt, include viv-prj-gen/functions.cmake, and use the provided cmake functions.  There are examples in the demos directory.
+To use it, create your own CMakeLists.txt, include viv-prj-gen/vivgen_functions.cmake, and use the provided cmake functions.
 
-Vivado's cmake version is too old to work with functions.cmake.  Make a build directory. Use your system's /usr/bin/cmake instead of vivado's.  After invoking cmake, use make help to see targets.
+The cmake functions provided are documented in the docs directory.  There are examples in the demos directory.
