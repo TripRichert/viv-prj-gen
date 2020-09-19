@@ -98,6 +98,11 @@ Outputs
 |
 *output* vivnonprj_${PRJNAME}/${PRJNAME}.bit:: bit file generated from nonprj flow
 
+| Output +
+Argument
+|
+*output* [bitfile_OUTPUT]:: variable to store the location of the bitfile to be generated (described in targets and outputs).
+
 | Description
 |
 nonproject generation of a bit file
@@ -146,6 +151,12 @@ Outputs
 |
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
+*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/${IPNAME}.stamp:: empty generated file indicating that the ipxact was successfully generated
+
+| Output +
+Argument
+|
+*output* [IP_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xactip was succesffully generated
 
 
 | Details
@@ -178,6 +189,13 @@ append xci_${genxci_PARTNAME}_targets:: path to xci output will be appended to t
 Outputs
 |
 *output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.xci:: Generated xci file
+*output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.stamp:: Generated xci file
+
+| Output +
+Argument
+|
+*output* [XCI_OUTPUT]:: variable to store the location of generated xci
+*output* [XCI_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xci was succesffully generated
 
 | Details
 |
