@@ -61,6 +61,10 @@ if {[diction::checkForKeyPair target_language {*}$argv]} {
 }
 
 read_ip [file rootname [file tail $xcipath]]/[file tail $xcipath]
+
+if { [get_property IS_LOCKED [get_ips]] } {
+    upgrade_ip [get_ips]
+}
 generate_target all [get_ips]
 
 ###############################################################################
