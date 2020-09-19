@@ -11,11 +11,6 @@ set(webpack_parts XCKU035 XCKU3P XCU50 XCU280)
 
 include(../../vivgen_functions.cmake)
 
-#file(GLOB commonverilog corundum/fpga/common/rtl/*.v)
-#file(GLOB axiverilog corundum/fpga/lib/axi/rtl/*.v)
-#file(GLOB ethverilog corundum/fpga/lib/eth/rtl/*.v)
-#file(GLOB pcieverilog corundum/fpga/lib/pcie/rtl/*.v)
-#file(GLOB axisverilog corundum/fpga/lib/eth/lib/axis/rtl/*.v)
 set(partname xcku035-fbva676-2-e)
 set(hdlfilenames  corundum/fpga/mqnic/ExaNIC_X10/fpga/rtl/fpga.v
   corundum/fpga/mqnic/ExaNIC_X10/fpga/rtl/fpga_core.v
@@ -92,7 +87,7 @@ file(GLOB constrfiles corundum/fpga/mqnic/ExaNIC_X10/fpga/fpga.xdc)
 file(GLOB xcigenfiles corundum/fpga/mqnic/ExaNIC_X10/fpga/ip/*.tcl)
 
 set(xcilist "")
-
+set(xcistamplist "")
 foreach(filename ${xcigenfiles})
   get_filename_component(xciname ${filename} NAME_WE)
   genxci_func(
@@ -100,12 +95,18 @@ foreach(filename ${xcigenfiles})
     PARTNAME ${partname}
     XCIGENSCRIPT ${filename}
     VERILOG true
+    XCI_OUTPUT xci_file
+    XCI_STAMPOUTPUT xci_stamp
     )
    add_custom_target(${xciname}_xci ALL
-     DEPENDS ${CMAKE_BINARY_DIR}/${partname}/xcidir/${xciname}/${xciname}.xci
+     DEPENDS ${xci_stamp}
      )
-   list(APPEND xcilist ${CMAKE_BINARY_DIR}/${partname}/xcidir/${xciname}/${xciname}.xci)
+   list(APPEND xcistamplist ${xci_stamp})
+   list(APPEND xcilist ${xci_file})
 endforeach()
+add_custom_target(xci_targets ALL
+  DEPENDS ${xcistamplist}
+  )
 
 
 file(GLOB postsynthtcl
@@ -137,11 +138,12 @@ vivnonprjbitgen_func(
   SYNTHSCRIPT ${synthscript}
   SCRIPTDEPS ${basesynthscript}
   MISCPARAMS ${miscparam}
+  BITFILE_OUTPUT bitfile
   )
 
 add_custom_target(nonprj
-	DEPENDS vivnonprj_${nonprjname}/${nonprjname}.bit
-	)
+  DEPENDS ${bitfile}
+  )
 
 ###############################################################################
 # MIT LICENSE

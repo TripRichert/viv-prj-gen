@@ -5,61 +5,23 @@ set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 project(project)
-set(partname "XC7Z020-1CLG484")
+set(partname "XC7Z010-1CLG400")
 
 include(../../vivgen_functions.cmake)
 include(../../util_functions.cmake)
 
-file(GLOB hdlfilelistname hdl/filelist.txt)
-readFilelist(hdlfiles ${hdlfilelistname})
-file(GLOB unscopedLateConstrFileListName constraints/unscopedlate/filelist.txt)
-readFileList(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
+file(GLOB xcifile xcidir/*.xci)
+cpyxci_func(
+    XCIPATH ${xcifile}
+    PARTNAME ${partname}
+    DESTDIR ${CMAKE_BINARY_DIR}
+    XCI_STAMPOUTPUT xcistamp
+    )
 
-genvivprj_func(
-  PRJNAME testprj
-  PARTNAME ${partname}
-  VHDLSYNTHFILES ${hdlfiles}
-  UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
-  )
+  add_custom_target(myxcifile ALL
+    DEPENDS ${xcistamp}
+    )
 
-set(nonprjscripts ${nonprjscripts}
-  "tcl/synth.tcl"
-  "tcl/place.tcl"
-  "tcl/route.tcl"
-  "tcl/writebit.tcl"
-  )
-
-set(nonprjname "nonprjdemo")
-file(GLOB synthfile "tcl/synth.tcl")
-file(GLOB placefile "tcl/place.tcl")
-file(GLOB routefile "tcl/route.tcl")
-file(GLOB writebitfile "tcl/writebit.tcl")
-
-vivnonprjbitgen_func(
-  PRJNAME ${nonprjname}
-  TOPNAME demo_top
-  PARTNAME ${partname}
-  VHDLFILES ${hdlfiles}
-  UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
-  BITFILE_OUTPUT ${nonprjname}_bitfile
-  )
-
-add_custom_target(nonprj
-  DEPENDS ${${nonprjname}_bitfile}
-  )
-
-genip_func(
-  IPNAME genff
-  PARTNAME ${partname}
-  LIBNAME test
-  VHDLFILES ${hdlfiles}
-  TOPNAME GenericDFlipFlop
-  IP_STAMPOUTPUT ipxact_target
-  )
-      
-add_custom_target(test_ip ALL
-  DEPENDS ${ipxact_target}
-  )
 
 ###############################################################################
 # MIT LICENSE

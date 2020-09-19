@@ -1,17 +1,17 @@
 set requiredMiscKeys synthbasescript
 
 foreach key $requiredMiscKeys {
-    requireKey $key $miscparams
+    diction::requireKey $key {*}$miscparams
 }
 
-if {[checkForKey synthbasescript $miscparams]} {
-    if {[getDef synthbasescript $miscparams] != ""} {
-	source [getDef synthbasescript $miscparams]
+if {[diction::checkForKey synthbasescript {*}$miscparams]} {
+    if {[diction::getDef synthbasescript {*}$miscparams] != ""} {
+	source [diction::getDef synthbasescript {*}$miscparams]
     }
 }
 
-if {[checkForKey postsynthscripts $miscparams]} {
-    foreach script [getDef postsynthscripts $miscparams] {
+if {[diction::checkForKey postsynthscripts {*}$miscparams]} {
+    foreach script [diction::getDef postsynthscripts {*}$miscparams] {
 	source $script
     }
 }

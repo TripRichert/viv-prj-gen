@@ -98,6 +98,11 @@ Outputs
 |
 *output* vivnonprj_${PRJNAME}/${PRJNAME}.bit:: bit file generated from nonprj flow
 
+| Output +
+Parameter
+|
+*output* [bitfile_OUTPUT]:: variable to store the location of the bitfile to be generated (described in targets and outputs).
+
 | Description
 |
 nonproject generation of a bit file
@@ -136,16 +141,18 @@ list [POSTIPXSCRIPTS]:: list tcl scripts to run after ipx core is generated
 list [SCRIPTDEPS]::  list of dependencies other than source files passed through other parameters
 list [MISCPARAMS]:: any data custom scripts need, will be stored in tcl ${miscparam} variable
 noargs [NODELETE]:: option, when present, project used to generate ip will not be deleted
-| Output +
-Variables
-|
-append ipxact_${PARTNAME}_${LIBNAME}_targets:: path to components.xml output will be appended to this variable
 
 | Targets and +
 Outputs
 |
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
+*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/${IPNAME}.stamp:: empty generated file indicating that the ipxact was successfully generated
+
+| Output +
+Parameter
+|
+*output* [IP_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xactip was succesffully generated
 
 
 | Details
@@ -169,15 +176,18 @@ string XCINAME:: name of generated xci module
 string PARTNAME:: name of xilinx part
 string XCIGENSCRIPT:: name of script used to generate xci module, should either generate xci module in current directory or at directory in ${ip_gen_dir} variable
 noarg VERILOG:: option, when present, wrapper generated is in verilog
-| Output +
-Variables
-|
-append xci_${genxci_PARTNAME}_targets:: path to xci output will be appended to this variable
 
 | Targets and +
 Outputs
 |
 *output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.xci:: Generated xci file
+*output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.stamp:: Generated xci file
+
+| Output +
+Parameters
+|
+*output* [XCI_OUTPUT]:: variable to store the location of generated xci
+*output* [XCI_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xci was succesffully generated
 
 | Details
 |
