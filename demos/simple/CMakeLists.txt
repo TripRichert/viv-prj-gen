@@ -23,11 +23,11 @@ genvivprj_func(
   )
 
 set(nonprjscripts ${nonprjscripts}
-		  "tcl/synth.tcl"
-		  "tcl/place.tcl"
-		  "tcl/route.tcl"
-		  "tcl/writebit.tcl"
-		  )
+  "tcl/synth.tcl"
+  "tcl/place.tcl"
+  "tcl/route.tcl"
+  "tcl/writebit.tcl"
+  )
 
 set(nonprjname "nonprjdemo")
 file(GLOB synthfile "tcl/synth.tcl")
@@ -41,11 +41,12 @@ vivnonprjbitgen_func(
   PARTNAME ${partname}
   VHDLFILES ${hdlfiles}
   UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
+  BITFILE_OUTPUT ${nonprjname}_bitfile
   )
 
 add_custom_target(nonprj
-	DEPENDS vivnonprj_${nonprjname}/${nonprjname}.bit
-	)
+  DEPENDS ${${nonprjname}_bitfile}
+  )
 
 genip_func(
   IPNAME genff
@@ -53,11 +54,12 @@ genip_func(
   LIBNAME test
   VHDLFILES ${hdlfiles}
   TOPNAME GenericDFlipFlop
+  IP_STAMPOUTPUT ipxact_target
   )
       
 add_custom_target(test_ip ALL
-	DEPENDS ${ipxact_${partname}_test_targets}
-	)
+  DEPENDS ${ipxact_target}
+  )
 
 ###############################################################################
 # MIT LICENSE

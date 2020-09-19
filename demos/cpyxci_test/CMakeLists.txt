@@ -15,10 +15,11 @@ cpyxci_func(
     XCIPATH ${xcifile}
     PARTNAME ${partname}
     DESTDIR ${CMAKE_BINARY_DIR}
+    XCI_STAMPOUTPUT xcistamp
     )
 
   add_custom_target(myxcifile ALL
-    DEPENDS ${CMAKE_BINARY_DIR}/clk_wiz_0/clk_wiz_0.stamp
+    DEPENDS ${xcistamp}
     )
 
 

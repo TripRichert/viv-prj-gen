@@ -24,11 +24,13 @@ genip_func(
   PARTNAME ${partname}
   LIBNAME test
   VERILOGFILES ${sqrtfiles}
-  TOPNAME sqrt_generic)
+  TOPNAME sqrt_generic
+  IP_STAMPOUTPUT sqrtip_stamp
+  )
 
 add_custom_target(ip ALL
-	DEPENDS ${CMAKE_BINARY_DIR}/${partname}/ip_repo/test/sqrt/component.xml
-	)
+  DEPENDS ${sqrtip_stamp}
+  )
 
 ###############################################################################
 # MIT LICENSE

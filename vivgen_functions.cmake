@@ -91,6 +91,8 @@ function(cpyxci_func)
     XCIPATH
     PARTNAME
     DESTDIR
+    XCI_OUTPUT
+    XCI_STAMPOUTPUT
     )
   set(list_args )
   CMAKE_PARSE_ARGUMENTS(
@@ -108,6 +110,8 @@ function(cpyxci_func)
     message(STATUS "cpyxci PARTNAME ${cpyxci_PARTNAME}")
     message(STATUS "cpyxci DESTDIR ${cpyxci_DESTDIR}")
     message(STATUS "cpyxci VERILOG ${cpyxci_VERILOG}")
+    message(STATUS "cpyxci XCI_OUTPUT ${cpyxci_XCI_OUTPUT}")
+    message(STATUS "cpyxci XCI_STAMPOUTPUT ${cpyxci_XCI_STAMPOUTPUT}")
   endif()
 
   if (genxci_VERILOG)
@@ -124,6 +128,13 @@ function(cpyxci_func)
     COMMAND ${CMAKE_COMMAND} -E touch ${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp
     DEPENDS ${cpyxciscript} ${cmdlinedictprocsscript} ${cpyxci_XCIPATH}
     )
+  if (NOT ${cpyxci_XCI_OUTPUT} STREQUAL "")
+    set(${cpyxci_XCI_OUTPUT} ${cpyxci_DESTDIR}/${xciname}/${xciname}.xci PARENT_SCOPE)
+  endif()
+  if (NOT ${cpyxci_XCI_STAMPOUTPUT} STREQUAL "")
+    set(${cpyxci_XCI_STAMPOUTPUT} "${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp" PARENT_SCOPE)
+  endif()
+  
 endfunction()
 
 #default nonproject file scripts
@@ -144,6 +155,7 @@ function(vivnonprjbitgen_func)
     PLACESCRIPT
     ROUTESCRIPT
     WRBITSCRIPT
+    BITFILE_OUTPUT
     )
   set(src_file_types
     VHDLFILES
@@ -187,6 +199,7 @@ function(vivnonprjbitgen_func)
       message(STATUS "vivnonprjgenbit ${arg} ${vivnonprj_${arg}}")
     endforeach()
     message(STATUS "vivnonprjgenbit VHDL2008? ${vivnonprj_VHDL2008}")
+    message(STATUS "vivnonprjgenbit BITFILE_OUTPUT ${vivnonprj_BITFILE_OUTPUT}")
   endif()
 
   foreach(file_type ${src_file_types})
@@ -243,10 +256,14 @@ function(vivnonprjbitgen_func)
     string(REPLACE ";" " " miscparamstring "${miscparamstring}")
   endif()
 
-  add_custom_command(OUTPUT vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit
+  set(bitfile_output "vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit")
+  add_custom_command(OUTPUT "${bitfile_output}"
     COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
     DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
     )
+  if (NOT ${vivnonprj_BITFILE_OUTPUT} STREQUAL "")
+    set(${vivnonprj_BITFILE_OUTPUT} "${bitfile_output}" PARENT_SCOPE)
+  endif()
 endfunction()
 
 file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
@@ -254,7 +271,13 @@ file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.
 
 function(genip_func)
   set(options NODELETE)
-  set(args IPNAME PARTNAME TOPNAME LIBNAME)
+  set(args
+    IPNAME
+    PARTNAME
+    TOPNAME
+    LIBNAME
+    IP_STAMPOUTPUT
+    )
   set(src_file_types
     VHDLFILES
     VERILOGFILES
@@ -291,6 +314,7 @@ function(genip_func)
       message(STATUS "genip ${arg} ${genip_${arg}}")
     endforeach()
     message(STATUS "genip NODELETE? ${genip_NODELETE}")
+    message(STATUS "genip IP_STAMPOUTPUT ${genip_IP_STAMPOUTPUT}")
   endif()
 
   foreach(file_type ${src_file_types})
@@ -354,13 +378,15 @@ function(genip_func)
     string(REPLACE ";" " " miscparamstring "${miscparamstring}")
   endif()
 
-  add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui
+  add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui ${ipdir}/${genip_IPNAME}.stamp
     COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} ${miscparamkey} {${miscparamstring}} ${laststring}
     DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript} ${genip_SCRIPTDEPS} ${genip_PREIPXSCRIPTS} ${genip_POSTIPXSCRIPTS}
     )
 
-  list(APPEND ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipdir}/component.xml)
-  set(ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets ${ipxact_${genip_PARTNAME}_${genip_LIBNAME}_targets} PARENT_SCOPE)
+  if (NOT ${genip_IP_STAMPOUTPUT} STREQUAL "")
+    set(${genip_IP_STAMPOUTPUT} ${ipdir}/${genip_IPNAME}.stamp PARENT_SCOPE)
+  endif()
+
 endfunction()
 
 file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
@@ -370,6 +396,8 @@ function(genxci_func)
     XCINAME
     PARTNAME
     XCIGENSCRIPT
+    XCI_OUTPUT
+    XCI_STAMPOUTPUT
     )
   set(list_args )
   CMAKE_PARSE_ARGUMENTS(
@@ -388,6 +416,8 @@ function(genxci_func)
     message(STATUS "genxci PARTNAME ${genxci_PARTNAME}")
     message(STATUS "genxci XCIGENSCRIPT ${genxci_XCIGENSCRIPT}")
     message(STATUS "genxci VERILOG ${genxci_VERILOG}")
+    message(STATUS "genxci XCI_OUTPUT ${genxci_XCI_OUTPUT}")
+    message(STATUS "genxci XCI_STAMPOUTPUT ${genxci_XCI_STAMPOUTPUT}")
   endif()
 
   set(xcidir ${CMAKE_BINARY_DIR}/${genxci_PARTNAME}/xcidir)
@@ -398,15 +428,20 @@ function(genxci_func)
     set(targetlangstr "")
   endif()
 
-  add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci
+  add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp
     COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
     COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
     COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
+    COMMAND ${CMAKE_COMMAND} -E touch ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp
     DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
     )
 
-  list(APPEND xci_${genxci_PARTNAME}_targets ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci)
-  set(xci_${genxci_PARTNAME}_targets ${xci_${genxci_PARTNAME}_targets} PARENT_SCOPE)
+  if (NOT ${genxci_XCI_OUTPUT} STREQUAL "")
+    set(${genxci_XCI_OUTPUT} ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci PARENT_SCOPE)
+  endif()
+  if (NOT ${genxci_XCI_STAMPOUTPUT} STREQUAL "")
+    set(${genxci_XCI_STAMPOUTPUT} "${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp" PARENT_SCOPE)
+  endif()
 endfunction()
 
 
