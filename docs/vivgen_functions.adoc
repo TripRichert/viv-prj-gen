@@ -141,10 +141,6 @@ list [POSTIPXSCRIPTS]:: list tcl scripts to run after ipx core is generated
 list [SCRIPTDEPS]::  list of dependencies other than source files passed through other parameters
 list [MISCPARAMS]:: any data custom scripts need, will be stored in tcl ${miscparam} variable
 noargs [NODELETE]:: option, when present, project used to generate ip will not be deleted
-| Output +
-Variables
-|
-append ipxact_${PARTNAME}_${LIBNAME}_targets:: path to components.xml output will be appended to this variable
 
 | Targets and +
 Outputs
@@ -180,10 +176,6 @@ string XCINAME:: name of generated xci module
 string PARTNAME:: name of xilinx part
 string XCIGENSCRIPT:: name of script used to generate xci module, should either generate xci module in current directory or at directory in ${ip_gen_dir} variable
 noarg VERILOG:: option, when present, wrapper generated is in verilog
-| Output +
-Variables
-|
-append xci_${genxci_PARTNAME}_targets:: path to xci output will be appended to this variable
 
 | Targets and +
 Outputs
