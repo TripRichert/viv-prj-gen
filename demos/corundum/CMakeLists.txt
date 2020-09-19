@@ -87,7 +87,7 @@ file(GLOB constrfiles corundum/fpga/mqnic/ExaNIC_X10/fpga/fpga.xdc)
 file(GLOB xcigenfiles corundum/fpga/mqnic/ExaNIC_X10/fpga/ip/*.tcl)
 
 set(xcilist "")
-
+set(xcistamplist "")
 foreach(filename ${xcigenfiles})
   get_filename_component(xciname ${filename} NAME_WE)
   genxci_func(
@@ -101,8 +101,12 @@ foreach(filename ${xcigenfiles})
    add_custom_target(${xciname}_xci ALL
      DEPENDS ${xci_stamp}
      )
+   list(APPEND xcistamplist ${xci_stamp})
    list(APPEND xcilist ${xci_file})
 endforeach()
+add_custom_target(xci_targets ALL
+  DEPENDS ${xcistamplist}
+  )
 
 
 file(GLOB postsynthtcl
