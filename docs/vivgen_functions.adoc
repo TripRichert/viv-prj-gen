@@ -99,7 +99,7 @@ Outputs
 *output* vivnonprj_${PRJNAME}/${PRJNAME}.bit:: bit file generated from nonprj flow
 
 | Output +
-Argument
+Parameter
 |
 *output* [bitfile_OUTPUT]:: variable to store the location of the bitfile to be generated (described in targets and outputs).
 
@@ -150,7 +150,7 @@ Outputs
 *output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/${IPNAME}.stamp:: empty generated file indicating that the ipxact was successfully generated
 
 | Output +
-Argument
+Parameter
 |
 *output* [IP_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xactip was succesffully generated
 
@@ -184,7 +184,7 @@ Outputs
 *output* ${PARTNAME}/xcidir/${XCINAME}/${XCINAME}.stamp:: Generated xci file
 
 | Output +
-Argument
+Parameters
 |
 *output* [XCI_OUTPUT]:: variable to store the location of generated xci
 *output* [XCI_STAMPOUTPUT]:: variable to store the location of the stampfile indicating that xci was succesffully generated
