@@ -239,6 +239,6 @@ Parameters
 
 | Description
 |
-intended for simulation.  Will fail if vivado project already exists.
+Generated hardware description file from generated block diagram
 
 |===
