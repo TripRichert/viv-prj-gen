@@ -23,7 +23,9 @@ if {[diction::hasDuplicates {*}[diction::getKeys {*}$argv]]} {
 set requiredKeys [list ipdir ipname partname  topname]
 set allowedKeys [list target_language \
 		     vhdlsynthfiles verilogsynthfiles svsynthfiles \
-		     preipxscripts postipxscripts miscparams]
+		     preipxscripts postipxscripts miscparams \
+		     vendorname
+		]
 
 #all required keys are allowed
 foreach key $requiredKeys {
@@ -108,10 +110,20 @@ if {[diction::checkForKeyPair preipxscripts {*}$argv]} {
 	source ${script}
     }
 }
+if {[diction::checkForKeyPair vendorname {*}$argv]} {
+    set vendorname [diction::getDef vendorname {*}$argv]
+} else {
+    set vendorname user.org
+}
+ipx::package_project -root_dir $root_dir  -vendor $vendorname -library user -taxonomy /UserIP
 
-ipx::package_project -root_dir $root_dir  -vendor NTA -library user -taxonomy /UserIP
+set ipname [diction::getDef ipname {*}$argv]
 
 set_property core_revision 1 [ipx::current_core]
+set_property name $ipname [ipx::current_core]
+set_property display_name $ipname [ipx::current_core]
+set_property description $ipname [ipx::current_core]
+
 ipx::create_xgui_files [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 

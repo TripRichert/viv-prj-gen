@@ -444,6 +444,83 @@ function(genxci_func)
   endif()
 endfunction()
 
+file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/genbdhdf.tcl)
+function(genhdf_func)
+  set(options VERILOG)
+  set(args
+    PRJNAME
+    PARTNAME
+    BDSCRIPT
+    BOARDNAME
+    HDFFILE_OUTPUT
+    )
+  set(src_file_types
+    UNSCOPEDEARLYXDC
+    UNSCOPEDNORMALXDC
+    UNSCOPEDLATEXDC
+    SCOPEDEARLYXDC
+    SCOPEDNORMALXDC
+    SCOPEDLATEXDC
+    )
+  set(gen_file_types "")
+  foreach(file_type ${src_file_types})
+    list(APPEND gen_file_types ${file_type}_GEN)
+  endforeach()
+  set(list_args
+    ${gen_file_types}
+    DEPENDS
+    )
+  CMAKE_PARSE_ARGUMENTS(
+    genhdf
+    "${options}"
+    "${args}"
+    "${list_args}"
+    "${ARGN}"
+    )
+  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+    message(WARNING "Unparsed argument: ${arg}")
+  endforeach()
+
+  if(printFuncParams)
+    foreach(arg ${list_args})
+      message(STATUS "genhdf ${arg} ${genhdf_${arg}}")
+    endforeach()
+    message(STATUS "genhdf PRJNAME ${genhdf_PRJNAME}")
+    message(STATUS "genhdf PARTNAME ${genhdf_PARTNAME}")
+    message(STATUS "genhdf BDSCRIPT ${genhdf_BDSCRIPT}")
+    message(STATUS "genhdf BOARDNAME ${genhdf_BOARDNAME}")    
+  endif()
+
+  foreach(file_type ${src_file_types})
+    foreach(filename ${genhdf_${file_type}})
+      if(NOT ${filename} STREQUAL "")
+        if(NOT EXISTS ${filename})
+          message(SEND_ERROR "missing file ${filename}")
+        endif()
+      endif()
+    endforeach()
+  endforeach()
+
+  foreach(file_type ${src_file_types})
+    set(${file_type} ${genhdf_${file_type}} 
+      ${genhdf_${file_type}_GEN})
+  endforeach()
+
+  set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.bit)
+  set(prjbuilddir ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/genprjs)
+  add_custom_command(OUTPUT ${hdffile_output}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
+    COMMAND ${CMAKE_COMMAND} -E remove ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
+    COMMAND vivado -mode batch -source ${genbdhdfscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC}
+    DEPENDS ${genbdhdfscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS}
+    )
+
+  if (NOT ${genhdf_HDFFILE_OUTPUT} STREQUAL "")
+    set(${genhdf_HDFFILE_OUTPUT} ${hdffile_output} PARENT_SCOPE)
+  endif()
+
+endfunction()
 
 ###############################################################################
 # MIT LICENSE

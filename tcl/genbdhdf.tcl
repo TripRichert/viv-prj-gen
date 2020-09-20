@@ -1,15 +1,15 @@
 puts "executing $argv0"
 puts "argv is:$argv"
 
-source [file join [file dirname [info script]] "cmdline_dict_procs.tcl"]
-source [file join [file dirname [info script]] "viv_prj_procs.tcl"]
+source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
+source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
 if { $argc == 0 } {
     puts "No arguments!"
     puts "execution suspended of $argv0"
     exit 2
 }
-if {[hasDuplicates [getKeys $argv]]} {
+if {[diction::hasDuplicates [diction::getKeys $argv]]} {
     puts "error! Duplicate keys!"
     puts "execution suspended of $argv0"
     exit 3
@@ -29,10 +29,10 @@ foreach key $requiredKeys {
 }
 
 foreach requiredKey $requiredKeys {
-    requireKey $requiredKey $argv
+    diction::requireKey $requiredKey {*}$argv
 }
 set unrecognizedKeys []
-foreach key [getKeys $argv] {
+foreach key [diction::getKeys {*}$argv] {
     if {[lsearch $allowedKeys $key] == -1} {
         lappend unrecognizedKeys $key
     }
@@ -45,34 +45,28 @@ if {[llength $unrecognizedKeys]} {
 }
 
 
-if {[getDef builddir $argv] != ""} {
-    cd [getDef builddir $argv]
+if {[diction::getDef builddir {*}$argv] != ""} {
+    cd [diction::getDef builddir {*}$argv]
 } else {
     puts "builddir failed"
     exit 7
 }
-set prjname [getDef prjname $argv]
+set prjname [diction::getDef prjname {*}$argv]
 set prjname "bdprj_$prjname"
 file mkdir $prjname
 cd $prjname
 
 create_project $prjname
 
-set partname [getDef partname $argv]
+set partname [diction::getDef partname {*}$argv]
 set_property "part" "$partname" [current_project]
 
-if {[checkForKey boardname $argv]} {
-    if {[getDef boardname $argv] != ""} {
-	set_property "board_part" [getDef boardname $argv] [current_project]
-    }
+if {[diction::checkForKeyPair boardname {*}$argv]} {
+    set_property "board_part" [diction::getDef boardname {*}$argv] [current_project]
 }
 
-if {[checkForKey target_language $argv]} {
-    if {[getDef target_language $argv] != ""} {
-	set_property target_language [getDef target_language $argv] [current_project]
-    } else {
-	set_property target_language VHDL [current_project]
-    }
+if {[diction::checkForKeyPair target_language {*}$argv]} {
+    set_property target_language [diction::getDef target_language {*}$argv] [current_project]
 } else {
     set_property target_language VHDL [current_project]
 }
@@ -86,60 +80,46 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
     create_fileset -srcset sources_1
 }
 
-if {[checkForKey ip_repo_dirs $argv]} {
-    if {[getDef ip_repo_dirs $argv] != ""} {
-	set_property ip_repo_paths [getDef ip_repo_dirs $argv]
-    }
+if {[diction::checkForKeyPair ip_repo_dirs {*}$argv]} {
+    set_property ip_repo_paths [diction::getDef ip_repo_dirs {*}$argv] [current_project]
 }
 update_ip_catalog -rebuild
 
-if {[checkForKey scopedearlyconstraints $argv]} {
-    if {[getDef scopedearlyconstraints $argv] != ""} {
-	add_const_files_to_set true early [getDef scopedearlyconstraints $argv]
-    }
+if {[diction::checkForKeyPair scopedearlyconstraints {*}$argv]} {
+    add_const_files_to_set true early [diction::getDef scopedearlyconstraints {*}$argv]
 }
-if {[checkForKey scopednormalconstraints $argv]} {
-    if {[getDef scopednormalconstraints $argv] != ""} {
-	add_const_files_to_set true normal [getDef scopednormalconstraints $argv]
-    }
+if {[diction::checkForKeyPair scopednormalconstraints {*}$argv]} {
+    add_const_files_to_set true normal [diction::getDef scopednormalconstraints {*}$argv]
 }
-if {[checkForKey scopedlateconstraints $argv]} {
-    if {[getDef scopedlateconstraints $argv] != ""} {
-	add_const_files_to_set true late [getDef scopedlateconstraints $argv]
-    }
+if {[diction::checkForKeyPair scopedlateconstraints {*}$argv]} {
+    add_const_files_to_set true late [diction::getDef scopedlateconstraints {*}$argv]
 }
-if {[checkForKey unscopedearlyconstraints $argv]} {
-    if {[getDef unscopedearlyconstraints $argv] != ""} {
-	add_const_files_to_set false early [getDef unscopedearlyconstraints $argv]
-    }
+if {[diction::checkForKeyPair unscopedearlyconstraints {*}$argv]} {
+    add_const_files_to_set false early [diction::getDef unscopedearlyconstraints {*}$argv]
 }
-if {[checkForKey unscopednormalconstraints $argv]} {
-    if {[getDef unscopednormalconstraints $argv] != ""} {
-	add_const_files_to_set false normal [getDef unscopednormalconstraints $argv]
-    }
+if {[diction::checkForKeyPair unscopednormalconstraints {*}$argv]} {
+    add_const_files_to_set false normal [diction::getDef unscopednormalconstraints {*}$argv]
 }
-if {[checkForKey unscopedlateconstraints $argv]} {
-    if {[getDef unscopedlateconstraints $argv] != ""} {
-	add_const_files_to_set false late [getDef unscopedlateconstraints $argv]
-    }
+if {[diction::checkForKeyPair unscopedlateconstraints {*}$argv]} {
+    add_const_files_to_set false late [diction::getDef unscopedlateconstraints {*}$argv]
 }
 
-source $bdscript
+source [diction::getDef bdscript {*}$argv]
 
-if {[checkForKey vhdlbdwrapper $argv] and ([getDef vhdlbdwrapper $argv] != "")} {
-    add_files_to_set sources_1 VHDL [getDef vhdlbdwrapper $argv]
-} elseif {[checkForKey verilogbdwrapper $argv] and ([getDef verilogbdwrapper $argv] != "")} {
-    add_files_to_set sources_1 Verilog [getDef verilogbdwrapper $argv]
+if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
+    add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
+} elseif {[diction::checkForKeyPair verilogbdwrapper {*}$argv]} {
+    add_files_to_set sources_1 Verilog [diction::getDef verilogbdwrapper {*}$argv]
 } else {
     set dirext .srcs
     make_wrapper -files [get_files *.bd] -top
-    add_files -norecurse $prjname$dirext/sources_1/bd/*/hdl/*.vhd
+    add_files -norecurse [file normalize [glob $prjname$dirext/sources_1/bd/*/hdl/*.v*]]
 }
 
 report_ip_status -name ip_status
 open_bd_design [get_files *.bd]
 update_ip_catalog -rebuild -scan_changes
-export_ip_user_files -of_objects pget_ips *] -no_script -reset -quiet
+export_ip_user_files -of_objects [get_ips *] -no_script -reset -quiet
 upgrade_ip [get_ips *] -log ip_upgrade.log
 generate_target all [get_files *.bd]
 export_ip_user_files -of_objects [get_files *.bd]
@@ -149,7 +129,10 @@ reset_run synth_1
 launch_runs impl_1 -to_step write_bitstream -jobs 4
 wait_on_run impl_1
 set dirext .runs
-file copy -force $prjname$dirext/impl_1/*.sysdef [getDef hdfout $argv]
-
+if {[file exists [glob $prjname$dirext/impl_1/*.bit]]} {
+    file copy -force [glob $prjname$dirext/impl_1/*.bit] [diction::getDef hdfout {*}$argv]
+} else {
+    file copy -force [glob $prjname$dirext/impl_1/*.sysdef] [diction::getDef hdfout {*}$argv]
+}
 
 puts "Completed Execution of $argv0"
