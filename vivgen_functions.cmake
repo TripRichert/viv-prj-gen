@@ -445,7 +445,7 @@ function(genxci_func)
   endif()
 endfunction()
 
-file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/genbdhdf.tcl)
+file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdhdf.tcl)
 function(genhdf_func)
   set(options VERILOG)
   set(args
