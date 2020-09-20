@@ -29,6 +29,55 @@ function(readFilelist filelist fullPathToFile)
   set(${filelist} ${${filelist}} PARENT_SCOPE)
 endfunction()
 
+
+## readFilelist_withSubstitution converts newline separated entries of
+# filenames in the passed fullPathToFile to a list and stores in filelist
+# cmake variable names can be part of path
+# nesting of variable names is not allowed (don't make me recurse)
+# \param filelist the filename to store the list in
+# \param fullPathToFile the filename of the file to be read
+# any time the passed file is modified, cmake will rerun
+function(readFilelist_withSubstitution filelist fullPathToFile)
+  if(NOT EXISTS ${fullPathToFile})
+    message(FATAL_ERROR "File ${fullPathToFile} does not exist")
+  endif()
+  file(READ ${fullPathToFile} rootNames)
+  STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
+  foreach(filename ${rootNames})
+    set(loopcontinue true)
+    while(loopcontinue)
+      STRING(REGEX MATCH "\\$\{[^\}]*\{" matchstring ${filename})
+      if(NOT matchstring STREQUAL "")
+	message(STATUS "matchstring ${matchstring}")
+	message(FATAL_ERROR "nested variables not supported")
+      endif()
+      STRING(REGEX MATCH "\\$\{[^\}]*\}" matchstring ${filename})
+      if(NOT matchstring STREQUAL "")
+	STRING(REGEX REPLACE "\\$" "" matchstring ${matchstring})
+	STRING(REGEX REPLACE "\{" "" matchstring ${matchstring})
+	STRING(REGEX REPLACE "\}" "" matchstring ${matchstring})
+	STRING(REGEX REPLACE "\\$\{${matchstring}\}" ${${matchstring}} filename ${filename})
+      else()
+	set(loopcontinue false)
+      endif()
+    endwhile()
+    list(APPEND filenames ${filename})
+  endforeach()
+  set(${${filelist}} "")
+  
+  get_filename_component(pathname ${fullPathToFile} DIRECTORY)
+  foreach(filename ${filenames})
+    if(NOT IS_ABSOLUTE ${filename})
+      set(fullname "${pathname}/${filename}")
+    else()
+      set(fullname ${filename})
+    endif()
+    list(APPEND ${filelist} ${fullname})
+  endforeach()
+  watch(${fullPathToFile})
+  set(${filelist} ${${filelist}} PARENT_SCOPE)
+endfunction()
+
 ###############################################################################
 # MIT LICENSE
 ###############################################################################

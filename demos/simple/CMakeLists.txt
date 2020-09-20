@@ -11,7 +11,7 @@ include(../../vivgen_functions.cmake)
 include(../../util_functions.cmake)
 
 file(GLOB hdlfilelistname hdl/filelist.txt)
-readFilelist(hdlfiles ${hdlfilelistname})
+readFilelist_withSubstitution(hdlfiles ${hdlfilelistname})
 file(GLOB unscopedLateConstrFileListName constraints/unscopedlate/filelist.txt)
 readFileList(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
 
