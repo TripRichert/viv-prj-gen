@@ -123,7 +123,7 @@ function(cpyxci_func)
   get_filename_component(xciname ${cpyxci_XCIPATH} NAME_WE)
   
   add_custom_command(OUTPUT ${cpyxci_DESTDIR}/${xciname}/${xciname}.xci ${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp
-    COMMAND ${CMAKE_COMMAND} -E remove ${cpyxci_DESTDIR}/${xciname}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${cpyxci_DESTDIR}/${xciname}
     COMMAND vivado -mode batch -source ${cpyxciscript} -tclargs -xcipath ${cpyxci_XCIPATH} -partname ${cpyxci_PARTNAME} -gendir ${cpyxci_DESTDIR} ${targetlangstr}
     COMMAND ${CMAKE_COMMAND} -E touch ${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp
     DEPENDS ${cpyxciscript} ${cmdlinedictprocsscript} ${cpyxci_XCIPATH}
@@ -345,7 +345,7 @@ function(genip_func)
     list(APPEND newvhdlfiles ${ipdir}/hdl/${name})
     add_custom_command(OUTPUT ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
-      COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
       DEPENDS ${filename}) 
   endforeach()
@@ -354,7 +354,7 @@ function(genip_func)
     list(APPEND newverilogfiles ${ipdir}/hdl/${name})
     add_custom_command(OUTPUT ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
-      COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
       DEPENDS ${filename}) 
   endforeach()
@@ -363,7 +363,7 @@ function(genip_func)
     list(APPEND newsvfiles ${ipdir}/hdl/${name})
     add_custom_command(OUTPUT ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E make_directory ${ipdir}/hdl
-      COMMAND ${CMAKE_COMMAND} -E remove ${ipdir}/hdl/${name}
+      COMMAND ${CMAKE_COMMAND} -E remove_directory ${ipdir}/hdl/${name}
       COMMAND ${CMAKE_COMMAND} -E create_symlink ${filename} ${ipdir}/hdl/${name}
       DEPENDS ${filename}) 
   endforeach()
@@ -431,7 +431,7 @@ function(genxci_func)
 
   add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp
     COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
-    COMMAND ${CMAKE_COMMAND} -E remove ${xcidir}/${genxci_XCINAME}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${xcidir}/${genxci_XCINAME}
     COMMAND vivado -mode batch -source ${genxciscript} -tclargs -xciname ${genxci_XCINAME} -partname ${genxci_PARTNAME} -gendir ${xcidir} -xcigenscript ${genxci_XCIGENSCRIPT} ${targetlangstr}
     COMMAND ${CMAKE_COMMAND} -E touch ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp
     DEPENDS ${gensciscript} ${cmdlinedictprocsscript}
@@ -512,7 +512,7 @@ function(genhdf_func)
   add_custom_command(OUTPUT ${hdffile_output}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
-    COMMAND ${CMAKE_COMMAND} -E remove ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
     COMMAND vivado -mode batch -source ${genbdhdfscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC}
     DEPENDS ${genbdhdfscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS}
     )
