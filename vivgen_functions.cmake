@@ -507,7 +507,7 @@ function(genhdf_func)
       ${genhdf_${file_type}_GEN})
   endforeach()
 
-  set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.bit)
+  set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/genprjs)
   add_custom_command(OUTPUT ${hdffile_output}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin

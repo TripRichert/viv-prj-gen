@@ -193,3 +193,52 @@ Parameters
 |
 Generates xci file using passed script
 |===
+
+== genhdf_func
+
+[cols='h,6a']
+|===
+| Brief
+| 
+generates a recipe for generating a hdf file
+
+| Input +
+Parameters
+|
+string PRJNAME:: name of vivado project to be created
+string PARTNAME:: xilinx part
+string BDSCRIPT:: tcl script for generating block diagram file
+string [BOARDNAME]:: name of xilinx board used
+list [UNSCOPEDEARLYXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDEARLYXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDNORMALXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDNORMALXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDLATEXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDLATEXDC_GEN]:: unscoped constraint file
+list [SCOPEDEARLYXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDEARLYXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDNORMALXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDNORMALXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
+noarg [VERILOG]:: option to, if wrapper is generated, use verilog instead of vhdl
+list [DEPENDS]:: list of dependencies 
+
+
+
+|Targets and +
+Outputs
+|
+*output* ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf:: hardware description file used by xilinx sdk
+
+| Output +
+Parameters
+|
+*output* HDFFILE_OUTPUT:: variable to store location of generated hdf file
+
+
+| Description
+|
+intended for simulation.  Will fail if vivado project already exists.
+
+|===
