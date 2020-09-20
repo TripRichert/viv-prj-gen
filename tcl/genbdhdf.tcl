@@ -129,10 +129,6 @@ reset_run synth_1
 launch_runs impl_1 -to_step write_bitstream -jobs 4
 wait_on_run impl_1
 set dirext .runs
-if {[file exists [glob $prjname$dirext/impl_1/*.bit]]} {
-    file copy -force [glob $prjname$dirext/impl_1/*.bit] [diction::getDef hdfout {*}$argv]
-} else {
-    file copy -force [glob $prjname$dirext/impl_1/*.sysdef] [diction::getDef hdfout {*}$argv]
-}
+file copy -force [glob $prjname$dirext/impl_1/*.sysdef] [diction::getDef hdfout {*}$argv]
 
 puts "Completed Execution of $argv0"
