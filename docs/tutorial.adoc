@@ -1,0 +1,248 @@
+= viv-prj-gen cmake tutorial
+:toc:
+:sectnums:
+
+== Introduction
+
+=== Goal
+
+Vivado projects can be difficult to version control. Vivado generates a lot of files and constantly touches files to add time stamps.  Tracking changes in these files can be difficult.
+
+This project provides tcl scripts, wrapped in cmake functions, that interface with vivado and place the generated files in a build directory that need not be tracked by version control.
+
+This enables the developer to have a reproducible build process that only relies on source files.
+
+viv-prj-gen can also generate a vivado project, so that users can develop using vivado's gui without tracking a xpr file.
+
+viv-prj-gen provides cmake functions in an includable cmake file, which makes it easy to extend without forking.
+
+=== Alternatives
+
+Before digging too far into my stuff, there are some good alternatives out there that try to do similar things.
+
+All of them use tcl under the hood, but when interfacing with the developer, some take different approaches.
+
+Edalize:: python based, vendor agnostic, supports building bit files and simulation
+
+link: https://github.com/olofk/edalize
+
+hdlmake:: python based, vendor agnostic, supports building bit files and simulation
+
+link: https://ohwr.org/projects/hdl-make/
+
+fuseSoC:: python based wrapper around edalize, is a package manager
+
+link: https://github.com/olofk/fusesoc
+
+Ruckus:: a makefile base tool with similar goals to viv-prj-gen
+
+link: https://github.com/slaclab/ruckus
+
+ttask:: tcl based, vendor agnostic, supports building bits files and simulation
+
+link: https://www.p-code.org/ttask/
+
+If Edalize or hdlmake support your needs, they interface with more tools and work better with simulation frameworks like VUnit.  I strongly recommend you check them out.
+
+I think the main benefits of viv-prj-gen are that it is simple, well documented, cmake based (has benefits and drawbacks, python based is better for simulation), supports vivado block diagrams for zynq projects, and is easy to extend.  The main downsides are that its not python based (and thus harder to integrate with VUnit testing), only supports vivado (writing cmake functions to support other vendors would not be difficult, though), doesn't have organization backing (might not be as well maintained), and isn't as widely used as these other projects.
+
+== Terminology and cmake Basics
+
+This section is not meant to be a full tutorial on cmake.
+
+If you haven't used cmake before, this section might help you conceptually understand the rest of this document, but, in order to write your own cmake files, you may need to go through a cmake tutorial that describes how to use modern cmake.
+
+If you are already familiar with cmake, you can probably skim or skip these sections.
+
+=== Introduction to cmake
+
+CMake is a two step build process.  The developer writes a CMakeLists.txt file in the cmake language.  Using your CMakeLists.txt file, cmake creates a makefile (or similar) defining how to create a set of outputs from a set of inputs.  It also keeps track of what outputs need to be regenerated if changes are made to the inputs.
+
+The makefile (or similar) is then used to generate the outputs from the inputs.
+
+When using any build system like cmake, there are several key components:
+
+* input files
+* dependencies
+* recipes
+* output files
+* targets
+
+A recipe is a set of instructions to convert a set of inputs into a set of outputs.
+
+Inputs to a recipe can either be input files, or outputs generated from other recipes.
+
+A dependency is a file that, if changed, implies that the recipe should be rerun.  For example, if you edit a verilog source file, you will need to rebuild a bit file that was generated from that verilog file.  The bit file depends on the verilog file.
+
+In cmake, any specified dependency must be a file that already exists or that cmake has a recipe that describes that file as an output.
+
+A target (sometimes called a phony target) is a named fake output that always needs to be rebuilt.  Using the command "make <target name>" produces all of the outputs that were specified as dependencies of the target (and all of the dependencies necessary to create that target).  The dependencies of the target "ALL" are produced if the command "make" is used with no output or target specified.
+
+=== Getting started
+
+In the top level directory of your project, create a text file called CMakeLists.txt
+
+The first two lines of your project should define the minimum version of cmake that can be used for your project and the project name.  All the versions of vivado I checked provide cmake version 3.3.
+
+You can add comments by starting a line with the # symbol.
+
+[source,cmake]
+cmake_minimum_required(VERSION 3.3)
+project(helloworld)
+
+
+I recommend that you force the user to build out of tree (create a separate build folder to put all outputs in).  You can accomplish this by adding the lines
+
+[source,cmake]
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+Variables don't need to be declared before being assigned.  You can assign variables using the "set" function and access them by prepending the variable name by a dollar sign and surrounding it with braces (e.g. "${varname}")
+
+[source,cmake]
+set(mymessage "Hello World!")
+
+You can output messages to the user when cmake is run by using the "message" function
+
+[source,cmake]
+message(STATUS ${mymessage})
+
+Our CMakeLists.txt file now looks like this
+
+[source,cmake]
+cmake_minimum_required(VERSION 3.3)
+project(helloworld)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(mymessage "Hello World!")
+message(STATUS ${mymessage})
+
+To run cmake, create a build directory in your project adjacent to the CMakeLists.txt file, navigate to that build directory, and run "cmake .." from command line.  If all goes well, it will welcome you to the world of cmake.
+
+=== File paths and cmake includes
+
+In cmake, filepaths should use forward slashes, not backslashes, even if you are on windows.
+
+To be able to use the functions in viv-prj-gen, you need to get viv-prj-gen on your computer, and to use the "include" function on the path to the .cmake file with the functions you want in it.
+
+I recommend using viv-prj-gen as a git submodule or a git subtree.
+
+The start of your CMakeLists.txt might look like this
+
+[source,cmake]
+cmake_minimum_required(VERSION 3.3)
+project(helloworld)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/util_functions.cmake)
+
+Included cmake files have their own scope for variables.  The parent variables are copied into the include cmake file's environment.  The included cmake file can explicitly set variables in the parent scope.  This is often used in functions to return by value.
+
+=== Getting the Source Files
+
+There are a number of ways of specifying filenames in cmake.  There are several goals when specifying filepaths in cmake.
+
+Paths that you write should be relative (so that you can move from machine to machine or change the directory you store stuff in).
+
+The paths that you use should be absolute (so that the user doesn't have to know from what directory you are referring to).
+
+==== GLOB
+
+The easiset way to get filepaths in cmake to use is file(GLOB varname path_to_file).  file glob sets the passed variable to a list of full paths of exisiting files that match the passed path.  Sticklers recommend against using glob in cmake because it will fail to detect files added after running cmake.
+
+If you had the following source tree
+
+[source, verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── hdl
+│   ├── DFlipFlop.v
+│   └── ShiftReg.v
+└── tb
+    ├── tb_DFlipFlop.sv
+    └── tb_ShiftReg.sv
+
+in your CMakeLists.txt file might have something like
+
+[source, cmake]
+file(GLOB hdlfiles hdl/*)
+file(GLOB tbfiles tb/*)
+
+we might want to add message function calls to check to make sure that cmake is finding the files as expected.  We end up with the cmake file
+
+[source,cmake]
+cmake_minimum_required(VERSION 3.3)
+project(globfilelists)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+file(GLOB hdlfiles hdl/*.v)
+file(GLOB tbfiles tb/*.sv)
+message(STATUS "hdlfiles ${hdlfiles}")
+message(STATUS "tbfiles ${tbfiles}")
+
+==== readFilelist
+
+More experienced build system users tend to recommend having an explicit list of files, rather than globing for the files in a directory.
+
+Putting this list in a separate file than your CMakeLists.txt file makes generating this list easier, enables you to reuse the file list across different build systems, and reduces clutter.
+
+In util_functions.cmake, viv-prj-gen provides a function called "readFilelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
+
+for example, in my hdl folder, I might have a listfile.txt file that says
+
+[source, verbatim]
+DFlipFlop.v
+ShiftReg.v
+
+Then, in your CMakeLists.txt file, call the readFilelist function.  The same example as before might look something like this.
+
+[source,cmake]
+----
+cmake_minimum_required(VERSION 3.3)
+project(filelists)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+include(viv-prj-gen/util_functions.cmake)
+
+file(GLOB hdllistfile hdl/listfile.txt)
+file(GLOB tblistfile tb/listfile.txt)
+readFilelist(hdlfiles ${hdllistfile})
+readFilelist(tbfiles ${tblistfile})
+
+message(STATUS "hdlfiles ${hdlfiles}")
+message(STATUS "tbfiles ${tbfiles}")
+----
+
+on a tree that that looks like this
+
+[source, verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── hdl
+│   ├── DFlipFlop.v
+│   ├── filelist.txt
+│   └── ShiftReg.v
+├── tb
+│   ├── filelist.txt
+│   ├── tb_DFlipFlop.sv
+│   └── tb_ShiftReg.sv
+└── viv-prj-gen
+    ├── demos
+    ├── docs
+    ├── LICENSE
+    ├── README.md
+    ├── tcl
+    ├── tests
+    ├── util_functions.cmake
+    └── vivgen_functions.cmake
+
+== Generating a Vivado Project
+
+== Generating a bit file using nonproject flow
+== Generating a hardware description file from a block diagram
+== Generating a XACT IP wrapper
+== Generating a xci file
