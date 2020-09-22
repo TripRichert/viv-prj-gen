@@ -182,6 +182,8 @@ file(GLOB tbfiles tb/*.sv)
 message(STATUS "hdlfiles ${hdlfiles}")
 message(STATUS "tbfiles ${tbfiles}")
 
+WARNING: glob only works on files that exist when cmake is run.  If you need to support generated files, I recommend using the set function.  cmake provides variables: CMAKE_BINARY_DIR for your build folder and CMAKE_CURRENT_LIST_DIRECTORY for the directory of the cmake file.  Use those to get the full path when not using glob.
+
 ==== readFilelist
 
 More experienced build system users tend to recommend having an explicit list of files, rather than globing for the files in a directory.
@@ -241,6 +243,120 @@ on a tree that that looks like this
     └── vivgen_functions.cmake
 
 == Generating a Vivado Project
+
+Let's generate a Vivado project.  We are going to use the genvivprj_func function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc.
+
+The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.  I added some data files that the testbenches might read from.
+
+[source, verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── hdl
+│   ├── DFlipFlop.v
+│   ├── filelist.txt
+│   └── ShiftReg.v
+├── tb
+│   ├── filelist.txt
+│   ├── tb_DFlipFlop.sv
+│   └── tb_ShiftReg.sv
+├── testdata
+│   ├── DFlipFlop
+│   │   ├── DFlipFlop_test0.dat
+│   │   └── DFlipFlop_test1.dat
+│   ├── filelist.txt
+│   └── ShiftReg
+│       ├── ShiftReg_test0.dat
+│       └── ShiftReg_test1.dat
+└── viv-prj-gen
+    |
+    .
+    .
+    .
+
+The testdata/filelist.txt would look like this
+
+[source, verbatim]
+DFlipFlop/DFlipFlop_test0.dat
+DFlipFlop/DFlipFlop_test1.dat
+ShiftReg/ShiftReg_test0.dat
+ShiftReg/ShiftReg_test1.dat
+
+We need to include our two cmake function files and find our source code.
+
+[source, cmake]
+----
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/utils_functions.cmake)
+
+file(GLOB hdllistfile hdl/filelist.txt)
+file(GLOB tblistfile tb/filelist.txt)
+file(GLOB datalistfile testdata/filelist.txt)
+
+readFilelist(hdlfiles ${hdllistfile})
+readFilelist(tbfiles ${tblistfile})
+readFilelist(datafiles ${datalistfile})
+----
+
+The vivgen_func requires us to give it a name for its project, a partname for the chip the project is for, and some kind of source files.  Let's put our design on a zynq chip and call our project "test.
+
+[source, cmake]
+----
+set(mypartname "XC7Z020-1CLG484")
+
+genvivprj_func(
+  PRJNAME test
+  PARTNAME ${mypartname}
+  VERILOGSYNTHFILES ${hdlfiles}
+  SVSIMFILES ${tbfiles}
+  DATAFILES ${datafiles}
+  )
+----
+
+That's all we need.  Our file will now look like this
+
+[source, cmake]
+----
+cmake_minimum_required(VERSION 3.3)
+project(prjgen)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/utils_functions.cmake)
+
+file(GLOB hdllistfile hdl/filelist.txt)
+file(GLOB tblistfile tb/filelist.txt)
+file(GLOB datalistfile testdata/filelist.txt)
+
+readFilelist(hdlfiles ${hdllistfile})
+readFilelist(tbfiles ${tblistfile})
+readFilelist(datafiles ${datalistfile})
+
+set(mypartname "XC7Z020-1CLG484")
+
+genvivprj_func(
+  PRJNAME test
+  PARTNAME ${mypartname}
+  VERILOGSYNTHFILES ${hdlfiles}
+  SVSIMFILES ${tbfiles}
+  DATAFILES ${datafiles}
+  )
+
+----
+
+If we navigate into the build directory, run "cmake ..", then "make help", it will print something like
+
+[source, verbatim]
+The following are some of the valid targets for this Makefile:
+... all (the default if no target is provided)
+... clean
+... depend
+... rebuild_cache
+... edit_cache
+... test_genvivprj
+
+The last option is the target that our function added.  source your vivado distributions settings64.sh or settings64.bat to tell your cmdline where your vivado is.  Then run "make test_genvivprj" from your build directory.  Vivado will run and generate the project!  
 
 == Generating a bit file using nonproject flow
 == Generating a hardware description file from a block diagram
