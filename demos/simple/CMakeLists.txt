@@ -22,18 +22,7 @@ genvivprj_func(
   UNSCOPEDLATEXDC ${unscopedLateConstrFiles}
   )
 
-set(nonprjscripts ${nonprjscripts}
-  "tcl/synth.tcl"
-  "tcl/place.tcl"
-  "tcl/route.tcl"
-  "tcl/writebit.tcl"
-  )
-
 set(nonprjname "nonprjdemo")
-file(GLOB synthfile "tcl/synth.tcl")
-file(GLOB placefile "tcl/place.tcl")
-file(GLOB routefile "tcl/route.tcl")
-file(GLOB writebitfile "tcl/writebit.tcl")
 
 vivnonprjbitgen_func(
   PRJNAME ${nonprjname}

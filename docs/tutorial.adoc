@@ -244,7 +244,9 @@ on a tree that that looks like this
 
 == Generating a Vivado Project
 
-Let's generate a Vivado project.  We are going to use the genvivprj_func function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc.
+A Vivado project is useful for interacting with the code using Vivado's gui.  This is great for nonautomated simulations.
+
+Let's generate one.  We are going to use the genvivprj_func function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc .
 
 The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.  I added some data files that the testbenches might read from.
 
@@ -359,6 +361,134 @@ The following are some of the valid targets for this Makefile:
 The last option is the target that our function added.  source your vivado distributions settings64.sh or settings64.bat to tell your cmdline where your vivado is.  Then run "make test_genvivprj" from your build directory.  Vivado will run and generate the project!  
 
 == Generating a bit file using nonproject flow
+
+To generate a bit file, we use the vivnonprjbitgen_func function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
+
+To generate a bit file, we need a constraint file to tell vivado what logical ports go to what physical pins.
+
+Let's say we've got a project directory structure that looks like this.
+
+[source, verbatim]
+.
+├── CMakeLists.txt
+├── constraints
+│   └── unscopedlate
+│       ├── filelist.txt
+│       └── system.xdc
+├── hdl
+│   ├── DemoTop.vhdl
+│   ├── DFlipFlop.vhdl
+│   └── filelist.txt
+├── tb
+│   ├── filelist.txt
+│   └── tb_DFlipFlop.vhdl
+└── viv-prj-gen
+    |
+    .
+    .
+    .
+
+We still might want to make edits using the vivado gui, so, we'll create a vivado project like the last in the last section.
+
+This time, we won't have any data files, but we'll add the constraint file.
+
+[source, cmake]
+----
+cmake_minimum_required(VERSION 3.3)
+project(nonprj)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/utils_functions.cmake)
+
+file(GLOB hdllistfile hdl/filelist.txt)
+file(GLOB tblistfile tb/filelist.txt)
+file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
+
+readFilelist(hdlfiles ${hdllistfile})
+readFilelist(tbfiles ${tblistfile})
+readFilelist(lateconstrfiles ${lateconstrlistfile})
+
+set(mypartname "XC7Z020-1CLG484")
+
+genvivprj_func(
+  PRJNAME test
+  PARTNAME ${mypartname}
+  VHDLSYNTHFILES ${hdlfiles}
+  VHDLSIMFILES ${tbfiles}
+  UNSCOPEDLATEXDC ${lateconstrfiles}
+ )
+----
+
+The function call to define a recipe for a bit file is fairly similar.  The bit file doesn't need the testbench.  It needs to know what the name of the top module is, and we need to get from it the location of the output bitfile.
+
+[source, cmake]
+set(nonprjname "nonprjdemo")
+vivnonprjbitgen_func(
+  PRJNAME ${nonprjname}
+  TOPNAME DemoTop
+  PARTNAME ${partname}
+  VHDLFILES ${hdlfiles}
+  UNSCOPEDLATEXDC ${lateconstrfiles}
+  BITFILE_OUTPUT ${nonprjname}_bitfile
+  )
+
+This creates a recipe for a bitfile, and stores the location it would put the bitfile in the variable nonprjdem_bitfile.
+
+To get this recipe to run, we need to set up a target that depends on that file.  cmake has a function for this called "add_custom_target".
+
+[source, cmake]
+add_custom_target(nonprj
+  DEPENDS ${${nonprjname}_bitfile}
+  )
+
+Now, make help will list nonprj as an option, and running make nonprj will generate our bit file.  The entire cmake file is listed below.
+
+[source,cmake]
+----
+cmake_minimum_required(VERSION 3.3)
+project(prjgen)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/util_functions.cmake)
+
+file(GLOB hdllistfile hdl/filelist.txt)
+file(GLOB tblistfile tb/filelist.txt)
+file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
+
+readFilelist(hdlfiles ${hdllistfile})
+readFilelist(tbfiles ${tblistfile})
+readFilelist(lateconstrfiles ${lateconstrlistfile})
+
+set(mypartname "XC7Z020-1CLG484")
+
+genvivprj_func(
+  PRJNAME test
+  PARTNAME ${mypartname}
+  VHDLSYNTHFILES ${hdlfiles}
+  VHDLSIMFILES ${tbfiles}
+  UNSCOPEDLATEXDC ${lateconstrfiles}
+  )
+
+set(nonprjname "nonprjdemo")
+
+vivnonprjbitgen_func(
+  PRJNAME ${nonprjname}
+  TOPNAME DemoTop
+  PARTNAME ${partname}
+  VHDLFILES ${hdlfiles}
+  UNSCOPEDLATEXDC ${lateconstrfiles}
+  BITFILE_OUTPUT ${nonprjname}_bitfile
+  )
+
+add_custom_target(nonprj
+  DEPENDS ${${nonprjname}_bitfile}
+  )
+----
+
 == Generating a hardware description file from a block diagram
 == Generating a XACT IP wrapper
 == Generating a xci file
