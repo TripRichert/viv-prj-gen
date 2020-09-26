@@ -9,10 +9,10 @@
 | 
 If file of filename passed to this function is changed, cmake will be rerun
 
-| Input +
-Argument
+| Positional +
+Arguments
 |
-list ARGV:: files that, if edited, will cause cmake to rerun
+input list ARGV:: files that, if edited, will cause cmake to rerun
 
 | Attribution
 |
@@ -27,13 +27,11 @@ user hachanuy on reddit provided this solution https://www.reddit.com/r/cmake/co
 | 
 reads file that contains newline spearated list of filepaths, and stores the full filepaths in a list
 
-| Output +
-Argument
+| Positional +
+Arguments
 |
-string filelist:: variable name to use as reference to store list of filenames in
-| Input +
-Argument
-|
-string fullPathToFilename:: name of file containing newline separated list of file names to be stored in filelist.  Paths should be relative to the directory offullPathToFilename or should be absolute.
+*output* string filelist:: variable name to use as reference to store list of filenames in
+
+*input* string fullPathToFilename:: name of file containing newline separated list of file names to be stored in filelist.  Paths should be relative to the directory of fullPathToFilename or should be absolute.
 
 |===
