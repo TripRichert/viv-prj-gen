@@ -51,7 +51,7 @@ link: https://www.p-code.org/ttask/
 
 If Edalize or hdlmake support your needs, they interface with more tools and work better with simulation frameworks like VUnit.  I strongly recommend you check them out.
 
-I think the main benefits of viv-prj-gen are that it is simple, well documented, cmake based (has benefits and drawbacks, python based is better for simulation), supports vivado block diagrams for zynq projects, and is easy to extend.  The main downsides are that its not python based (and thus harder to integrate with VUnit testing), only supports vivado (writing cmake functions to support other vendors would not be difficult, though), doesn't have organization backing (might not be as well maintained), and isn't as widely used as these other projects.
+I think the main benefits of viv-prj-gen are that it is simple, cmake based (has benefits and drawbacks, python based is better for simulation), supports vivado block diagrams for zynq projects, and is easy to extend.  The main downsides are that its not python based (and thus harder to integrate with VUnit testing), only supports vivado (writing cmake functions to support other vendors would not be difficult, though), doesn't have organization backing (might not be as well maintained), and isn't as widely used as these other projects.
 
 == Terminology and cmake Basics
 
