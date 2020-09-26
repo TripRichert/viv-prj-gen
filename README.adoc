@@ -191,13 +191,13 @@ message(STATUS "tbfiles ${tbfiles}")
 
 WARNING: glob only works on files that exist when cmake is run.  If you need to support generated files, I recommend using the set function.  cmake provides variables: CMAKE_BINARY_DIR for your build folder and CMAKE_CURRENT_LIST_DIRECTORY for the directory of the cmake file.  Use those to get the full path when not using glob.
 
-==== readFilelist
+==== read_filelist
 
 More experienced build system users tend to recommend having an explicit list of files, rather than globing for the files in a directory.
 
 Putting this list in a separate file than your CMakeLists.txt file makes generating this list easier, enables you to reuse the file list across different build systems, and reduces clutter.
 
-In util_functions.cmake, viv-prj-gen provides a function called "readFilelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
+In util_functions.cmake, viv-prj-gen provides a function called "read_filelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
 
 for example, in my hdl folder, I might have a listfile.txt file that says
 
@@ -205,7 +205,7 @@ for example, in my hdl folder, I might have a listfile.txt file that says
 DFlipFlop.v
 ShiftReg.v
 
-Then, in your CMakeLists.txt file, call the readFilelist function.  The same example as before might look something like this.
+Then, in your CMakeLists.txt file, call the read_filelist function.  The same example as before might look something like this.
 
 [source,cmake]
 ----
@@ -218,8 +218,8 @@ include(viv-prj-gen/util_functions.cmake)
 
 file(GLOB hdllistfile hdl/listfile.txt)
 file(GLOB tblistfile tb/listfile.txt)
-readFilelist(hdlfiles ${hdllistfile})
-readFilelist(tbfiles ${tblistfile})
+read_filelist(hdlfiles ${hdllistfile})
+read_filelist(tbfiles ${tblistfile})
 
 message(STATUS "hdlfiles ${hdlfiles}")
 message(STATUS "tbfiles ${tbfiles}")
@@ -302,9 +302,9 @@ file(GLOB hdllistfile hdl/filelist.txt)
 file(GLOB tblistfile tb/filelist.txt)
 file(GLOB datalistfile testdata/filelist.txt)
 
-readFilelist(hdlfiles ${hdllistfile})
-readFilelist(tbfiles ${tblistfile})
-readFilelist(datafiles ${datalistfile})
+read_filelist(hdlfiles ${hdllistfile})
+read_filelist(tbfiles ${tblistfile})
+read_filelist(datafiles ${datalistfile})
 ----
 
 The vivgen_func requires us to give it a name for its project, a partname for the chip the project is for, and some kind of source files.  Let's put our design on a zynq chip and call our project "test.
@@ -338,9 +338,9 @@ file(GLOB hdllistfile hdl/filelist.txt)
 file(GLOB tblistfile tb/filelist.txt)
 file(GLOB datalistfile testdata/filelist.txt)
 
-readFilelist(hdlfiles ${hdllistfile})
-readFilelist(tbfiles ${tblistfile})
-readFilelist(datafiles ${datalistfile})
+read_filelist(hdlfiles ${hdllistfile})
+read_filelist(tbfiles ${tblistfile})
+read_filelist(datafiles ${datalistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 
@@ -413,9 +413,9 @@ file(GLOB hdllistfile hdl/filelist.txt)
 file(GLOB tblistfile tb/filelist.txt)
 file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
 
-readFilelist(hdlfiles ${hdllistfile})
-readFilelist(tbfiles ${tblistfile})
-readFilelist(lateconstrfiles ${lateconstrlistfile})
+read_filelist(hdlfiles ${hdllistfile})
+read_filelist(tbfiles ${tblistfile})
+read_filelist(lateconstrfiles ${lateconstrlistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 
@@ -466,9 +466,9 @@ file(GLOB hdllistfile hdl/filelist.txt)
 file(GLOB tblistfile tb/filelist.txt)
 file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
 
-readFilelist(hdlfiles ${hdllistfile})
-readFilelist(tbfiles ${tblistfile})
-readFilelist(lateconstrfiles ${lateconstrlistfile})
+read_filelist(hdlfiles ${hdllistfile})
+read_filelist(tbfiles ${tblistfile})
+read_filelist(lateconstrfiles ${lateconstrlistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 

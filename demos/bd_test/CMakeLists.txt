@@ -11,7 +11,7 @@ set(boardname "em.avnet.com:zed:part0:1.4")
 include(../../vivgen_functions.cmake)
 include(../../util_functions.cmake)
 file(GLOB hdlfilelistname ipxact_files/myip/filelist.txt)
-readFilelist(hdlfiles ${hdlfilelistname})
+read_filelist(hdlfiles ${hdlfilelistname})
 
 add_vivado_xact_ip(
   IPNAME myip

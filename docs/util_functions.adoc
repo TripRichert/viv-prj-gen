@@ -20,7 +20,7 @@ user hachanuy on reddit provided this solution https://www.reddit.com/r/cmake/co
 
 |===
 
-== readFilelist
+== read_filelist
 [cols='h,6a']
 |===
 | Brief

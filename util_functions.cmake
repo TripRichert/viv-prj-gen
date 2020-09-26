@@ -4,12 +4,12 @@ function(watch)
   set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGV} )
 endfunction()
 
-## readFilelist converts newline separated entries of filenames in
+## read_filelist converts newline separated entries of filenames in
 # the passed fullPathToFile to a list and stores in filelist
 # \param filelist the filename to store the list in
 # \param fullPathToFile the filename of the file to be read
 # any time the passed file is modified, cmake will rerun
-function(readFilelist filelist fullPathToFile)
+function(read_filelist filelist fullPathToFile)
   if(NOT EXISTS ${fullPathToFile})
     message(FATAL_ERROR "File ${fullPathToFile} does not exist")
   endif()
@@ -30,14 +30,14 @@ function(readFilelist filelist fullPathToFile)
 endfunction()
 
 
-## readFilelist_withSubstitution converts newline separated entries of
+## read_filelist_use_substitution converts newline separated entries of
 # filenames in the passed fullPathToFile to a list and stores in filelist
 # cmake variable names can be part of path
 # nesting of variable names is not allowed (don't make me recurse)
 # \param filelist the filename to store the list in
 # \param fullPathToFile the filename of the file to be read
 # any time the passed file is modified, cmake will rerun
-function(readFilelist_withSubstitution filelist fullPathToFile)
+function(read_filelist_use_substitution filelist fullPathToFile)
   if(NOT EXISTS ${fullPathToFile})
     message(FATAL_ERROR "File ${fullPathToFile} does not exist")
   endif()
