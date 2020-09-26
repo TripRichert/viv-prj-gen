@@ -14,7 +14,7 @@ file(GLOB sim08files vhdl-extras/rtl/test_2008/*.vhdl)
 set(partname "XC7Z020-1CLG484")
 
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME extras
   VHDLSYNTHFILES ${hdlfiles}
   VHDLSIMFILES ${simfiles}
@@ -22,7 +22,7 @@ genvivprj_func(
   NOVHDL2008
   )
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME extras_2008
   VHDLSYNTHFILES ${hdlfiles} ${hdl08files}
   VHDLSIMFILES ${simfiles} ${sim08files}

@@ -11,7 +11,7 @@ include(../../vivgen_functions.cmake)
 include(../../util_functions.cmake)
 
 file(GLOB xcifile xcidir/*.xci)
-cpyxci_func(
+copy_vivado_xcifile(
     XCIPATH ${xcifile}
     PARTNAME ${partname}
     DESTDIR ${CMAKE_BINARY_DIR}

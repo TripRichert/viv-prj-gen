@@ -8,7 +8,7 @@ file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 #file used to parse commandline arguments
 file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/cmdline_dict.tcl")
 
-function(genvivprj_func)
+function(add_vivado_devel_project)
   set(options NOVHDL2008)
   set(args
     PRJNAME
@@ -85,7 +85,7 @@ function(genvivprj_func)
 endfunction()
 
 file(GLOB cpyxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/cpy_xci.tcl)
-function(cpyxci_func)
+function(copy_vivado_xcifile)
   set(options VERILOG)
   set(args
     XCIPATH
@@ -144,7 +144,7 @@ file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpr
 file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
 file(GLOB nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
 
-function(vivnonprjbitgen_func)
+function(add_vivado_nonprj_bitfile)
   set(options VHDL2008)
   set(args
     PRJNAME
@@ -269,7 +269,7 @@ endfunction()
 file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
 file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.tcl")
 
-function(genip_func)
+function(add_vivado_xact_ip)
   set(options NODELETE)
   set(args
     IPNAME
@@ -391,7 +391,7 @@ function(genip_func)
 endfunction()
 
 file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
-function(genxci_func)
+function(add_vivado_xcifile)
   set(options VERILOG)
   set(args
     XCINAME
@@ -446,7 +446,7 @@ function(genxci_func)
 endfunction()
 
 file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdhdf.tcl)
-function(genhdf_func)
+function(add_vivado_bd_hdf)
   set(options VERILOG)
   set(args
     PRJNAME

@@ -15,7 +15,7 @@ readFilelist_withSubstitution(hdlfiles ${hdlfilelistname})
 file(GLOB unscopedLateConstrFileListName constraints/unscopedlate/filelist.txt)
 readFileList(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME testprj
   PARTNAME ${partname}
   VHDLSYNTHFILES ${hdlfiles}
@@ -24,7 +24,7 @@ genvivprj_func(
 
 set(nonprjname "nonprjdemo")
 
-vivnonprjbitgen_func(
+add_vivado_nonprj_bitfile(
   PRJNAME ${nonprjname}
   TOPNAME demo_top
   PARTNAME ${partname}
@@ -37,7 +37,7 @@ add_custom_target(nonprj
   DEPENDS ${${nonprjname}_bitfile}
   )
 
-genip_func(
+add_vivado_xact_ip(
   IPNAME genff
   PARTNAME ${partname}
   LIBNAME test

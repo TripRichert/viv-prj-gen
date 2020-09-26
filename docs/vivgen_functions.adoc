@@ -1,7 +1,7 @@
 = vivgen_functions.cmake API Documentation
 :toc:
 
-== genvivprj_func
+== add_vivado_devel_project
 
 [cols='h,6a']
 |===
@@ -54,7 +54,7 @@ intended for simulation.  Will fail if vivado project already exists.
 
 |===
 
-== vivnonprjbitgen_func
+== add_vivado_nonprj_bitfile
 
 [cols='h,6a']
 |===
@@ -109,7 +109,7 @@ nonproject generation of a bit file
 |===
 
 
-== genip_func
+== add_vivado_xact_ip
 
 [cols='h,6a']
 |===
@@ -160,7 +160,7 @@ Parameter
 soft links source files to ipxact wrapper's directory and generates an ipxact wrapper for them
 |===
 
-== genxci_func
+== add_vivado_xcifile
 
 [cols='h,6a']
 |===
@@ -194,7 +194,7 @@ Parameters
 Generates xci file using passed script
 |===
 
-== genhdf_func
+== add_vivado_bd_hdf
 
 [cols='h,6a']
 |===

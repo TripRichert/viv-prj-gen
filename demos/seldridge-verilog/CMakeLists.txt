@@ -12,14 +12,14 @@ file(GLOB sqrtfiles verilog/src/pipeline_registers.v verilog/src/sqrt_generic.v)
 set(partname "XC7Z020-1CLG484")
 
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME verilog
   VERILOGSYNTHFILES ${vfiles}
   VERILOGSIMFILES ${simfiles}
   PARTNAME ${partname}
   )
 
-genip_func(
+add_vivado_xact_ip(
   IPNAME sqrt
   PARTNAME ${partname}
   LIBNAME test

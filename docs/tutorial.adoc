@@ -246,7 +246,7 @@ on a tree that that looks like this
 
 A Vivado project is useful for interacting with the code using Vivado's gui.  This is great for nonautomated simulations.
 
-Let's generate one.  We are going to use the genvivprj_func function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc .
+Let's generate one.  We are going to use the add_vivado_devel_project function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc .
 
 The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.  I added some data files that the testbenches might read from.
 
@@ -306,7 +306,7 @@ The vivgen_func requires us to give it a name for its project, a partname for th
 ----
 set(mypartname "XC7Z020-1CLG484")
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VERILOGSYNTHFILES ${hdlfiles}
@@ -337,7 +337,7 @@ readFilelist(datafiles ${datalistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VERILOGSYNTHFILES ${hdlfiles}
@@ -362,7 +362,7 @@ The last option is the target that our function added.  source your vivado distr
 
 == Generating a bit file using nonproject flow
 
-To generate a bit file, we use the vivnonprjbitgen_func function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
+To generate a bit file, we use the add_vivado_nonprj_bitfile function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
 
 To generate a bit file, we need a constraint file to tell vivado what logical ports go to what physical pins.
 
@@ -412,7 +412,7 @@ readFilelist(lateconstrfiles ${lateconstrlistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VHDLSYNTHFILES ${hdlfiles}
@@ -425,7 +425,7 @@ The function call to define a recipe for a bit file is fairly similar.  The bit 
 
 [source, cmake]
 set(nonprjname "nonprjdemo")
-vivnonprjbitgen_func(
+add_vivado_nonprj_bitfile(
   PRJNAME ${nonprjname}
   TOPNAME DemoTop
   PARTNAME ${partname}
@@ -465,7 +465,7 @@ readFilelist(lateconstrfiles ${lateconstrlistfile})
 
 set(mypartname "XC7Z020-1CLG484")
 
-genvivprj_func(
+add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VHDLSYNTHFILES ${hdlfiles}
@@ -475,7 +475,7 @@ genvivprj_func(
 
 set(nonprjname "nonprjdemo")
 
-vivnonprjbitgen_func(
+add_vivado_nonprj_bitfile(
   PRJNAME ${nonprjname}
   TOPNAME DemoTop
   PARTNAME ${partname}

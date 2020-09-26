@@ -90,7 +90,7 @@ set(xcilist "")
 set(xcistamplist "")
 foreach(filename ${xcigenfiles})
   get_filename_component(xciname ${filename} NAME_WE)
-  genxci_func(
+  add_vivado_xcifile(
     XCINAME ${xciname}
     PARTNAME ${partname}
     XCIGENSCRIPT ${filename}
@@ -116,7 +116,7 @@ file(GLOB postsynthtcl
 )
 
 
-# genvivprj_func(
+# add_vivado_devel_project(
 #   PRJNAME corundum
 #   VERILOGSYNTHFILES ${hdlfiles}
 #   PARTNAME ${partname}
@@ -128,7 +128,7 @@ file(GLOB basesynthscript ../../tcl/default_scripts/nonprj_synth.tcl)
 message(STATUS "basesynth "${basesynthscript})
 set(nonprjname nic_x10)
 set(miscparam -synthbasescript ${basesynthscript})
-vivnonprjbitgen_func(
+add_vivado_nonprj_bitfile(
   PRJNAME ${nonprjname}
   PARTNAME ${partname}
   TOPNAME fpga

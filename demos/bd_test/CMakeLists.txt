@@ -13,7 +13,7 @@ include(../../util_functions.cmake)
 file(GLOB hdlfilelistname ipxact_files/myip/filelist.txt)
 readFilelist(hdlfiles ${hdlfilelistname})
 
-genip_func(
+add_vivado_xact_ip(
   IPNAME myip
   PARTNAME ${partname}
   LIBNAME test
@@ -27,7 +27,7 @@ add_custom_target(test_ip ALL
   )
 
 file(GLOB bdscript scripts/*_bd.tcl)
-genhdf_func(
+add_vivado_bd_hdf(
   PRJNAME test
   PARTNAME ${partname}
   BDSCRIPT ${bdscript}
