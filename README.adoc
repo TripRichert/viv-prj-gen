@@ -29,11 +29,11 @@ Before digging too far into my stuff, there are some good alternatives out there
 
 All of them use tcl under the hood, but when interfacing with the developer, some take different approaches.
 
-Edalize:: python based, vendor agnostic, supports building bit files and simulation
+Edalize:: python based, vendor agnostic, supports synthesis and simulation
 
 link: https://github.com/olofk/edalize
 
-hdlmake:: python based, vendor agnostic, supports building bit files and simulation
+hdlmake:: python based, vendor agnostic, supports building synthesis and simulation
 
 link: https://ohwr.org/projects/hdl-make/
 
