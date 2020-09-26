@@ -191,6 +191,13 @@ message(STATUS "tbfiles ${tbfiles}")
 
 WARNING: glob only works on files that exist when cmake is run.  If you need to support generated files, I recommend using the set function.  cmake provides variables: CMAKE_BINARY_DIR for your build folder and CMAKE_CURRENT_LIST_DIRECTORY for the directory of the cmake file.  Use those to get the full path when not using glob.
 
+==== get_filename_component
+
+An absolute path can be gotten from a relative path using the function get_filename_component with the REALPATH mode like so
+
+[source, cmake]
+get_filename_component(hdlfile hdl/blinky.v REALPATH)
+
 ==== read_filelist
 
 More experienced build system users tend to recommend having an explicit list of files, rather than globing for the files in a directory.
@@ -216,8 +223,8 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 include(viv-prj-gen/util_functions.cmake)
 
-file(GLOB hdllistfile hdl/listfile.txt)
-file(GLOB tblistfile tb/listfile.txt)
+get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
+get_filename_componnet(tblistfile tb/filelist.txt REALPATH)
 read_filelist(hdlfiles ${hdllistfile})
 read_filelist(tbfiles ${tblistfile})
 
@@ -298,9 +305,9 @@ We need to include our two cmake function files and find our source code.
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/utils_functions.cmake)
 
-file(GLOB hdllistfile hdl/filelist.txt)
-file(GLOB tblistfile tb/filelist.txt)
-file(GLOB datalistfile testdata/filelist.txt)
+get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
+get_filename_component(tblistfile tb/filelist.txt REALPATH)
+get_filename_component(datalistfile testdata/filelist.txt REALPATH)
 
 read_filelist(hdlfiles ${hdllistfile})
 read_filelist(tbfiles ${tblistfile})
@@ -334,9 +341,9 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/utils_functions.cmake)
 
-file(GLOB hdllistfile hdl/filelist.txt)
-file(GLOB tblistfile tb/filelist.txt)
-file(GLOB datalistfile testdata/filelist.txt)
+get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
+get_filename_component(tblistfile tb/filelist.txt REALPATH)
+get_filename_component(datalistfile testdata/filelist.txt REALPATH)
 
 read_filelist(hdlfiles ${hdllistfile})
 read_filelist(tbfiles ${tblistfile})
@@ -409,9 +416,9 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/utils_functions.cmake)
 
-file(GLOB hdllistfile hdl/filelist.txt)
-file(GLOB tblistfile tb/filelist.txt)
-file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
+get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
+get_filename_component(tblistfile tb/filelist.txt REALPATH)
+get_filename_component(lateconstrlistfile constraints/unscopedlate/filelist.txt REALPATH)
 
 read_filelist(hdlfiles ${hdllistfile})
 read_filelist(tbfiles ${tblistfile})
@@ -462,9 +469,9 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/util_functions.cmake)
 
-file(GLOB hdllistfile hdl/filelist.txt)
-file(GLOB tblistfile tb/filelist.txt)
-file(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt)
+get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
+get_filename_component(GLOB tblistfile tb/filelist.txt REALPATH)
+get_filename_component(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt REALPATH)
 
 read_filelist(hdlfiles ${hdllistfile})
 read_filelist(tbfiles ${tblistfile})
