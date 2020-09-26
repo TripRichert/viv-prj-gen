@@ -13,7 +13,7 @@ include(../../util_functions.cmake)
 file(GLOB hdlfilelistname hdl/filelist.txt)
 read_filelist(hdlfiles ${hdlfilelistname})
 file(GLOB unscopedLateConstrFileListName constraints/unscopedlate/filelist.txt)
-readFileList(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
+read_filelist(unscopedLateConstrFiles ${unscopedLateConstrFileListName})
 
 add_vivado_devel_project(
   PRJNAME testprj
