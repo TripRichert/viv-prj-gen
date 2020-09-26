@@ -33,7 +33,7 @@ Edalize:: python based, vendor agnostic, supports synthesis and simulation
 
 link: https://github.com/olofk/edalize
 
-hdlmake:: python based, vendor agnostic, supports building synthesis and simulation
+hdlmake:: python based, vendor agnostic, supports synthesis and simulation
 
 link: https://ohwr.org/projects/hdl-make/
 
