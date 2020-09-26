@@ -136,7 +136,7 @@ add_vivado_nonprj_bitfile(
   XCIFILES ${xcilist}
   UNSCOPEDNORMALXDC ${constrfiles}
   SYNTHSCRIPT ${synthscript}
-  SCRIPTDEPS ${basesynthscript}
+  DEPENDS ${basesynthscript}
   MISCPARAMS ${miscparam}
   BITFILE_OUTPUT bitfile
   )

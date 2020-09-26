@@ -138,7 +138,7 @@ list [SVSIMFILES]:: system verilog sim only files, must exist at config time
 list [SVSIMFILES_GEN]:: system verilog sim onlyfiles, not checked for existance
 list [PREIPXSCRIPTS]:: list of tcl scripts to run before ipx core is generated
 list [POSTIPXSCRIPTS]:: list tcl scripts to run after ipx core is generated
-list [SCRIPTDEPS]::  list of dependencies other than source files passed through other parameters
+list [DEPENDS]::  list of dependencies other than source files passed through other parameters
 list [MISCPARAMS]:: any data custom scripts need, will be stored in tcl ${miscparam} variable
 noargs [NODELETE]:: option, when present, project used to generate ip will not be deleted
 

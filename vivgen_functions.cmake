@@ -177,7 +177,7 @@ function(add_vivado_nonprj_bitfile)
     ${src_file_types}
     ${gen_file_types}
     XCIFILES 
-    SCRIPTDEPS 
+    DEPENDS 
     MISCPARAMS
     )
   CMAKE_PARSE_ARGUMENTS(
@@ -259,7 +259,7 @@ function(add_vivado_nonprj_bitfile)
   set(bitfile_output "vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit")
   add_custom_command(OUTPUT "${bitfile_output}"
     COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
-    DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_SCRIPTDEPS}
+    DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_DEPENDS}
     )
   if (NOT ${vivnonprj_BITFILE_OUTPUT} STREQUAL "")
     set(${vivnonprj_BITFILE_OUTPUT} "${bitfile_output}" PARENT_SCOPE)
@@ -292,7 +292,7 @@ function(add_vivado_xact_ip)
     ${gen_file_types}
     PREIPXSCRIPTS  #run before ipx generated
     POSTIPXSCRIPTS #run after ipx generated
-    SCRIPTDEPS #not passed to tcl, is deps
+    DEPENDS #not passed to tcl, is deps
     MISCPARAMS #used for preipx and postipx
     )
   CMAKE_PARSE_ARGUMENTS(
@@ -381,7 +381,7 @@ function(add_vivado_xact_ip)
   add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui ${ipdir}/${genip_IPNAME}.stamp
     COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} ${miscparamkey} {${miscparamstring}} ${laststring}
     COMMAND ${CMAKE_COMMAND} -E touch ${ipdir}/${genip_IPNAME}.stamp
-    DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript} ${genip_SCRIPTDEPS} ${genip_PREIPXSCRIPTS} ${genip_POSTIPXSCRIPTS}
+    DEPENDS ${newvhdlfiles} ${newverilogfiles} ${newsvfiles} ${genipscript} ${vivprjprocsscript} ${cmdlinedictprocsscript} ${genip_DEPENDS} ${genip_PREIPXSCRIPTS} ${genip_POSTIPXSCRIPTS}
     )
 
   if (NOT ${genip_IP_STAMPOUTPUT} STREQUAL "")
