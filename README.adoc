@@ -189,7 +189,7 @@ file(GLOB tbfiles tb/*.sv)
 message(STATUS "hdlfiles ${hdlfiles}")
 message(STATUS "tbfiles ${tbfiles}")
 
-WARNING: glob only works on files that exist when cmake is run.  If you need to support generated files, I recommend using the set function.  cmake provides variables: CMAKE_BINARY_DIR for your build folder and CMAKE_CURRENT_LIST_DIRECTORY for the directory of the cmake file.  Use those to get the full path when not using glob.
+WARNING: glob only works on files that exist when cmake is run.
 
 ==== get_filename_component
 
@@ -197,6 +197,7 @@ An absolute path can be gotten from a relative path using the function get_filen
 
 [source, cmake]
 get_filename_component(hdlfile hdl/blinky.v REALPATH)
+message(STATUS "hdlfile ${hdlfile}")
 
 ==== read_filelist
 
