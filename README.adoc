@@ -196,7 +196,7 @@ WARNING: glob only works on files that exist when cmake is run.
 An absolute path can be gotten from a relative path using the function get_filename_component with the REALPATH mode like so
 
 [source, cmake]
-get_filename_component(hdlfile hdl/blinky.v REALPATH)
+get_filename_component(hdlfile hdl/DFlipFlop.v REALPATH)
 message(STATUS "hdlfile ${hdlfile}")
 
 ==== read_filelist
