@@ -11,6 +11,7 @@ Check out the tutorial
 For more detail, look at the api
 
 [vivgen_functions](docs/vivgen_functions.adoc)
+
 [util_functions](docs/util_functions.adoc)
 
 There are examples in the demos directory.
