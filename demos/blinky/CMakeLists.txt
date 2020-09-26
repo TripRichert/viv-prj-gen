@@ -16,7 +16,6 @@ read_filelist(xdcfiles ${xdclistfile})
 
 set(partname "XC7Z020-1CLG484")
 
-
 add_vivado_devel_project(
   PRJNAME blinky
   VERILOGSYNTHFILES ${hdlfiles}
@@ -38,6 +37,36 @@ add_custom_target(blinky_nonprj
   DEPENDS ${blinky_bitfile}
   )
 
+get_filename_component(edabuildscript build.py REALPATH)
+
+add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky/blinky.bit
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/synth
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky
+  COMMAND python3 ${edabuildscript} -name blinky -topname blinky_zedboard_z7 -verilogsynthfiles ${hdlfiles} -xdcfiles ${xdcfiles} -partname ${partname} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky
+  DEPENDS ${edabuildscript} ${hdlfiles} ${xdcfiles}
+  )
+
+add_custom_target(eda_blinky_bitfile
+  DEPENDS ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky/blinky.bit
+  )
+
+get_filename_component(edasimscript sim.py REALPATH)
+
+
+set(innerstring "int 1000")
+
+set(miscparamstring "-clk_freq_hz ${innerstring}")
+set(miscparamstring "arg ${miscparamstring}")
+string(REPLACE ";" " " miscparamstring "${miscparamstring}")
+
+
+add_custom_target(eda_blinky_sim
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/sim
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/sim/blinky
+  COMMAND python3 ${edasimscript} -name blinky -topname blinky_tb -verilogfiles ${hdlfiles} ${simfiles} ${tbfiles} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/sim/blinky -parameters ${miscparamstring}
+  DEPENDS ${edabuildscript} ${hdlfiles} ${xdcfiles}
+  )
+  
 
 ###############################################################################
 # MIT LICENSE
