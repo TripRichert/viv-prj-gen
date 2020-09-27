@@ -142,7 +142,7 @@ project(helloworld)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 include(viv-prj-gen/vivgen_functions.cmake)
-include(viv-prj-gen/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/util_functions.cmake)
 
 Included cmake files have their own scope for variables.  The parent variables are copied into the include cmake file's environment.  The included cmake file can explicitly set variables in the parent scope.  This is often used in functions to return by value.
 
@@ -222,7 +222,7 @@ project(filelists)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-include(viv-prj-gen/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/util_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_componnet(tblistfile tb/filelist.txt REALPATH)
@@ -254,7 +254,7 @@ on a tree that that looks like this
     ├── README.md
     ├── tcl
     ├── tests
-    ├── util_functions.cmake
+    ├── cmake_utils/util_functions.cmake
     └── vivgen_functions.cmake
 
 == Generating a Vivado Project
@@ -468,7 +468,7 @@ set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 include(viv-prj-gen/vivgen_functions.cmake)
-include(viv-prj-gen/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/util_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_component(GLOB tblistfile tb/filelist.txt REALPATH)

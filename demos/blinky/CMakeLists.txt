@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(project)
 
 include(../../vivgen_functions.cmake)
-include(../../util_functions.cmake)
+include(../../cmake_utils/util_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_component(tblistfile tb/filelist.txt REALPATH)

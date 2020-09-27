@@ -8,7 +8,7 @@ project(project)
 set(partname "XC7Z010-1CLG400")
 
 include(../../vivgen_functions.cmake)
-include(../../util_functions.cmake)
+include(../../cmake_utils/util_functions.cmake)
 
 file(GLOB xcifile xcidir/*.xci)
 copy_vivado_xcifile(

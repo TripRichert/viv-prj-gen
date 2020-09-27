@@ -8,7 +8,7 @@ project(project)
 set(partname "XC7Z020-1CLG484")
 
 include(../../vivgen_functions.cmake)
-include(../../util_functions.cmake)
+include(../../cmake_utils/util_functions.cmake)
 
 file(GLOB hdlfilelistname hdl/filelist.txt)
 read_filelist(hdlfiles ${hdlfilelistname})
