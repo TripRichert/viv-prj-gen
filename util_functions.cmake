@@ -91,7 +91,7 @@ function(read_filelist_use_substitution filelist fullPathToFile)
   
   get_filename_component(pathname ${fullPathToFile} DIRECTORY)
   foreach(filename ${filenames})
-    get_filename_realpath(fullname ${filename} ${pathname}
+    get_filename_realpath(fullname ${filename} ${pathname})
     list(APPEND ${filelist} ${fullname})
   endforeach()
   watch(${fullPathToFile})
