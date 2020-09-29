@@ -4,22 +4,26 @@ project(project)
 include(../../vivgen_functions.cmake)
 include(../../cmake_utils/util_functions.cmake)
 
-get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
-get_filename_component(tblistfile tb/filelist.txt REALPATH)
-get_filename_component(simhdllistfile simhdl/filelist.txt REALPATH)
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
+get_filename_component(tbdepfile tb/deptree.txt REALPATH)
 get_filename_component(xdclistfile constraints/filelist.txt REALPATH)
 
-read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
-read_filelist(simfiles ${simhdllistfile})
+add_dependency_tree_file(placeholder1 ${hdldepfile})
+add_dependency_tree_file(placeholder2 ${tbdepfile})
+
 read_filelist(xdcfiles ${xdclistfile})
+
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+get_filename_component(topsim tb/blinky_tb.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
+get_list_from_dependency_tree(simfiles ${topsim})
 
 set(partname "XC7Z020-1CLG484")
 
 add_vivado_devel_project(
   PRJNAME blinky
-  VERILOGSYNTHFILES ${hdlfiles}
-  VERILOGSIMFILES ${simfiles} ${tbfiles}
+  VERILOGSYNTHFILES ${synthfiles}
+  VERILOGSIMFILES ${simfiles}
   PARTNAME ${partname}
   UNSCOPEDLATEXDC ${xdcfiles}
   )
@@ -28,7 +32,7 @@ add_vivado_nonprj_bitfile(
   PRJNAME blinky
   TOPNAME blinky_zedboard_z7
   PARTNAME ${partname}
-  VERILOGFILES ${hdlfiles}
+  VERILOGFILES ${synthfiles}
   UNSCOPEDLATEXDC ${xdcfiles}
   BITFILE_OUTPUT blinky_bitfile
   )
@@ -42,7 +46,7 @@ get_filename_component(edabuildscript build.py REALPATH)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky/blinky.bit
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/synth
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky
-  COMMAND python3 ${edabuildscript} -name blinky -topname blinky_zedboard_z7 -verilogsynthfiles ${hdlfiles} -xdcfiles ${xdcfiles} -partname ${partname} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky
+  COMMAND python3 ${edabuildscript} -name blinky -topname blinky_zedboard_z7 -verilogsynthfiles ${synthfiles} -xdcfiles ${xdcfiles} -partname ${partname} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/synth/blinky
   DEPENDS ${edabuildscript} ${hdlfiles} ${xdcfiles}
   )
 
@@ -63,8 +67,8 @@ string(REPLACE ";" " " miscparamstring "${miscparamstring}")
 add_custom_target(eda_blinky_sim
   COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/sim
   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${partname}/edalize/sim/blinky
-  COMMAND python3 ${edasimscript} -name blinky -topname blinky_tb -verilogfiles ${hdlfiles} ${simfiles} ${tbfiles} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/sim/blinky -parameters ${miscparamstring}
-  DEPENDS ${edabuildscript} ${hdlfiles} ${xdcfiles}
+  COMMAND python3 ${edasimscript} -name blinky -topname blinky_tb -verilogfiles ${simfiles} -outdir ${CMAKE_BINARY_DIR}/${partname}/edalize/sim/blinky -parameters ${miscparamstring}
+  DEPENDS ${edabuildscript} ${simfiles} ${xdcfiles}
   )
   
 

@@ -15,7 +15,7 @@ set(partname "XC7Z020-1CLG484")
 add_vivado_devel_project(
   PRJNAME verilog
   VERILOGSYNTHFILES ${vfiles}
-  VERILOGSIMFILES ${simfiles}
+  VERILOGSIMFILES ${simfiles} ${vfiles}
   PARTNAME ${partname}
   )
 

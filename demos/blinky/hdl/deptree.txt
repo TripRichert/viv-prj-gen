@@ -1,0 +1,1 @@
+blinky_zedboard_z7.v <= blinky.v

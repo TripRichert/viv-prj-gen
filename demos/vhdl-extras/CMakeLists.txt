@@ -17,7 +17,7 @@ set(partname "XC7Z020-1CLG484")
 add_vivado_devel_project(
   PRJNAME extras
   VHDLSYNTHFILES ${hdlfiles}
-  VHDLSIMFILES ${simfiles}
+  VHDLSIMFILES ${simfiles} ${hdlfiles}
   PARTNAME ${partname}
   NOVHDL2008
   )
@@ -25,7 +25,7 @@ add_vivado_devel_project(
 add_vivado_devel_project(
   PRJNAME extras_2008
   VHDLSYNTHFILES ${hdlfiles} ${hdl08files}
-  VHDLSIMFILES ${simfiles} ${sim08files}
+  VHDLSIMFILES ${hdlfiles} ${hdl08files} ${simfiles} ${sim08files}
   PARTNAME ${partname}
   NOVHDL2008
   )

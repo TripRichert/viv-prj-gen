@@ -82,7 +82,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 if {[diction::checkForKey vhdl08synthfiles {*}$argv]} {
     if {[diction::getDef vhdl08synthfiles {*}$argv] != ""} {
 	vivprj::add_files_to_set sources_1 "VHDL 2008" {*}[diction::getDef vhdl08synthfiles {*}$argv]
-	vivprj::add_files_to_set sim_1 "VHDL 2008" {*}[diction::getDef vhdl08synthfiles {*}$argv]
     }
 }
 
@@ -94,8 +93,6 @@ if {[diction::checkForKeyPair vhdl08simfiles {*}$argv]} {
 if {[diction::checkForKeyPair vhdlsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
 	"VHDL" {*}[diction::getDef vhdlsynthfiles {*}$argv]
-    vivprj::add_files_to_set sim_1 \
-	"VHDL" {*}[diction::getDef vhdlsynthfiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair vhdlsimfiles {*}$argv]} {
@@ -104,8 +101,6 @@ if {[diction::checkForKeyPair vhdlsimfiles {*}$argv]} {
 
 if {[diction::checkForKeyPair verilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"Verilog" {*}[diction::getDef verilogsynthfiles {*}$argv]
-    vivprj::add_files_to_set sim_1 \
 	"Verilog" {*}[diction::getDef verilogsynthfiles {*}$argv]
 }
 
@@ -116,8 +111,6 @@ if {[diction::checkForKeyPair verilogsimfiles {*}$argv]} {
 
 if {[diction::checkForKeyPair systemverilogsynthfiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 \
-	"SystemVerilog" {*}[diction::getDef systemverilogsynthfiles {*}$argv]
-    vivprj::add_files_to_set sim_1 \
 	"SystemVerilog" {*}[diction::getDef systemverilogsynthfiles {*}$argv]
 }
 

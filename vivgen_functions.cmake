@@ -70,6 +70,7 @@ function(add_vivado_devel_project)
   
   foreach(file_type ${file_types})
     set(${file_type} ${genviv_${file_type}} ${genviv_${file_type}_GEN})
+    list(REMOVE_DUPLICATES ${file_type})
   endforeach()
 
   if (genviv_NOVHDL2008)

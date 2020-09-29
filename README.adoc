@@ -325,7 +325,7 @@ add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VERILOGSYNTHFILES ${hdlfiles}
-  SVSIMFILES ${tbfiles}
+  SVSIMFILES ${tbfiles} ${hdlfiles}
   DATAFILES ${datafiles}
   )
 ----
@@ -356,7 +356,7 @@ add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VERILOGSYNTHFILES ${hdlfiles}
-  SVSIMFILES ${tbfiles}
+  SVSIMFILES ${tbfiles} ${hdlfiles}
   DATAFILES ${datafiles}
   )
 
@@ -431,7 +431,7 @@ add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VHDLSYNTHFILES ${hdlfiles}
-  VHDLSIMFILES ${tbfiles}
+  VHDLSIMFILES ${tbfiles} ${hdlfiles}
   UNSCOPEDLATEXDC ${lateconstrfiles}
  )
 ----
@@ -484,7 +484,7 @@ add_vivado_devel_project(
   PRJNAME test
   PARTNAME ${mypartname}
   VHDLSYNTHFILES ${hdlfiles}
-  VHDLSIMFILES ${tbfiles}
+  VHDLSIMFILES ${tbfiles} ${hdlfiles}
   UNSCOPEDLATEXDC ${lateconstrfiles}
   )
 
