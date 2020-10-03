@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(project)
 
 include(../../vivgen_functions.cmake)
-include(../../cmake_utils/util_functions.cmake)
+include(../../cmake_utils/file_functions.cmake)
 
 get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
 get_filename_component(tbdepfile tb/deptree.txt REALPATH)

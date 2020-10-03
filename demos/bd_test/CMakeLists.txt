@@ -9,7 +9,7 @@ set(partname "XC7Z020-1CLG484")
 set(boardname "em.avnet.com:zed:part0:1.4")
 
 include(../../vivgen_functions.cmake)
-include(../../cmake_utils/util_functions.cmake)
+include(../../cmake_utils/file_functions.cmake)
 file(GLOB hdlfilelistname ipxact_files/myip/filelist.txt)
 read_filelist(hdlfiles ${hdlfilelistname})
 

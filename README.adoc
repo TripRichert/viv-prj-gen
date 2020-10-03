@@ -135,14 +135,13 @@ To be able to use the functions in viv-prj-gen, you need to get viv-prj-gen on y
 I recommend using viv-prj-gen as a git submodule or a git subtree.
 
 The start of your CMakeLists.txt might look like this
-
 [source,cmake]
 cmake_minimum_required(VERSION 3.3)
 project(helloworld)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 include(viv-prj-gen/vivgen_functions.cmake)
-include(viv-prj-gen/cmake_utils/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
 
 Included cmake files have their own scope for variables.  The parent variables are copied into the include cmake file's environment.  The included cmake file can explicitly set variables in the parent scope.  This is often used in functions to return by value.
 
@@ -205,7 +204,7 @@ More experienced build system users tend to recommend having an explicit list of
 
 Putting this list in a separate file than your CMakeLists.txt file makes generating this list easier, enables you to reuse the file list across different build systems, and reduces clutter.
 
-In util_functions.cmake, viv-prj-gen provides a function called "read_filelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
+In file_functions.cmake, viv-prj-gen provides a function called "read_filelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
 
 for example, in my hdl folder, I might have a listfile.txt file that says
 
@@ -222,7 +221,7 @@ project(filelists)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-include(viv-prj-gen/cmake_utils/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_componnet(tblistfile tb/filelist.txt REALPATH)
@@ -254,7 +253,7 @@ on a tree that that looks like this
     ├── README.md
     ├── tcl
     ├── tests
-    ├── cmake_utils/util_functions.cmake
+    ├── cmake_utils/file_functions.cmake
     └── vivgen_functions.cmake
 
 == Generating a Vivado Project
@@ -468,7 +467,7 @@ set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 include(viv-prj-gen/vivgen_functions.cmake)
-include(viv-prj-gen/cmake_utils/util_functions.cmake)
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_component(GLOB tblistfile tb/filelist.txt REALPATH)
