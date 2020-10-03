@@ -1,4 +1,4 @@
-= util_functions.cmake API Documentation
+= file_functions.cmake API Documentation
 :toc:
 
 == watch
@@ -30,8 +30,48 @@ reads file that contains newline spearated list of filepaths, and stores the ful
 | Positional +
 Arguments
 |
-*output* string filelist:: variable name to use as reference to store list of filenames in
+*output* list filelist:: variable name to use as reference to store list of filenames in
 
-*input* string fullPathToFilename:: name of file containing newline separated list of file names to be stored in filelist.  Paths should be relative to the directory of fullPathToFilename or should be absolute.
+*input* string fullPathToFilename:: name of file containing newline separated list of file names to be stored in filelist.  Paths in this file should be relative to the directory of fullPathToFilename or should be absolute.  Paths in this file can use cmake variables like a .in file does by surrounding the cmake variable with @ symbols
 
+|===
+
+== add_dependency_tree_file
+[cols='h,6a']
+|===
+| Brief
+| 
+reads file that contains newline spearated list of dependencies, and stores the full filepaths of those dependencies in a set of lists
+
+| Positional +
+Arguments
+|
+*output* list headfile_list:: variable name to use as reference to store full path names of files that are used as heads of the lists
+
+*input* string fullPathToFilename:: name of file containing newline separated entries of the format "headfilename <= dependencyfilename1 dependencyfilename2".  Paths in this file should be relative to the directory of fullPathToFilename or should be absolute  Paths in this file can use cmake variables like a .in file does by surrounding the cmake variable with @ symbols.
+
+| Output Variables
+|
+list deps_file_${hash_headfile}:: for each list entry in headfile_list, an output variable will be generated using the MD5 hash of the fullpath to the head file.  that variable will contain a list of the entries to the right hand side of "<=" in the fullPathToFilename file.  These variables are used by get_list_from_dependency_tree
+
+|===
+
+== get_list_from_dependency_tree
+[cols='h,6a']
+|===
+| Brief
+|
+
+Recursively expands lists from added dependency tree files from passed full path to head file.
+
+| Positional +
+Arguments
+|
+*output* list filelist_varname:: variable name to use as reference to store full path names of files that the fullPathToFilename depends on
+
+*input* string fullPathToFilename:: full path filename of head of list to recursively expand
+
+| Description
+|
+Recursively expands lists from added dependency tree files from passed full path to head file.  The expanded list includes the head file and only contains unique entries.  
 |===
