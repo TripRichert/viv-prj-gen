@@ -153,6 +153,8 @@ Paths that you write should be relative (so that you can move from machine to ma
 
 The paths that you use should be absolute (so that the user doesn't have to know from what directory you are referring to).
 
+The following sections has several methods.  The appendix lists another one.
+
 ==== GLOB
 
 The easiset way to get filepaths in cmake to use is file(GLOB varname path_to_file).  file glob sets the passed variable to a list of full paths of exisiting files that match the passed path.  Sticklers recommend against using glob in cmake because it will fail to detect files added after running cmake.
@@ -255,6 +257,7 @@ on a tree that that looks like this
     ├── tests
     ├── cmake_utils/file_functions.cmake
     └── vivgen_functions.cmake
+
 
 == Generating a Vivado Project
 
@@ -506,3 +509,70 @@ add_custom_target(nonprj
 == Generating a hardware description file from a block diagram
 == Generating a XACT IP wrapper
 == Generating a xci file
+
+[appendix]
+== Terminology and cmake Basics Continued
+=== File paths entry Alternative
+==== add_dependency_tree_file get_list_from_dependency_tree
+
+If you want to build lots of outputs based on your input set, sometimes it is helpful to represent your sources by what other sources they depend on.
+
+cmake_utils provides 2 functions to do this.
+
+add_dependency_tree_file reads a file and saves the dependencies that are listed in it.  get_list_from_dependency_tree reads those dependencies and generates a list from it.
+
+If we had a file tree that looked like this
+
+[source, verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── hdl
+│   ├── DFlipFlop.v
+│   └── ShiftReg.v
+├── file_deplist.txt
+├── tb
+│   ├── tb_DFlipFlop.sv
+│   └── tb_ShiftReg.sv
+└── viv-prj-gen
+    ├── demos
+    ├── docs
+    ├── LICENSE
+    ├── README.md
+    ├── tcl
+    ├── tests
+    ├── cmake_utils/file_functions.cmake
+    └── vivgen_functions.cmake
+
+Let's say
+
+* ShiftRegister.v  instantiate DFlipFlop.v 
+* DFlipFlop_tb.sv instantiates DFlipFlop.v
+* ShiftRegister_tb.sv instantiates ShiftRegister.v 
+
+This could be represented in file_deplist.txt like this
+
+[source, verbatim]
+hdl/ShiftRegister.v <= hdl/DFlipFlop.v
+tb/DFlipFlop_tb.sv <= hdl/DFlipFlop.v
+tb/ShiftRegister_tb.sv <= hdl/ShiftRegister.v
+
+We don't need to say that ShiftRegister_tb.sv depends on DFlipFlop.v, because it only depends on it indirectly through ShiftRegister.v .  get_list_from_dependency_tree will recursively handle that for us.
+
+[source, cmake]
+----
+cmake_minimum_required(VERSION 3.3)
+project(filelists)
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
+
+get_filename_component(hdldepfile file_deplist.txt REALPATH)
+add_dependency_tree_file(hdlheadfiles ${hdldepfile})
+get_filename_component(shiftregister_tb_file tb/ShiftRegister_tb.sv REALPATH)
+
+get_list_from_dependency_tree(ShiftRegister_tb_list  ${shiftregister_tb_file})
+
+message(STATUS "shift register tb list: ${ShiftRegister_tb_list}")
+----
