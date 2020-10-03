@@ -1,7 +1,7 @@
 package require tcltest
 namespace import ::tcltest::*
 source [file join [file dirname [info script]] \
-	    "../tcl/helper_procs/cmdline_dict.tcl"]
+	    "..//cmdline_dict.tcl"]
 
 proc tcltest::cleanupTestsHook {} {
     variable numTests
