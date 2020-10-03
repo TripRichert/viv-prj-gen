@@ -1,0 +1,1 @@
+@CMAKE_BINARY_DIR@/hello.v;@CMAKE_SOURCE_DIR@/goodbye.v

@@ -1,0 +1,2 @@
+../hello.v
+../test1/goodbye.v
