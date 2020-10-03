@@ -8,7 +8,7 @@ include(CTest)
 enable_testing()
 
 
-include(../util_functions.cmake)
+include(../file_functions.cmake)
 get_filename_component(compare_tcl compare.tcl REALPATH)
 
 include(test1/test1.cmake)
