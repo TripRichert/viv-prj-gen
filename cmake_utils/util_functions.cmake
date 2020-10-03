@@ -1,17 +1,10 @@
+include(${CMAKE_CURRENT_LIST_DIR}/helper_functions.cmake)
+
 ## watch forces cmake to rerun when the passed file(s) is/are modified
 # \param filename(s) to monitor for modification
 function(watch)
   set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ARGV} )
-endfunction()
-
-function(get_filename_realpath filename_ref stub directory)
-  if(NOT IS_ABSOLUTE ${stub})
-    get_filename_component(fullname ${directory}/${stub} REALPATH)
-  else()
-    get_filename_component(fullname ${stub} REALPATH)
-  endif()
-  set(${filename_ref} ${fullname} PARENT_SCOPE)
-endfunction()
+endfunction()  
 
 ## read_filelist converts newline separated entries of filenames in
 # the passed fullPathToFile to a list and stores in filelist
@@ -23,52 +16,11 @@ function(read_filelist filelist fullPathToFile)
     message(FATAL_ERROR "File ${fullPathToFile} does not exist")
   endif()
   file(READ ${fullPathToFile} rootNames)
-  STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
-  set(${${filelist}} "")
-  get_filename_component(pathname ${fullPathToFile} DIRECTORY)
-  foreach(filename ${rootNames})
-    get_filename_realpath(fullname ${filename} ${pathname})
-    list(APPEND ${filelist} ${fullname})
-  endforeach()
+  parse_filelist(${filelist} ${rootNames})
   watch(${fullPathToFile})
   set(${filelist} ${${filelist}} PARENT_SCOPE)
 endfunction()
 
-## substitute_variables substitutes the contents of cmake variables of string
-# when variable name is contained in string by ${}
-# \param result_varname the variable name to store the resulting string in
-# \param input_string the string to do substitution on
-function(substitute_variables result_varname input_string)
-  STRING(REGEX MATCH "\\$\{[^\}]*\{" matchstring ${input_string})
-  if(NOT matchstring STREQUAL "")
-    message(STATUS "matchstring ${matchstring}")
-    message(FATAL_ERROR "nested variables not supported")
-  endif()
-  set(loopcontinue true)
-  while(loopcontinue)
-    STRING(REGEX MATCH "\\$\{[^\}]*\{" matchstring ${input_string})
-    if(NOT matchstring STREQUAL "")
-      message(STATUS "matchstring ${matchstring}")
-      message(FATAL_ERROR "nested variables not supported")
-    endif()
-    STRING(REGEX MATCH "\\$\{[^\}]*\}" matchstring ${input_string})
-    if(NOT matchstring STREQUAL "")
-      STRING(REGEX REPLACE "\\$" "" matchstring ${matchstring})
-      STRING(REGEX REPLACE "\{" "" matchstring ${matchstring})
-      STRING(REGEX REPLACE "\}" "" matchstring ${matchstring})
-      if (DEFINED ${matchstring})
-	STRING(REGEX REPLACE "\\$\{${matchstring}\}" ${${matchstring}} input_string ${input_string})
-      else()
-        message(FATAL_ERROR "variable ${matchstring} not found")
-      endif()
-    else()
-      set(loopcontinue false)
-    endif()
-  endwhile()
-
-  set(${result_varname} ${input_string} PARENT_SCOPE)
-
-endfunction()
 
 ## read_filelist_use_substitution converts newline separated entries of
 # filenames in the passed fullPathToFile to a list and stores in filelist
@@ -82,18 +34,7 @@ function(read_filelist_use_substitution filelist fullPathToFile)
     message(FATAL_ERROR "File ${fullPathToFile} does not exist")
   endif()
   file(READ ${fullPathToFile} rootNames)
-  STRING(REGEX REPLACE "\n" ";" rootNames "${rootNames}")
-  foreach(filename ${rootNames})
-    substitute_variables(filename ${filename})
-    list(APPEND filenames ${filename})
-  endforeach()
-  set(${${filelist}} "")
-  
-  get_filename_component(pathname ${fullPathToFile} DIRECTORY)
-  foreach(filename ${filenames})
-    get_filename_realpath(fullname ${filename} ${pathname})
-    list(APPEND ${filelist} ${fullname})
-  endforeach()
+  parse_filelist_with_substitution(${filelist} ${rootNames})
   watch(${fullPathToFile})
   set(${filelist} ${${filelist}} PARENT_SCOPE)
 endfunction()

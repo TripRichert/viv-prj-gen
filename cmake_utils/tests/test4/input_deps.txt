@@ -1,0 +1,2 @@
+Register.v <= DFlipFlop.v
+Register_tb.v <= Register.v

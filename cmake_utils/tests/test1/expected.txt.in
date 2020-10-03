@@ -1,0 +1,1 @@
+@CMAKE_SOURCE_DIR@/test1/hello.v;@CMAKE_SOURCE_DIR@/test1/goodbye.v
