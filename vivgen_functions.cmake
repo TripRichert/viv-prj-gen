@@ -6,7 +6,7 @@ include(CMakeParseArguments)
 file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 
 #file used to parse commandline arguments
-file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/cmdline_dict.tcl")
+file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/tcl_utils/cmdline_dict.tcl")
 
 function(add_vivado_devel_project)
   set(options NOVHDL2008)

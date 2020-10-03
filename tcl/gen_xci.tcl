@@ -3,7 +3,7 @@
 puts "executing $argv0"
 puts "argv is: $argv"
 
-source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
+source [file join [file dirname [info script]] "tcl_utils/cmdline_dict.tcl"]
 
 
 if { $argc == 0 } {

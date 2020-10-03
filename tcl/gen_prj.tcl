@@ -4,7 +4,7 @@ puts "executing $argv0"
 puts "argv is:$argv"
 
 #get procs to parse cmdline arguments
-source [file join [file dirname [info script]] "helper_procs/cmdline_dict.tcl"]
+source [file join [file dirname [info script]] "tcl_utils/cmdline_dict.tcl"]
 #procs to add files to vivado projects
 source [file join [file dirname [info script]] "helper_procs/vivprj.tcl"]
 
