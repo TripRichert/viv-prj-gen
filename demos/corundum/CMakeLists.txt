@@ -7,7 +7,7 @@ set(webpack_parts XCKU035 XCKU3P XCU50 XCU280)
 #*  Xilinx Alveo U50 (Xilinx Virtex UltraScale+ XCU50)
 #*  Xilinx Alveo U280 (Xilinx Virtex UltraScale+ XCU280)
 
-
+#set(printFuncParams true)
 
 include(../../vivgen_functions.cmake)
 
@@ -116,16 +116,18 @@ file(GLOB postsynthtcl
 )
 
 
-# add_vivado_devel_project(
-#   PRJNAME corundum
-#   VERILOGSYNTHFILES ${hdlfiles}
-#   PARTNAME ${partname}
-#   NOVHDL2008
-#   )
+ add_vivado_devel_project(
+   PRJNAME corundum
+   VERILOGSYNTHFILES ${hdlfiles}
+   UNSCOPEDNORMALXDC ${constrfiles}
+   PARTNAME ${partname}
+   XCIFILES_GEN ${xcilist}
+   NOVHDL2008
+   )
 
 file(GLOB synthscript tcl/synth.tcl)
 file(GLOB basesynthscript ../../tcl/default_scripts/nonprj_synth.tcl)
-message(STATUS "basesynth "${basesynthscript})
+message(STATUS "basesynth ${basesynthscript}")
 set(nonprjname nic_x10)
 set(miscparam -synthbasescript ${basesynthscript})
 add_vivado_nonprj_bitfile(
@@ -133,7 +135,7 @@ add_vivado_nonprj_bitfile(
   PARTNAME ${partname}
   TOPNAME fpga
   VERILOGFILES ${hdlfiles}
-  XCIFILES ${xcilist}
+  XCIFILES_GEN ${xcilist}
   UNSCOPEDNORMALXDC ${constrfiles}
   SYNTHSCRIPT ${synthscript}
   DEPENDS ${basesynthscript}

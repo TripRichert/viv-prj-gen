@@ -21,6 +21,7 @@ function(add_vivado_devel_project)
     VERILOGSIMFILES
     SVSYNTHFILES
     SVSIMFILES
+    XCIFILES
     UNSCOPEDEARLYXDC
     UNSCOPEDNORMALXDC
     UNSCOPEDLATEXDC
@@ -70,7 +71,10 @@ function(add_vivado_devel_project)
   
   foreach(file_type ${file_types})
     set(${file_type} ${genviv_${file_type}} ${genviv_${file_type}_GEN})
-    list(REMOVE_DUPLICATES ${file_type})
+    list(LENGTH ${file_type} list_length)
+    if (${list_length})
+      list(REMOVE_DUPLICATES ${file_type})
+    endif()
   endforeach()
 
   if (genviv_NOVHDL2008)
@@ -80,8 +84,8 @@ function(add_vivado_devel_project)
   endif()
   
   add_custom_target(${genviv_PRJNAME}_genvivprj
-    COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES}  -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
-    DEPENDS ${VHDLSYNTHFILES} ${VHDLSIMFILES} ${VERILOGSYNTHFILES} ${VERILOGSIMFILES} ${SVSYNTHFILES} ${SVSIMFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${DATAFILES} ${genvivprjscript} ${cmdlinedictprocsscript}
+    COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES} -xcifiles ${XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
+    DEPENDS ${VHDLSYNTHFILES} ${VHDLSIMFILES} ${VERILOGSYNTHFILES} ${VERILOGSIMFILES} ${SVSYNTHFILES} ${SVSIMFILES} ${XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${DATAFILES} ${genvivprjscript} ${cmdlinedictprocsscript}
     )
 endfunction()
 
@@ -135,6 +139,10 @@ function(copy_vivado_xcifile)
   if (NOT ${cpyxci_XCI_STAMPOUTPUT} STREQUAL "")
     set(${cpyxci_XCI_STAMPOUTPUT} "${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp" PARENT_SCOPE)
   endif()
+
+  set_property(SOURCE ${cpyxci_DESTDIR}/${xciname}/${xciname}.xci
+    PROPERTY OBJECT_OUTPUTS ${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp
+    )
   
 endfunction()
 
@@ -177,7 +185,7 @@ function(add_vivado_nonprj_bitfile)
   set(list_args
     ${src_file_types}
     ${gen_file_types}
-    XCIFILES 
+    XCIFILES_GEN
     DEPENDS 
     MISCPARAMS
     )
@@ -257,10 +265,26 @@ function(add_vivado_nonprj_bitfile)
     string(REPLACE ";" " " miscparamstring "${miscparamstring}")
   endif()
 
+  set(xci_depends "")
+  foreach(xcifile ${vivnonprj_XCIFILES_GEN})
+    if (NOT "${xcifile}" STREQUAL "")
+      get_property( xci_dep
+        SOURCE ${xcifile}
+        PROPERTY OBJECT_OUTPUTS
+        )
+      if (NOT "${xci_dep}" STREQUAL "")
+        list(APPEND xci_depends "${xci_dep}")
+      else()
+        message(WARNING "generated xci ${xcifile} not associated with object output")
+        list(APPEND xci_depends "${xcifile}")
+      endif()
+    endif()
+  endforeach()
+
   set(bitfile_output "vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit")
   add_custom_command(OUTPUT "${bitfile_output}"
-    COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
-    DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${vivnonprj_XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_DEPENDS}
+    COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
+    DEPENDS ${nonprjbuildscript} ${VHDLFILES} ${VERILOGFILES} ${SYSTEMVERILOGFILES} ${xci_depends} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${scriptlist} ${cmdlinedictprocsscript} ${vivnonprj_DEPENDS}
     )
   if (NOT ${vivnonprj_BITFILE_OUTPUT} STREQUAL "")
     set(${vivnonprj_BITFILE_OUTPUT} "${bitfile_output}" PARENT_SCOPE)
@@ -444,6 +468,9 @@ function(add_vivado_xcifile)
   if (NOT ${genxci_XCI_STAMPOUTPUT} STREQUAL "")
     set(${genxci_XCI_STAMPOUTPUT} "${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp" PARENT_SCOPE)
   endif()
+  set_property(SOURCE "${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci"
+    PROPERTY OBJECT_OUTPUTS "${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp"
+    )
 endfunction()
 
 file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdhdf.tcl)

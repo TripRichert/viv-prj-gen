@@ -15,7 +15,12 @@ copy_vivado_xcifile(
     XCIPATH ${xcifile}
     PARTNAME ${partname}
     DESTDIR ${CMAKE_BINARY_DIR}
-    XCI_STAMPOUTPUT xcistamp
+    XCI_OUTPUT xcifile
+    )
+
+  get_property(xcistamp
+    SOURCE ${xcifile}
+    PROPERTY OBJECT_OUTPUTS
     )
 
   add_custom_target(myxcifile ALL

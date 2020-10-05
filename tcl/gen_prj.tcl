@@ -24,6 +24,7 @@ set allowedKeys [list target_language vhdl08synthfiles \
 		     vhdl08simfiles vhdlsynthfiles vhdlsimfiles\
 		     verilogsynthfiles verilogsimfiles \
 		     systemverilogsynthfiles systemverilogsimfiles \
+		     xcifiles \
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
@@ -117,6 +118,11 @@ if {[diction::checkForKeyPair systemverilogsynthfiles {*}$argv]} {
 if {[diction::checkForKeyPair systemverilogsimfiles {*}$argv]} {
     vivprj::add_files_to_set sim_1 \
 	"SystemVerilog" {*}[diction::getDef systemverilogsimfiles {*}$argv]
+}
+
+if {[diction::checkForKeyPair xcifiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 \
+	"IP" {*}[diction::getDef xcifiles {*}$argv]
 }
 
 

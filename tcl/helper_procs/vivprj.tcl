@@ -28,9 +28,11 @@ proc vivprj::add_files_to_set { filesettype filetype args} {
         exit 6
     }
     add_files -norecurse -fileset $obj [join $files]
-    foreach filename $files {
-	set file_obj [get_files -of_objects [get_filesets $filesettype] $filename]
-	set_property file_type $filetype $file_obj
+    if {$filetype != "IP"} {
+	foreach filename $files {
+	    set file_obj [get_files -of_objects [get_filesets $filesettype] $filename]
+	    set_property file_type $filetype $file_obj
+	}
     }
     return
 }
