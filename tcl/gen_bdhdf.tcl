@@ -18,6 +18,7 @@ if {[diction::hasDuplicates [diction::getKeys $argv]]} {
 set requiredKeys [list builddir prjname partname bdscript hdfout]
 set allowedKeys [list boardname target_language vhdlbdwrapper\
 		     verilogbdwrapper \
+		     xcifiles \
 		     ip_repo_dirs\
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
@@ -86,34 +87,38 @@ if {[diction::checkForKeyPair ip_repo_dirs {*}$argv]} {
 update_ip_catalog -rebuild
 
 if {[diction::checkForKeyPair scopedearlyconstraints {*}$argv]} {
-    add_const_files_to_set true early [diction::getDef scopedearlyconstraints {*}$argv]
+    vivprj::add_const_files_to_set true early [diction::getDef scopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopednormalconstraints {*}$argv]} {
-    add_const_files_to_set true normal [diction::getDef scopednormalconstraints {*}$argv]
+    vivprj::add_const_files_to_set true normal [diction::getDef scopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopedlateconstraints {*}$argv]} {
-    add_const_files_to_set true late [diction::getDef scopedlateconstraints {*}$argv]
+    vivprj::add_const_files_to_set true late [diction::getDef scopedlateconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedearlyconstraints {*}$argv]} {
-    add_const_files_to_set false early [diction::getDef unscopedearlyconstraints {*}$argv]
+    vivprj::add_const_files_to_set false early [diction::getDef unscopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopednormalconstraints {*}$argv]} {
-    add_const_files_to_set false normal [diction::getDef unscopednormalconstraints {*}$argv]
+    vivprj::add_const_files_to_set false normal [diction::getDef unscopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedlateconstraints {*}$argv]} {
-    add_const_files_to_set false late [diction::getDef unscopedlateconstraints {*}$argv]
+    vivprj::add_const_files_to_set false late [diction::getDef unscopedlateconstraints {*}$argv]
 }
 
 source [diction::getDef bdscript {*}$argv]
 
 if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
-    add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
+    vivprj::add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
 } elseif {[diction::checkForKeyPair verilogbdwrapper {*}$argv]} {
-    add_files_to_set sources_1 Verilog [diction::getDef verilogbdwrapper {*}$argv]
+    vivprj::add_files_to_set sources_1 Verilog [diction::getDef verilogbdwrapper {*}$argv]
 } else {
     set dirext .srcs
     make_wrapper -files [get_files *.bd] -top
     add_files -norecurse [file normalize [glob $prjname$dirext/sources_1/bd/*/hdl/*.v*]]
+}
+
+if {[diction::checkForKeyPair xcifiles {*}$argv]} {
+    vivprj::add_files_to_set sources_1 "IP" [diction::getDef xcifiles {*}$argv]
 }
 
 report_ip_status -name ip_status

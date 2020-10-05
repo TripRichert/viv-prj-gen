@@ -497,6 +497,7 @@ function(add_vivado_bd_hdf)
   endforeach()
   set(list_args
     ${gen_file_types}
+    XCIFILES_GEN
     DEPENDS
     )
   CMAKE_PARSE_ARGUMENTS(
@@ -535,14 +536,32 @@ function(add_vivado_bd_hdf)
       ${genhdf_${file_type}_GEN})
   endforeach()
 
+
+  set(xci_depends "")
+  foreach(xcifile ${genhdf_XCIFILES_GEN})
+    if (NOT "${xcifile}" STREQUAL "")
+      get_property( xci_dep
+        SOURCE ${xcifile}
+        PROPERTY OBJECT_OUTPUTS
+        )
+      if (NOT "${xci_dep}" STREQUAL "")
+        list(APPEND xci_depends "${xci_dep}")
+      else()
+        message(WARNING "generated xci ${xcifile} not associated with object output")
+        list(APPEND xci_depends "${xcifile}")
+      endif()
+    endif()
+  endforeach()
+
+
   set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/genprjs)
   add_custom_command(OUTPUT ${hdffile_output}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
-    COMMAND vivado -mode batch -source ${genbdhdfscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC}
-    DEPENDS ${genbdhdfscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS}
+    COMMAND vivado -mode batch -source ${genbdhdfscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC}
+    DEPENDS ${genbdhdfscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS} ${xci_depends}
     )
 
   if (NOT ${genhdf_HDFFILE_OUTPUT} STREQUAL "")
