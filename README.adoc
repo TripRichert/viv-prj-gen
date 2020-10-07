@@ -1,5 +1,5 @@
 = viv-prj-gen cmake tutorial
-:toc:
+:toc: left
 :sectnums:
 ifdef::env-github[]
 :tip-caption: :bulb:
@@ -53,13 +53,9 @@ If Edalize or hdlmake support your needs, they interface with more tools and wor
 
 I think the main benefits of viv-prj-gen are that it is simple, cmake based (has benefits and drawbacks, python based is better for simulation), supports vivado block diagrams for zynq projects, and is easy to extend.  The main downsides are that its not python based (and thus harder to integrate with VUnit testing), only supports vivado (writing cmake functions to support other vendors would not be difficult, though), doesn't have organization backing (might not be as well maintained), and isn't as widely used as these other projects.
 
-== Terminology and cmake Basics
+== cmake Basics
 
-This section is not meant to be a full tutorial on cmake.
-
-If you haven't used cmake before, this section might help you conceptually understand the rest of this document, but, in order to write your own cmake files, you may need to go through a cmake tutorial that describes how to use modern cmake.
-
-If you are already familiar with cmake, you can probably skim or skip these sections.
+This section is not meant to be a full tutorial on cmake, but hopefully is enough to get you started.
 
 === Introduction to cmake
 
@@ -126,7 +122,7 @@ message(STATUS ${mymessage})
 
 To run cmake, create a build directory in your project adjacent to the CMakeLists.txt file, navigate to that build directory, and run "cmake .." from command line.  If all goes well, it will welcome you to the world of cmake.
 
-=== File paths and cmake includes
+=== File paths and includes
 
 In cmake, filepaths should use forward slashes, not backslashes, even if you are on windows.
 
@@ -259,7 +255,7 @@ on a tree that that looks like this
     └── vivgen_functions.cmake
 
 
-== Generating a Vivado Project
+== Vivado Project Generation
 
 A Vivado project is useful for interacting with the code using Vivado's gui.  This is great for nonautomated simulations.
 
@@ -377,7 +373,7 @@ The following are some of the valid targets for this Makefile:
 
 The last option is the target that our function added.  source your vivado distributions settings64.sh or settings64.bat to tell your cmdline where your vivado is.  Then run "make test_genvivprj" from your build directory.  Vivado will run and generate the project!  
 
-== Generating a bit file using nonproject flow
+== nonproject flow bitfile generation
 
 To generate a bit file, we use the add_vivado_nonprj_bitfile function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
 
@@ -506,12 +502,12 @@ add_custom_target(nonprj
   )
 ----
 
-== Generating a hardware description file from a block diagram
+== hardware description file generation
 == Generating a XACT IP wrapper
 == Generating a xci file
 
 [appendix]
-== Terminology and cmake Basics Continued
+== cmake Basics Continued
 === File paths entry Alternative
 ==== add_dependency_tree_file get_list_from_dependency_tree
 
