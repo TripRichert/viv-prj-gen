@@ -24,7 +24,7 @@ set requiredKeys [list ipdir ipname partname  topname]
 set allowedKeys [list target_language \
 		     vhdlsynthfiles verilogsynthfiles svsynthfiles \
 		     preipxscripts postipxscripts miscparams \
-		     vendorname
+		     vendorname libname
 		]
 
 #all required keys are allowed
@@ -115,7 +115,13 @@ if {[diction::checkForKeyPair vendorname {*}$argv]} {
 } else {
     set vendorname user.org
 }
-ipx::package_project -root_dir $root_dir  -vendor $vendorname -library user -taxonomy /UserIP
+if {[diction::checkForKeyPair libname {*}$argv]} {
+    set libname [diction::getDef libname {*}$argv]
+} else {
+    set libname user
+}
+
+ipx::package_project -root_dir $root_dir  -vendor $vendorname -library $libname -taxonomy /UserIP
 
 set ipname [diction::getDef ipname {*}$argv]
 

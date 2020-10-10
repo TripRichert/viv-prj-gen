@@ -300,7 +300,7 @@ function(add_vivado_xact_ip)
     IPNAME
     PARTNAME
     TOPNAME
-    LIBNAME
+    SUBDIRNAME
     IP_STAMPOUTPUT
     )
   set(src_file_types
@@ -356,7 +356,7 @@ function(add_vivado_xact_ip)
     set(${file_type} ${genip_${file_type}} ${genip_${file_type}_GEN})
   endforeach()
   
-  set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_LIBNAME}/${genip_IPNAME})
+  set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_SUBDIRNAME}/${genip_IPNAME})
   set(laststring "")
   if (genip_NODELETE)
     set(laststring "--nodelete")

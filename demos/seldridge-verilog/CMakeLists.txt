@@ -22,7 +22,7 @@ add_vivado_devel_project(
 add_vivado_xact_ip(
   IPNAME sqrt
   PARTNAME ${partname}
-  LIBNAME test
+  SUBDIRNAME test
   VERILOGFILES ${sqrtfiles}
   TOPNAME sqrt_generic
   IP_STAMPOUTPUT sqrtip_stamp

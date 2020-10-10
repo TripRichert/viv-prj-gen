@@ -27,7 +27,7 @@ copy_vivado_xcifile(
 add_vivado_xact_ip(
   IPNAME myip
   PARTNAME ${partname}
-  LIBNAME test
+  SUBDIRNAME test
   VHDLFILES ${hdlfiles}
   TOPNAME myip_v1_0
   IP_STAMPOUTPUT ipxact_target

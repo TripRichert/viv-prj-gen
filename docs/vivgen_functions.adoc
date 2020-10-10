@@ -126,7 +126,7 @@ Parameters
 string IPNAME:: name of generated ip
 string PARTNAME:: xilinx part
 string TOPNAME:: name of top module wrapped by ip
-string LIBNAME:: subdirectory within ip_repo
+string [SUBDIRNAMENAME]:: subdirectory within ip_repo
 list [VHDLSYNTHFILES]:: vhdl synthesizable files, must exist at config time
 list [VHDLSYNTHFILES_GEN]:: vhdl synthesizable files
 list [VERILOGSYNTHFILES]:: verilog files must exist at config time
@@ -148,9 +148,9 @@ noargs [NODELETE]:: option, when present, project used to generate ip will not b
 | Targets and +
 Outputs
 |
-*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
-*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
-*output* ${PARTNAME}/ip_repo/${LIBNAME}/${IPNAME}/${IPNAME}.stamp:: empty generated file indicating that the ipxact was successfully generated
+*output* ${PARTNAME}/ip_repo/${SUBDIRNAME}/${IPNAME}/component.xml:: component file of ipxact wrapper, file used to track ipxact wrapper
+*output* ${PARTNAME}/ip_repo/${SUBDIRNAME}/${IPNAME}/xgui:: additional meta data for ipxact wrapper
+*output* ${PARTNAME}/ip_repo/${SUBDIRNAME}/${IPNAME}/${IPNAME}.stamp:: empty generated file indicating that the ipxact was successfully generated
 
 | Output +
 Parameter

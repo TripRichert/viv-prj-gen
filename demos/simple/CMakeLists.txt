@@ -40,7 +40,7 @@ add_custom_target(nonprj
 add_vivado_xact_ip(
   IPNAME genff
   PARTNAME ${partname}
-  LIBNAME test
+  SUBDIRNAME test
   VHDLFILES ${hdlfiles}
   TOPNAME GenericDFlipFlop
   IP_STAMPOUTPUT ipxact_target
