@@ -66,20 +66,22 @@ The makefile (or similar) is then used to generate the outputs from the inputs.
 When using any build system like cmake, there are several key components:
 
 * input files
-* dependencies
 * recipes
+* recipe dependencies
 * output files
 * targets
 
-A recipe is a set of instructions to convert a set of inputs into a set of outputs.
+A recipe is a set of instructions to convert a set of input files into a set of output files.
 
-Inputs to a recipe can either be input files, or outputs generated from other recipes.
+Input files to a recipe can either be input files, or outputs generated from other recipes.
 
-A dependency is a file that, if changed, implies that the recipe should be rerun.  For example, if you edit a verilog source file, you will need to rebuild a bit file that was generated from that verilog file.  The bit file depends on the verilog file.
+A recipe dependency is a file that, if changed, implies that the recipe should be rerun.  For example, if you edit a verilog source file, you will need to rebuild a bit file that was generated from that verilog file.  The bit file depends on the verilog file.
 
-In cmake, any specified dependency must be a file that already exists or that cmake has a recipe that describes that file as an output.
+This is different than a source dependency.  Only output files can have recipe dependencies because the recipe dependencies are what are used to generate a file.  A source file's source dependency is used by that source file, but is not used to produce that source file.
 
-A target (sometimes called a phony target) is a named fake output that always needs to be rebuilt.  Using the command "make <target name>" produces all of the outputs that were specified as dependencies of the target (and all of the dependencies necessary to create that target).  The dependencies of the target "ALL" are produced if the command "make" is used with no output or target specified.
+In cmake, any specified recipe dependency must be a file that already exists or that cmake has a recipe that describes that file as an output.
+
+A target (sometimes called a phony target) is a named fake output that always needs to be rebuilt.  Using the command "make <target name>" produces all of the outputs that were specified as dependencies of the target (and all of the dependencies necessary to create that target).  The recipe dependencies of the target "ALL" are produced if the command "make" is used with no output or target specified.
 
 === Getting started
 
@@ -515,7 +517,7 @@ If you want to build lots of outputs based on your input set, sometimes it is he
 
 cmake_utils provides 2 functions to do this.
 
-add_dependency_tree_file reads a file and saves the dependencies that are listed in it.  get_list_from_dependency_tree reads those dependencies and generates a list from it.
+add_dependency_tree_file reads a file and saves the source dependencies that are listed in it.  get_list_from_dependency_tree reads those source dependencies and generates a list from it.
 
 If we had a file tree that looked like this
 
