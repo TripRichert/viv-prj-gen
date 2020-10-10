@@ -71,8 +71,6 @@ I think the main benefits of viv-prj-gen are that it is simple, cmake based (has
 
 == Examples
 
-=== Project and nonproject flow
-
 Let's say you've got a directory tree that looks like this:
 
 [source, verbatim]
@@ -91,6 +89,8 @@ Let's say you've got a directory tree that looks like this:
 └── cmake_utils
 
 where viv-prj-gen and cmake_utils are retrieved using git clone https://github.com/TripRichert/viv-prj-gen; git clone https://github.com/TripRichert/cmake_utils
+
+you could set up a vivado project to develop in like this.
 
 [source, cmake]
 ----
@@ -117,9 +117,7 @@ add_vivado_devel_project(
   )
 ----
 
-can be used to generate a vivado project to develop this code with.
-
-If you want a build for record,
+If you want to build a bit file, you can set up a nonproject mode build recipe like this.
 
 [source, cmake]
 ----
@@ -151,5 +149,8 @@ add_custom_target(testnonprj_target
   )
 ----
 
-can be used to add a recipe to build a bit file from source using a nonproject flow.
+If you need to customize the build process, there are hooks for that, too.
 
+If you are interested in seeing more of the capabilities, go through the tutorial:
+
+link:Tutorial.adoc[Tutorial]
