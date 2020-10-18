@@ -31,7 +31,7 @@ To use this tool, you need vivado installed on your system.  vivado provides a s
 
 Vivado has a built-in distribution of cmake.  You can follow the tutorial here:
 
-link:Tutorial.adoc[Tutorial]
+link:tutorial/Tutorial.adoc[Tutorial]
 
 The documentation of the api is here
 

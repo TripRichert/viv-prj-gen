@@ -6,9 +6,9 @@ This section is not meant to be a full tutorial on cmake, but hopefully is enoug
 
 === Introduction to cmake
 
-CMake is a two step build process.  The developer writes a CMakeLists.txt file in the cmake language.  Using your CMakeLists.txt file, cmake creates a makefile (or similar) defining how to create a set of outputs from a set of inputs.  It also keeps track of what outputs need to be regenerated if changes are made to the inputs.
+CMake is a two step build process.  The developer writes a CMakeLists.txt file in the cmake language.  Using your CMakeLists.txt file, cmake creates a makefile (or similar) defining how to create a set of output files from a set of input files.  It also keeps track of what outputs need to be regenerated if changes are made to the inputs.
 
-The makefile (or similar) is then used to generate the outputs from the inputs.
+The makefile (or similar) is then used to generate the output files from the input files.
 
 When using any build system like cmake, there are several key components:
 
@@ -39,9 +39,8 @@ The first two lines of your project should define the minimum version of cmake t
 You can add comments by starting a line with the # symbol.
 
 [source,cmake]
-cmake_minimum_required(VERSION 3.3)
+make_minimum_required(VERSION 3.3)
 project(helloworld)
-
 
 I recommend that you force the user to build out of tree (create a separate build folder to put all outputs in).  You can accomplish this by adding the lines
 
@@ -102,7 +101,9 @@ The following sections has several methods.  The appendix lists another one.
 
 ==== GLOB
 
-The easiset way to get filepaths in cmake to use is file(GLOB varname path_to_file).  file glob sets the passed variable to a list of full paths of exisiting files that match the passed path.  Sticklers recommend against using glob in cmake because it will fail to detect files added after running cmake.
+The easiset way to get filepaths in cmake to use is file(GLOB varname path_to_file).  file glob sets the passed variable to a list of full paths of exisiting files that match the passed path.
+
+Some cmake users recommend against using glob in cmake because it will silently fail to detect files added after running cmake.
 
 If you had the following source tree
 
@@ -111,11 +112,10 @@ If you had the following source tree
 ├── build
 ├── CMakeLists.txt
 ├── hdl
-│   ├── DFlipFlop.v
-│   └── ShiftReg.v
+│   ├── DFlipFlop.vhdl
+│   └── GenericDFlipFlop.vhdl
 └── tb
-    ├── tb_DFlipFlop.sv
-    └── tb_ShiftReg.sv
+    └── DFlipFlop_tb.vhdl
 
 in your CMakeLists.txt file might have something like
 
@@ -130,28 +130,45 @@ cmake_minimum_required(VERSION 3.3)
 project(globfilelists)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-file(GLOB hdlfiles hdl/*.v)
-file(GLOB tbfiles tb/*.sv)
+file(GLOB hdlfiles hdl/*.vhdl)
+file(GLOB tbfiles tb/*.vhdl)
 message(STATUS "hdlfiles ${hdlfiles}")
 message(STATUS "tbfiles ${tbfiles}")
 
-WARNING: glob only works on files that exist when cmake is run.
+WARNING: glob only works on files that exist when cmake is run.  Use a different approach for absolute paths to generated files.
+
+This prints a semicolon separated lists of absolute paths to the files in hdl and tb.
 
 ==== get_filename_component
 
 An absolute path can be gotten from a relative path using the function get_filename_component with the REALPATH mode like so
 
 [source, cmake]
-get_filename_component(hdlfile hdl/DFlipFlop.v REALPATH)
+get_filename_component(hdlfile hdl/DFlipFlop.vhdl REALPATH)
 message(STATUS "hdlfile ${hdlfile}")
+
+We can use a foreach loop over a list to call this function on every filename in the list.
+
+[source, cmake]
+set(filenames
+  hdl/DFlipFlop.vhdl
+  hdl/GenericDFlipFlop.vhdl
+  )
+foreach(filename ${filenames})
+  get_filename_component(hdlfile ${filename} REALPATH)
+  message(STATUS "file ${hdlfile}")
+endforeach()
+
 
 ==== read_filelist
 
 More experienced build system users tend to recommend having an explicit list of files, rather than globing for the files in a directory.
 
-Putting this list in a separate file than your CMakeLists.txt file makes generating this list easier, enables you to reuse the file list across different build systems, and reduces clutter.
+This can be accomplished by explicitly listing the files in the cmakelists file, like we did in the get_filename_component example.
 
-In file_functions.cmake, viv-prj-gen provides a function called "read_filelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
+However, putting the list of source in a separate file than your CMakeLists.txt file makes generating this list easier, enables you to reuse the file list across different build systems, and reduces clutter.
+
+The cmake_utils repo provides a function a function called "read_filelist" to specify filepaths.  To use this function, create a file that has a relative file paths of the files you want in your list.
 
 for example, in my hdl folder, I might have a listfile.txt file that says
 
@@ -172,11 +189,10 @@ include(viv-prj-gen/cmake_utils/file_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 get_filename_componnet(tblistfile tb/filelist.txt REALPATH)
+
 read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
 
 message(STATUS "hdlfiles ${hdlfiles}")
-message(STATUS "tbfiles ${tbfiles}")
 ----
 
 on a tree that that looks like this
@@ -189,17 +205,7 @@ on a tree that that looks like this
 │   ├── DFlipFlop.v
 │   ├── filelist.txt
 │   └── ShiftReg.v
-├── tb
-│   ├── filelist.txt
-│   ├── tb_DFlipFlop.sv
-│   └── tb_ShiftReg.sv
 └── viv-prj-gen
-    ├── demos
-    ├── docs
-    ├── LICENSE
-    ├── README.md
-    ├── tcl
-    ├── tests
     ├── cmake_utils/file_functions.cmake
     └── vivgen_functions.cmake
 
