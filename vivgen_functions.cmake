@@ -82,9 +82,11 @@ function(add_vivado_devel_project)
   else()
     set(vhdlfileopts -vhdl08synthfiles ${VHDLSYNTHFILES} -vhdl08simfiles ${VHDLSIMFILES})
   endif()
+
+  file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${genviv_PARTNAME}/devel_prjs")
   
   add_custom_target(${genviv_PRJNAME}_genvivprj
-    COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES} -xcifiles ${XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir ${CMAKE_BINARY_DIR}
+    COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES} -xcifiles ${XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir "${CMAKE_BINARY_DIR}/${genviv_PARTNAME}/devel_prjs"
     DEPENDS ${VHDLSYNTHFILES} ${VHDLSIMFILES} ${VERILOGSYNTHFILES} ${VERILOGSIMFILES} ${SVSYNTHFILES} ${SVSIMFILES} ${XCIFILES} ${UNSCOPEDEARLYXDC} ${UNSCOPEDNORMALXDC} ${UNSCOPEDLATEXDC} ${SCOPEDEARLYXDC} ${SCOPEDNORMALXDC} ${SCOPEDLATEXDC} ${DATAFILES} ${genvivprjscript} ${cmdlinedictprocsscript}
     )
 endfunction()

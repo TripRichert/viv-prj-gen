@@ -1,0 +1,1 @@
+blinky_tb.v <= ../hdl/blinky.v ../simhdl/vlog_tb_utils.v

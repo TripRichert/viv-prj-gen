@@ -209,6 +209,69 @@ on a tree that that looks like this
     ├── cmake_utils/file_functions.cmake
     └── vivgen_functions.cmake
 
+==== add_dependency_tree_file
+
+
+If you want to build lots of outputs based on your input set, sometimes it is helpful to represent your sources by what other sources they depend on.
+
+cmake_utils provides a set of 2 functions that are used together to accomplish this.
+
+add_dependency_tree_file reads a file and saves the source dependencies that are listed in it.
+
+get_list_from_dependency_tree reads those source dependencies and generates a list from it.
+
+If we had a file tree that looked like this
+
+[source, verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── hdl
+│   ├── blinky.v
+│   ├── blinky_zedboard_z7.v
+│   └── deptree.txt
+├── simhdl
+│   └── vlog_tb_utils.v
+├── tb
+|   ├── blinky_tb.v
+|   └── deptree.txt
+└── viv-prj-gen
+    ├── cmake_utils/file_functions.cmake
+    └── vivgen_functions.cmake
+
+Let's say
+
+* blinky_zedboard_z7.v  instantiates blinky.v 
+* blinky_tb.v instantiates blinky.v vlog_tb_utils.v
+
+tb/deptree.txt could look like this:
+
+[source, verbatim]
+blinky_tb.v <= ../hdl/blinky.v ../simhdl/vlog_tb_utils.v
+
+and hdl/deptree.txt could look like this
+
+[source, verbatim]
+blinky_zedboard_z7.v <= blinky.v
+
+Using add_dependency_tree_file and get_list_from_dependency_tree to get a list of source files, based on the top filename, would look like this: 
+
+[source, cmake]
+----
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
+get_filename_component(tbdepfile tb/deptree.txt REALPATH)
+
+add_dependency_tree_file(placeholder1 ${hdldepfile})
+add_dependency_tree_file(placeholder2 ${tbdepfile})
+
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+get_filename_component(topsim tb/blinky_tb.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
+get_list_from_dependency_tree(simfiles ${topsim})
+
+message(STATUS "synth files ${synthfiles}")
+message(STATUS "sim files ${simfiles}")
+----
 
 == Vivado Project Generation
 
@@ -216,41 +279,28 @@ A Vivado project is useful for interacting with the code using Vivado's gui.  Th
 
 Let's generate one.  We are going to use the add_vivado_devel_project function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc .
 
-The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.  I added some data files that the testbenches might read from.
+The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.
 
 [source, verbatim]
 .
 ├── build
 ├── CMakeLists.txt
+├── constraints
+│   ├── blinky_zedboard.xdc
+│   └── filelist.txt
 ├── hdl
-│   ├── DFlipFlop.v
-│   ├── filelist.txt
-│   └── ShiftReg.v
+│   ├── blinky.v
+│   ├── blinky_zedboard_z7.v
+│   └── deptree.txt
+├── simhdl
+│   └── vlog_tb_utils.v
 ├── tb
-│   ├── filelist.txt
-│   ├── tb_DFlipFlop.sv
-│   └── tb_ShiftReg.sv
-├── testdata
-│   ├── DFlipFlop
-│   │   ├── DFlipFlop_test0.dat
-│   │   └── DFlipFlop_test1.dat
-│   ├── filelist.txt
-│   └── ShiftReg
-│       ├── ShiftReg_test0.dat
-│       └── ShiftReg_test1.dat
+|   ├── blinky_tb.v
+|   └── deptree.txt
 └── viv-prj-gen
-    |
-    .
-    .
-    .
+    ├── cmake_utils/file_functions.cmake
+    └── vivgen_functions.cmake
 
-The testdata/filelist.txt would look like this
-
-[source, verbatim]
-DFlipFlop/DFlipFlop_test0.dat
-DFlipFlop/DFlipFlop_test1.dat
-ShiftReg/ShiftReg_test0.dat
-ShiftReg/ShiftReg_test1.dat
 
 We need to include our two cmake function files and find our source code.
 
@@ -259,27 +309,38 @@ We need to include our two cmake function files and find our source code.
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/utils_functions.cmake)
 
-get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
-get_filename_component(tblistfile tb/filelist.txt REALPATH)
-get_filename_component(datalistfile testdata/filelist.txt REALPATH)
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
+get_filename_component(tbdepfile tb/deptree.txt REALPATH)
 
-read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
-read_filelist(datafiles ${datalistfile})
+#full path to constraint file
+get_filename_component(xdclistfile constraints/filelist.txt REALPATH)
+
+add_dependency_tree_file(placeholder1 ${hdldepfile})
+add_dependency_tree_file(placeholder2 ${tbdepfile})
+
+#get list of constraint files
+read_filelist(xdcfiles ${xdclistfile})
+
+#the value of topsynth is also in placeholder1
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+#the value of topsim is also in placeholder2
+get_filename_component(topsim tb/blinky_tb.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
+get_list_from_dependency_tree(simfiles ${topsim})
 ----
 
-The vivgen_func requires us to give it a name for its project, a partname for the chip the project is for, and some kind of source files.  Let's put our design on a zynq chip and call our project "test.
+The add_vivado_devel_project requires us to give it a name for its project, a partname for the chip the project is for, and some kind of source files.  It uses named arguments.  The constraint file design was written for a zynq chip.  Let's call our project "blinky".
 
 [source, cmake]
 ----
-set(mypartname "XC7Z020-1CLG484")
+set(partname "XC7Z020-1CLG484")
 
 add_vivado_devel_project(
-  PRJNAME test
-  PARTNAME ${mypartname}
-  VERILOGSYNTHFILES ${hdlfiles}
-  SVSIMFILES ${tbfiles} ${hdlfiles}
-  DATAFILES ${datafiles}
+  PRJNAME blinky
+  PARTNAME ${partname}
+  VERILOGSYNTHFILES ${synthfiles}
+  VERILOGSIMFILES ${simfiles}
+  UNSCOPEDLATEXDC ${xdcfiles}
   )
 ----
 
@@ -288,31 +349,46 @@ That's all we need.  Our file will now look like this
 [source, cmake]
 ----
 cmake_minimum_required(VERSION 3.3)
-project(prjgen)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+project(project)
 
+#cmake_utils file_functions.cmake provides the functions
+#add_dependency_tree_file and get_list_from_dependency_tree
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
+
+#vivgen_functions.cmake provides the add_vivado_devel_project function
 include(viv-prj-gen/vivgen_functions.cmake)
-include(viv-prj-gen/utils_functions.cmake)
 
-get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
-get_filename_component(tblistfile tb/filelist.txt REALPATH)
-get_filename_component(datalistfile testdata/filelist.txt REALPATH)
+#we need the full paths to the dependency tree files
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
+get_filename_component(tbdepfile tb/deptree.txt REALPATH)
 
-read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
-read_filelist(datafiles ${datalistfile})
+#full path to constraint file
+get_filename_component(xdclistfile constraints/filelist.txt REALPATH)
 
-set(mypartname "XC7Z020-1CLG484")
+
+#placeholder1 and placeholder2 store the filepaths that are the heads of lists
+add_dependency_tree_file(placeholder1 ${hdldepfile})
+add_dependency_tree_file(placeholder2 ${tbdepfile})
+
+#get list of constraint files
+read_filelist(xdcfiles ${xdclistfile})
+
+#the value of topsynth is also in placeholder1
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+#the value of topsim is also in placeholder2
+get_filename_component(topsim tb/blinky_tb.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
+get_list_from_dependency_tree(simfiles ${topsim})
+  
+set(partname "XC7Z020-1CLG484")
 
 add_vivado_devel_project(
-  PRJNAME test
-  PARTNAME ${mypartname}
-  VERILOGSYNTHFILES ${hdlfiles}
-  SVSIMFILES ${tbfiles} ${hdlfiles}
-  DATAFILES ${datafiles}
+  PRJNAME blinky
+  VERILOGSYNTHFILES ${synthfiles}
+  VERILOGSIMFILES ${simfiles}
+  PARTNAME ${partname}
+  UNSCOPEDLATEXDC ${xdcfiles}
   )
-
 ----
 
 If we navigate into the build directory, run "cmake ..", then "make help", it will print something like
@@ -324,206 +400,165 @@ The following are some of the valid targets for this Makefile:
 ... depend
 ... rebuild_cache
 ... edit_cache
-... test_genvivprj
+... blinky_genvivprj
 
-The last option is the target that our function added.  source your vivado distributions settings64.sh or settings64.bat to tell your cmdline where your vivado is.  Then run "make test_genvivprj" from your build directory.  Vivado will run and generate the project!  
+The last option is the target that our function added.  source your vivado distributions settings64.sh or settings64.bat to tell your cmdline where your vivado is.  Then run "make test_genvivprj" from your build directory.  Vivado will run and generate the project!
 
-== nonproject flow bitfile generation
-
-To generate a bit file, we use the add_vivado_nonprj_bitfile function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
-
-To generate a bit file, we need a constraint file to tell vivado what logical ports go to what physical pins.
-
-Let's say we've got a project directory structure that looks like this.
+The generated xilinx xpr project file will be generated in the subdirectory of the build directory described in the tree below.  Open that xpr file with vivado and start developing!  Whenever you add or remove source files, edit your deptree.txt and filelist.txt files accordingly.
 
 [source, verbatim]
 .
+└── XC7Z020-1CLG484
+    └── devel_prjs
+        └── blinky
+            ├── blinky.cache
+            │   └── wt
+            │       └── project.wpc
+            ├── blinky.hw
+            │   └── blinky.lpr
+            ├── blinky.ip_user_files
+            └── blinky.xpr
+
+
+== nonproject flow bitfile generation
+
+Generating a project to develop in is helpful, but we need to be able to generate bit files from source.  We don't want to use the development project that isn't source controlled to do this, as doing so would not create a reproducible build.
+
+To generate a bit file, we use the add_vivado_nonprj_bitfile function in vivgen_functions.cmake (documented in vivgen_functions.adoc).
+
+To illustrate this, we will add on to the blinky example used to explain the add_vivado_devel_project function.
+
+As in the previous example, our file tree looks like this.
+
+[source, verbatim]
+.
+├── build
 ├── CMakeLists.txt
 ├── constraints
-│   └── unscopedlate
-│       ├── filelist.txt
-│       └── system.xdc
-├── hdl
-│   ├── DemoTop.vhdl
-│   ├── DFlipFlop.vhdl
+│   ├── blinky_zedboard.xdc
 │   └── filelist.txt
+├── hdl
+│   ├── blinky.v
+│   ├── blinky_zedboard_z7.v
+│   └── deptree.txt
+├── simhdl
+│   └── vlog_tb_utils.v
 ├── tb
-│   ├── filelist.txt
-│   └── tb_DFlipFlop.vhdl
+|   ├── blinky_tb.v
+|   └── deptree.txt
 └── viv-prj-gen
-    |
-    .
-    .
-    .
+    ├── cmake_utils/file_functions.cmake
+    └── vivgen_functions.cmake
 
-We still might want to make edits using the vivado gui, so, we'll create a vivado project like the last in the last section.
 
-This time, we won't have any data files, but we'll add the constraint file.
+Just like last time, we need to get the lists of source files to pass to our cmake function
 
 [source, cmake]
 ----
-cmake_minimum_required(VERSION 3.3)
-project(nonprj)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-
 include(viv-prj-gen/vivgen_functions.cmake)
 include(viv-prj-gen/utils_functions.cmake)
 
-get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
-get_filename_component(tblistfile tb/filelist.txt REALPATH)
-get_filename_component(lateconstrlistfile constraints/unscopedlate/filelist.txt REALPATH)
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
 
-read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
-read_filelist(lateconstrfiles ${lateconstrlistfile})
+#full path to constraint file
+get_filename_component(xdclistfile constraints/filelist.txt REALPATH)
 
-set(mypartname "XC7Z020-1CLG484")
+add_dependency_tree_file(placeholder1 ${hdldepfile})
 
-add_vivado_devel_project(
-  PRJNAME test
-  PARTNAME ${mypartname}
-  VHDLSYNTHFILES ${hdlfiles}
-  VHDLSIMFILES ${tbfiles} ${hdlfiles}
-  UNSCOPEDLATEXDC ${lateconstrfiles}
- )
+#get list of constraint files
+read_filelist(xdcfiles ${xdclistfile})
+
+#the value of topsynth is also in placeholder1
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
 ----
 
 The function call to define a recipe for a bit file is fairly similar.  The bit file doesn't need the testbench.  It needs to know what the name of the top module is, and we need to get from it the location of the output bitfile.
 
 [source, cmake]
-set(nonprjname "nonprjdemo")
 add_vivado_nonprj_bitfile(
-  PRJNAME ${nonprjname}
-  TOPNAME DemoTop
+  PRJNAME blinky
+  TOPNAME blinky_zedboard_z7
   PARTNAME ${partname}
-  VHDLFILES ${hdlfiles}
-  UNSCOPEDLATEXDC ${lateconstrfiles}
-  BITFILE_OUTPUT ${nonprjname}_bitfile
+  VERILOGFILES ${synthfiles}
+  UNSCOPEDLATEXDC ${xdcfiles}
+  BITFILE_OUTPUT blinky_bitfile
   )
 
-This creates a recipe for a bitfile, and stores the location it would put the bitfile in the variable nonprjdem_bitfile.
+This creates a recipe for a bitfile, and stores the location it would put the bitfile in the variable blinky_bitfile.
 
 To get this recipe to run, we need to set up a target that depends on that file.  cmake has a function for this called "add_custom_target".
 
 [source, cmake]
-add_custom_target(nonprj
-  DEPENDS ${${nonprjname}_bitfile}
+add_custom_target(blinky_nonprj
+  DEPENDS ${blinky_bitfile}
   )
 
-Now, make help will list nonprj as an option, and running make nonprj will generate our bit file.  The entire cmake file is listed below.
+Now, if we navigate to our build directory, and run
+
+[source, bash]
+cmake..; make help;
+
+make help will list blinky_nonprj as an option, and running make blinky_nonprj will generate our bit file.  The entire cmake file is listed below.
 
 [source,cmake]
 ----
 cmake_minimum_required(VERSION 3.3)
-project(prjgen)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+project(project)
 
-include(viv-prj-gen/vivgen_functions.cmake)
+#cmake_utils file_functions.cmake provides the functions
+#add_dependency_tree_file and get_list_from_dependency_tree
 include(viv-prj-gen/cmake_utils/file_functions.cmake)
 
-get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
-get_filename_component(GLOB tblistfile tb/filelist.txt REALPATH)
-get_filename_component(GLOB lateconstrlistfile constraints/unscopedlate/filelist.txt REALPATH)
+#vivgen_functions.cmake provides the add_vivado_devel_project function
+include(viv-prj-gen/vivgen_functions.cmake)
 
-read_filelist(hdlfiles ${hdllistfile})
-read_filelist(tbfiles ${tblistfile})
-read_filelist(lateconstrfiles ${lateconstrlistfile})
+#we need the full paths to the dependency tree files
+get_filename_component(hdldepfile hdl/deptree.txt REALPATH)
+get_filename_component(tbdepfile tb/deptree.txt REALPATH)
 
-set(mypartname "XC7Z020-1CLG484")
+#full path to constraint file
+get_filename_component(xdclistfile constraints/filelist.txt REALPATH)
+
+
+#placeholder1 and placeholder2 store the filepaths that are the heads of lists
+add_dependency_tree_file(placeholder1 ${hdldepfile})
+add_dependency_tree_file(placeholder2 ${tbdepfile})
+
+#get list of constraint files
+read_filelist(xdcfiles ${xdclistfile})
+
+#the value of topsynth is also in placeholder1
+get_filename_component(topsynth hdl/blinky_zedboard_z7.v REALPATH)
+#the value of topsim is also in placeholder2
+get_filename_component(topsim tb/blinky_tb.v REALPATH)
+get_list_from_dependency_tree(synthfiles ${topsynth})
+get_list_from_dependency_tree(simfiles ${topsim})
+  
+set(partname "XC7Z020-1CLG484")
 
 add_vivado_devel_project(
-  PRJNAME test
-  PARTNAME ${mypartname}
-  VHDLSYNTHFILES ${hdlfiles}
-  VHDLSIMFILES ${tbfiles} ${hdlfiles}
-  UNSCOPEDLATEXDC ${lateconstrfiles}
+  PRJNAME blinky
+  VERILOGSYNTHFILES ${synthfiles}
+  VERILOGSIMFILES ${simfiles}
+  PARTNAME ${partname}
+  UNSCOPEDLATEXDC ${xdcfiles}
   )
-
-set(nonprjname "nonprjdemo")
 
 add_vivado_nonprj_bitfile(
-  PRJNAME ${nonprjname}
-  TOPNAME DemoTop
+  PRJNAME blinky
+  TOPNAME blinky_zedboard_z7
   PARTNAME ${partname}
-  VHDLFILES ${hdlfiles}
-  UNSCOPEDLATEXDC ${lateconstrfiles}
-  BITFILE_OUTPUT ${nonprjname}_bitfile
+  VERILOGFILES ${synthfiles}
+  UNSCOPEDLATEXDC ${xdcfiles}
+  BITFILE_OUTPUT blinky_bitfile
   )
 
-add_custom_target(nonprj
-  DEPENDS ${${nonprjname}_bitfile}
+add_custom_target(blinky_nonprj
+  DEPENDS ${blinky_bitfile}
   )
 ----
 
 == hardware description file generation
 == Generating a XACT IP wrapper
 == Generating a xci file
-
-[appendix]
-== cmake Basics Continued
-=== File paths entry Alternative
-==== add_dependency_tree_file get_list_from_dependency_tree
-
-If you want to build lots of outputs based on your input set, sometimes it is helpful to represent your sources by what other sources they depend on.
-
-cmake_utils provides 2 functions to do this.
-
-add_dependency_tree_file reads a file and saves the source dependencies that are listed in it.  get_list_from_dependency_tree reads those source dependencies and generates a list from it.
-
-If we had a file tree that looked like this
-
-[source, verbatim]
-.
-├── build
-├── CMakeLists.txt
-├── hdl
-│   ├── DFlipFlop.v
-│   └── ShiftReg.v
-├── file_deplist.txt
-├── tb
-│   ├── tb_DFlipFlop.sv
-│   └── tb_ShiftReg.sv
-└── viv-prj-gen
-    ├── demos
-    ├── docs
-    ├── LICENSE
-    ├── README.md
-    ├── tcl
-    ├── tests
-    ├── cmake_utils/file_functions.cmake
-    └── vivgen_functions.cmake
-
-Let's say
-
-* ShiftRegister.v  instantiate DFlipFlop.v 
-* DFlipFlop_tb.sv instantiates DFlipFlop.v
-* ShiftRegister_tb.sv instantiates ShiftRegister.v 
-
-This could be represented in file_deplist.txt like this
-
-[source, verbatim]
-hdl/ShiftRegister.v <= hdl/DFlipFlop.v
-tb/DFlipFlop_tb.sv <= hdl/DFlipFlop.v
-tb/ShiftRegister_tb.sv <= hdl/ShiftRegister.v
-
-We don't need to say that ShiftRegister_tb.sv depends on DFlipFlop.v, because it only depends on it indirectly through ShiftRegister.v .  get_list_from_dependency_tree will recursively handle that for us.
-
-[source, cmake]
-----
-cmake_minimum_required(VERSION 3.3)
-project(filelists)
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-
-include(viv-prj-gen/cmake_utils/file_functions.cmake)
-
-get_filename_component(hdldepfile file_deplist.txt REALPATH)
-add_dependency_tree_file(hdlheadfiles ${hdldepfile})
-get_filename_component(shiftregister_tb_file tb/ShiftRegister_tb.sv REALPATH)
-
-get_list_from_dependency_tree(ShiftRegister_tb_list  ${shiftregister_tb_file})
-
-message(STATUS "shift register tb list: ${ShiftRegister_tb_list}")
-----
