@@ -560,5 +560,71 @@ add_custom_target(blinky_nonprj
 ----
 
 == hardware description file generation
+
+Version controlling vivado block diagrams is difficult.
+
+Unfortunately, when dealing with system-on-chip designs where a processor needs to interface with a fpga over axi-buses, the IP Integrator is the easiest way to get started with it.
+
+Version controlling the block diagram directly is difficult. Instead, viv-gen-prj expects the user to version control a tcl script that generates the block diagram.
+
+There are two main ways of doing this.
+
+option 1: The easiest is to create a block diagram in the gui with vivado, have that block diagram open, then use the menu button file->export->block diagram to export the block diagram to a tcl file.  I recommend you validate design befor you do so.
+
+option 2: The other option is, as you are editing the block diagram, copy the tcl corresponding tcl commands that you used to create the block diagram to a tcl script.  The tcl commands corresponding to your gui actions appear in the command window at the bottom of your screen, and they are also logged in a vivado.jou file in the directory that you start vivado in.
+
+Option 2 gives you more control, but option 1 is easier not to forget to copy changes from your working block diagram copy to your version controlled script.
+
+Once you have a block diagram generation script, the cmake script is fairly simple.  You need to know the name of the board you are using and the partname you are using.
+
+Let's say you are using a Zedboard, and your file tree looks like this
+
+[source,verbatim]
+.
+├── build
+├── CMakeLists.txt
+├── scripts
+|    └── system_bd.tcl
+└── viv-prj-gen
+    ├── cmake_utils/file_functions.cmake
+    └── vivgen_functions.cmake
+
+The boardname for a zedboard, for my version of vivado, is "em.avnet.com:zed:part0:1.4" and the partname for the zynq chip on the zedboard is "XC7Z020-1CLG484".
+
+The CMakeLists.txt file would look like this
+
+[source,cmake]
+----
+#vivado's version of cmake is 3.3
+cmake_minimum_required(VERSION 3.3)
+#do not allow in source build
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+project(bd_project)
+set(partname "XC7Z020-1CLG484")
+set(boardname "em.avnet.com:zed:part0:1.4")
+
+include(viv-prj-gen/vivgen_functions.cmake)
+include(viv-prj-gen/cmake_utils/file_functions.cmake)
+
+get_filename_component(bdscript scripts/system_bd.tcl REALPATH)
+add_vivado_bd_hdf(
+  PRJNAME bdprj
+  PARTNAME ${partname}
+  BDSCRIPT ${bdscript}
+  BOARDNAME ${boardname}
+  HDFFILE_OUTPUT hdf_target
+  )
+
+add_custom_target(bdprj_hdf
+  DEPENDS ${hdf_target}
+  )
+----
+
+The add_vivado_bd_hdf function creates a recipe for the hardware description file (hdf).  add_custom_target provides a target that the user can command built with make.
+
+To build the hdf file, navigate to the build directory in the terminal, run cmake .. .  Then, if you run "make -help", bdprj_hdf will be listed as one of the targets.  "make bdprj_hdf" will generate your hardware description file.
+
 == Generating a XACT IP wrapper
 == Generating a xci file
