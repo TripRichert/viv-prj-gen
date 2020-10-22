@@ -1,4 +1,4 @@
-= viv-prj-gen cmake tutorial
+= viv-prj-gen
 :toc: 
 :sectnums:
 ifdef::env-github[]
@@ -153,4 +153,5 @@ If you need to customize the build process, there are hooks for that, too.
 
 If you are interested in seeing more of the capabilities, go through the tutorial:
 
-link:Tutorial.adoc[Tutorial]
+link:tutorial/Tutorial.adoc[Tutorial]
+
