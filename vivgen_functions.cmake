@@ -228,6 +228,10 @@ function(add_vivado_nonprj_bitfile)
       ${vivnonprj_${file_type}_GEN})
   endforeach()
 
+  if("${VHDLFILES}" STREQUAL "" AND "${VERILOGFILES}" STREQUAL "" AND "${SYSTEMVERILOGFILES}" STREQUAL "")
+    message(FATAL_ERROR "no hdl source files used in nonproject")
+  endif()
+
   set(scriptlist)
   if (NOT ${vivnonprj_PRESYNTHSCRIPT} STREQUAL "")
     set(scriptlist ${scriptlist} ${vivnonprj_PRESYNTHSCRIPT})
@@ -357,6 +361,11 @@ function(add_vivado_xact_ip)
   foreach(file_type ${src_file_types})
     set(${file_type} ${genip_${file_type}} ${genip_${file_type}_GEN})
   endforeach()
+
+  if("${VHDLFILES}" STREQUAL "" AND "${VERILOGFILES}" STREQUAL "" AND "${SYSTEMVERILOGFILES}" STREQUAL "")
+    message(FATAL_ERROR "no hdl source files used in xact ip")
+  endif()
+
   
   set(ipdir ${CMAKE_BINARY_DIR}/${genip_PARTNAME}/ip_repo/${genip_SUBDIRNAME}/${genip_IPNAME})
   set(laststring "")
