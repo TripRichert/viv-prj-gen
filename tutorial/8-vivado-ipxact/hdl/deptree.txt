@@ -1,0 +1,1 @@
+myip/myip_v1_0.vhd <= myip/myip_v1_0_S00_AXI.vhd

@@ -575,6 +575,28 @@ option 2: The other option is, as you are editing the block diagram, copy the tc
 
 Option 2 gives you more control, but option 1 is easier not to forget to copy changes from your working block diagram copy to your version controlled script.
 
+Let's look at a block diagram script.  To create a block diagram, we use the create_bd_design function with the name of our block diagram.
+
+[source, tcl]
+create_bd_design "system"
+
+Let's say we're working with a zedboard.  We can instantiate a zynq design and invoke the presets using these commands:
+
+[source, tcl]
+create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
+set_property -dict [list CONFIG.preset {ZedBoard}] [get_bd_cells processing_system7_0]
+
+We need to connect the zynq chip to the ddr memory.  This can be accomplished by applying block diagram automation
+
+[source, tcl]
+apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" apply_board_preset "1" Master "Disable" Slave "Disable" }  [get_bd_cells processing_system7_0]
+
+
+Last, we'll want to validate the design
+
+[source, tcl]
+validate_bd_design
+
 Once you have a block diagram generation script, the cmake script is fairly simple.  You need to know the name of the board you are using and the partname you are using.
 
 Let's say you are using a Zedboard, and your file tree looks like this
@@ -627,4 +649,12 @@ The add_vivado_bd_hdf function creates a recipe for the hardware description fil
 To build the hdf file, navigate to the build directory in the terminal, run cmake .. .  Then, if you run "make -help", bdprj_hdf will be listed as one of the targets.  "make bdprj_hdf" will generate your hardware description file.
 
 == Generating a XACT IP wrapper
-== Generating a xci file
+
+Sometimes, instead of just using xilinx's intellectual property, you'll want to connect your own custom hdl code to a bus connecting to a processor.
+
+Xilinx uses the xact ip standard to wrap hdl code to be used in a block diagram.  Their IP management software for this is not version control friendly.  All source files used by the IP must be in the directory of the IP or one of its subdirectories.
+
+viv-prj-gen provides the add_vivado_xact_ip function to use vivado to infer an ip xact for your hdl code.
+
+In order to correctly infer your intent on the hdl code, it can be helpful to create a vivado project, and use the tools->create and package new ip button.  Select "create a new AXI4 peripheral", and select the menu options for the bus type you want.  Look at the generated code, and use their naming conventions for the bus signals.
+
