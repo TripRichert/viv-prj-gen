@@ -279,6 +279,11 @@ A Vivado project is useful for interacting with the code using Vivado's gui.  Th
 
 Let's generate one.  We are going to use the add_vivado_devel_project function.  Documentation for functions in vivgen_functions.cmake is in vivgen_functions.adoc .
 
+Any time you run into problems with viv-prj-gen functions, you can print out a bunch of information about the variable inputs to the functions by addding this line of code to your CMakeLists.txt file
+
+[source, cmake]
+set(printFuncParams true)
+
 The first thing we need to do is include our .cmake files and get paths to our hdl files.  Lets say our file system, looks like this.
 
 [source, verbatim]
