@@ -37,7 +37,7 @@ The documentation of the api is here
 
 link:docs/vivgen_functions.adoc[vivgen_functions]
 
-There is some example code in <<Examples>>
+To see what the syntax looks like, you can look in the <<Examples>> section.  To see working demos, https://github.com/TripRichert/cmake_fpga_demos
 
 === Alternatives
 
