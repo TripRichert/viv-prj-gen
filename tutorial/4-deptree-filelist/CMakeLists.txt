@@ -3,7 +3,7 @@ project(project)
 
 #cmake_utils file_functions.cmake provides the functions
 #add_dependency_tree_file and get_list_from_dependency_tree
-include(../../cmake_utils/file_functions.cmake)
+include(../cmake_utils/file_functions.cmake)
 
 #we need the full paths to the dependency tree files
 get_filename_component(hdldepfile hdl/deptree.txt REALPATH)

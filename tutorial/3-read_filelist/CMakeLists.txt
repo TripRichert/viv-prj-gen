@@ -5,7 +5,7 @@ project(filelists)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-include(../../cmake_utils/file_functions.cmake)
+include(../cmake_utils/file_functions.cmake)
 
 get_filename_component(hdllistfile hdl/filelist.txt REALPATH)
 

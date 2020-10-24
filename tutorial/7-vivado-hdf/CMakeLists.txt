@@ -9,7 +9,7 @@ set(partname "XC7Z020-1CLG484")
 set(boardname "em.avnet.com:zed:part0:1.4")
 
 include(../../vivgen_functions.cmake)
-include(../../cmake_utils/file_functions.cmake)
+include(../cmake_utils/file_functions.cmake)
 
 
 get_filename_component(bdscript scripts/system_bd.tcl REALPATH)
