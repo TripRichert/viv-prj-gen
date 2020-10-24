@@ -1,5 +1,11 @@
 = Tutorial
 
+This tutorial assumes you've used vivado before.  It assumes you have vivado on your machine and sourced the settings64.sh or settings64.bat file so that your commandline knows where your vivado installation is.  Passing knowledge of tcl and cmake is would be useful, but this tutorial might give you enough information without that.
+
+The subdirectories adjacent to this file provide numbered examples going along with the tutorial.
+
+To be able to follow along with this tutorial, you need to clone, submodule, or subtree https://github.com/TripRichert/viv-prj-gen and https://github.com/TripRichert/cmake_utils to include the cmake files these two repos provide.
+
 == cmake Basics
 
 This section is not meant to be a full tutorial on cmake, but hopefully is enough to get you started.
@@ -74,9 +80,9 @@ To run cmake, create a build directory in your project adjacent to the CMakeList
 
 In cmake, filepaths should use forward slashes, not backslashes, even if you are on windows.
 
-To be able to use the functions in viv-prj-gen, you need to get viv-prj-gen on your computer, and to use the "include" function on the path to the .cmake file with the functions you want in it.
+To be able to use the functions in viv-prj-gen, you need to get https://github.com/TripRichert/viv-prj-gen and https://github.com/TripRichert/cmake_utils on your computer, and to use the "include" function on the path to the .cmake file with the functions you want in it.
 
-I recommend using viv-prj-gen as a git submodule or a git subtree.
+I recommend using viv-prj-gen and cmake_utils as a git submodule or a git subtree.
 
 The start of your CMakeLists.txt might look like this
 [source,cmake]
