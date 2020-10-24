@@ -23,7 +23,7 @@ viv-prj-gen can also generate a vivado project, so that users can develop using 
 
 viv-prj-gen provides cmake functions in an includable cmake file, which makes it easy to extend without forking.
 
-Viv-prj-gen does not directly support automated simulation.  Viv-prj-gen does not support tools other than vivado.  That said, wrapping python frameworks that support simulation of vhdl and verilog in cmake is not difficult.  I plan to provide examples in the cmake fpga demos repo demonstrating how to do this in a way that works well with viv-prj-gen.
+Viv-prj-gen does not directly support automated simulation.  Viv-prj-gen does not support tools other than vivado.  That said, wrapping python frameworks that support simulation of vhdl and verilog in cmake is possible.  Two of the demos in https://github.com/TripRichert/cmake_fpga_demos (blinky and blinky2) show two different approaches for invoking edalize to simulate from cmake.
 
 === Getting Started
 
