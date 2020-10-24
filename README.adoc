@@ -77,6 +77,7 @@ Let's say you've got a directory tree that looks like this:
 .
 ├── build
 ├── CMakeLists.txt
+├── cmake_utils
 ├── hdl
 │   ├── DFlipFlop.v
 │   └── ShiftReg.v
@@ -86,7 +87,6 @@ Let's say you've got a directory tree that looks like this:
 ├── constraints
 │   ├── system.xdc
 └── viv-prj-gen
-└── cmake_utils
 
 where viv-prj-gen and cmake_utils are retrieved using git clone https://github.com/TripRichert/viv-prj-gen; git clone https://github.com/TripRichert/cmake_utils
 
@@ -154,4 +154,3 @@ If you need to customize the build process, there are hooks for that, too.
 If you are interested in seeing more of the capabilities, go through the tutorial:
 
 link:tutorial/Tutorial.adoc[Tutorial]
-
