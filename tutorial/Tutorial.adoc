@@ -1,6 +1,6 @@
 = Tutorial
 
-This tutorial assumes you've used vivado before.  It assumes you have vivado on your machine and sourced the settings64.sh or settings64.bat file so that your commandline knows where your vivado installation is.  Passing knowledge of tcl and cmake is would be useful, but this tutorial might give you enough information without that.
+This tutorial assumes you've used vivado before.  It assumes you have vivado on your machine and sourced the settings64.sh or settings64.bat file so that your commandline knows where your vivado installation is.  It assumes that you have a working version of cmake that you can invoke from commandline (one should come with vivado).  Passing knowledge of tcl and cmake is would be useful, but this tutorial might give you enough information without that.
 
 The subdirectories adjacent to this file provide numbered examples going along with the tutorial.
 
@@ -674,3 +674,4 @@ viv-prj-gen provides the add_vivado_xact_ip function to use vivado to infer an i
 
 In order to correctly infer your intent on the hdl code, it can be helpful to create a vivado project, and use the tools->create and package new ip button.  Select "create a new AXI4 peripheral", and select the menu options for the bus type you want.  Look at the generated code, and use their naming conventions for the bus signals.
 
+check out the subdirectory "8-vivado-ipxact" for a working example
