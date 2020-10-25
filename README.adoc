@@ -65,6 +65,14 @@ ttask:: tcl based, vendor agnostic, supports building bits files and simulation
 
 link: https://www.p-code.org/ttask/
 
+HOG:: tcl and bash based, supports synthesis
+
+link: https://gitlab.cern.ch/hog/Hog
+
+IPbus builder:: I don't understand this enough to summarize
+
+link: https://github.com/ipbus/ipbb
+
 If Edalize or hdlmake support your needs, they interface with more tools and work better with simulation frameworks like VUnit.  I strongly recommend you check them out.
 
 I think the main benefits of viv-prj-gen are that it is simple, cmake based (has benefits and drawbacks, python based is better for simulation), supports vivado block diagrams for zynq projects, and is easy to extend.  The main downsides are that its not python based, only supports vivado (writing cmake functions to support other vendors would not be difficult, though), doesn't have organization backing (might not be as well maintained), and isn't as widely used as these other projects.
