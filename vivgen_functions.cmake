@@ -45,7 +45,7 @@ function(add_vivado_devel_project)
     "${list_args}"
     "${ARGN}"
     )
-  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+  foreach(arg IN LISTS genviv_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed argument: ${arg}")
   endforeach()
 
@@ -109,7 +109,7 @@ function(copy_vivado_xcifile)
     "${list_args}"
     "${ARGN}"
     )
-  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+  foreach(arg IN LISTS cpyxci_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed argument: ${arg}")
   endforeach()
   if(printFuncParams)
@@ -333,7 +333,7 @@ function(add_vivado_xact_ip)
     "${list_args}"
     "${ARGN}"
     )
-  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+  foreach(arg IN LISTS genip_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed argument: ${arg}")
   endforeach()
 
@@ -444,7 +444,7 @@ function(add_vivado_xcifile)
     "${list_args}"
     "${ARGN}"
     )
-  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+  foreach(arg IN LISTS genxci_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed argument: ${arg}")
   endforeach()
 
@@ -518,7 +518,7 @@ function(add_vivado_bd_hdf)
     "${list_args}"
     "${ARGN}"
     )
-  foreach(arg IN LISTS test_UNPARSED_ARGUMENTS)
+  foreach(arg IN LISTS genhdf_UNPARSED_ARGUMENTS)
     message(WARNING "Unparsed argument: ${arg}")
   endforeach()
 
