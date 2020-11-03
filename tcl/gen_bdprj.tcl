@@ -15,14 +15,15 @@ if {[diction::hasDuplicates [diction::getKeys $argv]]} {
     exit 3
 }
 
-set requiredKeys [list builddir prjname partname bdscript hdfout]
+set requiredKeys [list builddir prjname partname bdscript]
 set allowedKeys [list boardname target_language vhdlbdwrapper\
 		     verilogbdwrapper \
 		     xcifiles \
 		     ip_repo_dirs\
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
-		     unscopednormalconstraints unscopedlateconstraints
+		     unscopednormalconstraints unscopedlateconstraints \
+		     postbdgen_scripts hdfout
                    ]
 
 foreach key $requiredKeys {
@@ -130,10 +131,11 @@ generate_target all [get_files *.bd]
 export_ip_user_files -of_objects [get_files *.bd]
 report_ip_status -name ip_status
 update_ip_catalog -rebuild -scan_changes
-reset_run synth_1
-launch_runs impl_1 -to_step write_bitstream -jobs 4
-wait_on_run impl_1
-set dirext .runs
-file copy -force [glob $prjname$dirext/impl_1/*.sysdef] [diction::getDef hdfout {*}$argv]
+
+if {[diction::checkForKeyPair postbdgen_scripts {*}$argv]} {
+    foreach filename [diction::getDef postbdgen_scripts {*}$argv] {
+	source $filename
+    }
+}
 
 puts "Completed Execution of $argv0"

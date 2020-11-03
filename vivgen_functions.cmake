@@ -484,7 +484,9 @@ function(add_vivado_xcifile)
     )
 endfunction()
 
-file(GLOB genbdhdfscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdhdf.tcl)
+file(GLOB genbdprjscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdprj.tcl)
+file(GLOB genbdhdf_defaultscript ${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/gen_bdhdf.tcl)
+
 function(add_vivado_bd_hdf)
   set(options VERILOG)
   set(args
@@ -508,6 +510,7 @@ function(add_vivado_bd_hdf)
   endforeach()
   set(list_args
     ${gen_file_types}
+    POSTBDGENSCRIPTS
     XCIFILES_GEN
     DEPENDS
     )
@@ -529,7 +532,8 @@ function(add_vivado_bd_hdf)
     message(STATUS "genhdf PRJNAME ${genhdf_PRJNAME}")
     message(STATUS "genhdf PARTNAME ${genhdf_PARTNAME}")
     message(STATUS "genhdf BDSCRIPT ${genhdf_BDSCRIPT}")
-    message(STATUS "genhdf BOARDNAME ${genhdf_BOARDNAME}")    
+    message(STATUS "genhdf BOARDNAME ${genhdf_BOARDNAME}")
+    message(STATUS "genhdf POSTBDGENSCRIPTS ${genhdf_POSTBDGENSCRIPTS}")
   endif()
 
   foreach(file_type ${src_file_types})
@@ -564,6 +568,10 @@ function(add_vivado_bd_hdf)
     endif()
   endforeach()
 
+  set(POSTBDGENSCRIPTS ${genhdf_POSTBDGENSCRIPTS})
+  list(APPEND POSTBDGENSCRIPTS ${genbdhdf_defaultscript})
+  
+
 
   set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/genprjs)
@@ -571,8 +579,8 @@ function(add_vivado_bd_hdf)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
-    COMMAND vivado -mode batch -source ${genbdhdfscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC}
-    DEPENDS ${genbdhdfscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS} ${xci_depends}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    DEPENDS ${genbdprjscript} ${genbdhdf_defaultscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS} ${xci_depends}
     )
 
   if (NOT ${genhdf_HDFFILE_OUTPUT} STREQUAL "")
@@ -580,6 +588,97 @@ function(add_vivado_bd_hdf)
   endif()
 
 endfunction()
+
+function(add_vivado_bd_devel_project)
+  set(options VERILOG)
+  set(args
+    PRJNAME
+    PARTNAME
+    BDSCRIPT
+    BOARDNAME
+    )
+  set(src_file_types
+    UNSCOPEDEARLYXDC
+    UNSCOPEDNORMALXDC
+    UNSCOPEDLATEXDC
+    SCOPEDEARLYXDC
+    SCOPEDNORMALXDC
+    SCOPEDLATEXDC
+    )
+  set(gen_file_types "")
+  foreach(file_type ${src_file_types})
+    list(APPEND gen_file_types ${file_type}_GEN)
+  endforeach()
+  set(list_args
+    ${gen_file_types}
+    POSTBDGENSCRIPTS
+    XCIFILES_GEN
+    DEPENDS
+    )
+  CMAKE_PARSE_ARGUMENTS(
+    genbd
+    "${options}"
+    "${args}"
+    "${list_args}"
+    "${ARGN}"
+    )
+  foreach(arg IN LISTS genbd_UNPARSED_ARGUMENTS)
+    message(WARNING "Unparsed argument: ${arg}")
+  endforeach()
+
+  if(printFuncParams)
+    foreach(arg ${list_args})
+      message(STATUS "genbd ${arg} ${genbd_${arg}}")
+    endforeach()
+    message(STATUS "genbd PRJNAME ${genbd_PRJNAME}")
+    message(STATUS "genbd PARTNAME ${genbd_PARTNAME}")
+    message(STATUS "genbd BDSCRIPT ${genbd_BDSCRIPT}")
+    message(STATUS "genbd BOARDNAME ${genbd_BOARDNAME}")
+    message(STATUS "genbd POSTBDGENSCRIPTS ${genbd_POSTBDGENSCRIPTS}")
+  endif()
+
+  foreach(file_type ${src_file_types})
+    foreach(filename ${genbd_${file_type}})
+      if(NOT ${filename} STREQUAL "")
+        if(NOT EXISTS ${filename})
+          message(SEND_ERROR "missing file ${filename}")
+        endif()
+      endif()
+    endforeach()
+  endforeach()
+
+  foreach(file_type ${src_file_types})
+    set(${file_type} ${genbd_${file_type}} 
+      ${genbd_${file_type}_GEN})
+  endforeach()
+
+
+  set(xci_depends "")
+  foreach(xcifile ${genbd_XCIFILES_GEN})
+    if (NOT "${xcifile}" STREQUAL "")
+      get_property( xci_dep
+        SOURCE ${xcifile}
+        PROPERTY OBJECT_OUTPUTS
+        )
+      if (NOT "${xci_dep}" STREQUAL "")
+        list(APPEND xci_depends "${xci_dep}")
+      else()
+        message(WARNING "generated xci ${xcifile} not associated with object output")
+        list(APPEND xci_depends "${xcifile}")
+      endif()
+    endif()
+  endforeach()
+
+  set(POSTBDGENSCRIPTS ${genbd_POSTBDGENSCRIPTS})  
+
+  set(prjbuilddir ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/devel_prjs)
+  add_custom_target(${genbd_PRJNAME}_develbdprj
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genbd_PRJNAME} -partname ${genbd_PARTNAME} -bdscript ${genbd_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/bin/${genbd_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/ip_repo -xcifiles ${genbd_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    DEPENDS ${genbdprjscript} ${cmdlinedictprocsscript} ${genbd_DEPENDS} ${xci_depends}
+    )
+endfunction()
+
 
 ###############################################################################
 # MIT LICENSE

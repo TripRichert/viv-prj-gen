@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.3)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
+set(printFuncParams true)
+
 project(bd_project)
 set(partname "XC7Z020-1CLG484")
 set(boardname "em.avnet.com:zed:part0:1.4")
