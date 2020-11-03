@@ -224,6 +224,7 @@ list [SCOPEDNORMALXDC]:: scoped to ref of same name constr file, must exist conf
 list [SCOPEDNORMALXDC_GEN]:: scoped to ref of same name constr file
 list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config time
 list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
+list [POSTBDGENSCRIPTS]:: scripts to run after block diagram is generated
 noarg [VERILOG]:: option to, if wrapper is generated, use verilog instead of vhdl
 list [DEPENDS]:: list of dependencies 
 
@@ -243,5 +244,48 @@ Parameters
 | Description
 |
 Generated hardware description file from generated block diagram
+
+|===
+
+== add_vivado_bd_devel_project
+
+[cols='h,6a']
+|===
+| Brief
+| 
+generates a recipe for a target for a development project for block diagrams
+
+| Input +
+Parameters
+|
+string PRJNAME:: name of vivado project to be created
+string PARTNAME:: xilinx part
+string BDSCRIPT:: tcl script for generating block diagram file
+string [BOARDNAME]:: name of xilinx board used
+list [UNSCOPEDEARLYXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDEARLYXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDNORMALXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDNORMALXDC_GEN]:: unscoped constraint file
+list [UNSCOPEDLATEXDC]:: unscoped constraint file, must exist config time
+list [UNSCOPEDLATEXDC_GEN]:: unscoped constraint file
+list [SCOPEDEARLYXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDEARLYXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDNORMALXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDNORMALXDC_GEN]:: scoped to ref of same name constr file
+list [SCOPEDLATEXDC]:: scoped to ref of same name constr file, must exist config time
+list [SCOPEDLATEXDC_GEN]:: scoped to ref of same name constr file
+list [POSTBDGENSCRIPTS]:: scripts to run after block diagram is generated
+noarg [VERILOG]:: option to, if wrapper is generated, use verilog instead of vhdl
+list [DEPENDS]:: list of dependencies 
+
+|Targets and +
+Outputs
+|
+*target* ${genbd_PRJNAME}_bddevelprj:: generates development project for block diagram.  Fails if project already exists
+
+
+| Description
+|
+Generated block diagram development project
 
 |===
