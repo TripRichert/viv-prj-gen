@@ -612,7 +612,9 @@ Last, we'll want to validate the design
 [source, tcl]
 validate_bd_design
 
-Once you have a block diagram generation script, the cmake script is fairly simple.  You need to know the name of the board you are using and the partname you are using.
+Once you have a block diagram generation script, the cmake script is fairly simple.
+
+viv-prj-gen expects you to use cmake to generate two projects for block diagrams.  One project is meant for development.  You make changes in it, then export those changes to your bd generation script file.  The other is meant for builds for record and should not be modified by you.
 
 Let's say you are using a Zedboard, and your file tree looks like this
 
@@ -647,6 +649,14 @@ include(viv-prj-gen/vivgen_functions.cmake)
 include(cmake_utils/file_functions.cmake)
 
 get_filename_component(bdscript scripts/system_bd.tcl REALPATH)
+
+add_vivado_bd_devel_project(
+  PRJNAME bdprj
+  PARTNAME ${partname}
+  BDSCRIPT ${bdscript}
+  BOARDNAME ${boardname}
+  )
+  
 add_vivado_bd_hdf(
   PRJNAME bdprj
   PARTNAME ${partname}
@@ -662,7 +672,10 @@ add_custom_target(bdprj_hdf
 
 The add_vivado_bd_hdf function creates a recipe for the hardware description file (hdf).  add_custom_target provides a target that the user can command built with make.
 
+
 To build the hdf file, navigate to the build directory in the terminal, run cmake .. .  Then, if you run "make -help", bdprj_hdf will be listed as one of the targets.  "make bdprj_hdf" will generate your hardware description file.
+
+add_vivado_bd_devel_project creates a separate recipe for a target that generates a development project for you.  You can use the command "make help" to see available targets.  In this case, to generate the vivado project, use the command "make bdprj_develbdprj".  The build system will not overwrite this project.  If you make changes that you want reflected in the development project, you will need to delete the development project yourself.
 
 == Generating a XACT IP wrapper
 

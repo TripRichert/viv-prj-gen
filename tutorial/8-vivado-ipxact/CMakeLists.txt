@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.3)
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-set(printFuncParams true)
+#set(printFuncParams true)
 
 project(bd_project)
 set(partname "XC7Z020-1CLG484")
@@ -29,6 +29,15 @@ add_vivado_xact_ip(
   )
 
 get_filename_component(bdscript scripts/system_bd.tcl REALPATH)
+
+add_vivado_bd_devel_project(
+  PRJNAME bdprj
+  PARTNAME ${partname}
+  BDSCRIPT ${bdscript}
+  BOARDNAME ${boardname}
+  DEPENDS ${ipxact_output}
+  )
+
 add_vivado_bd_hdf(
   PRJNAME bdprj
   PARTNAME ${partname}

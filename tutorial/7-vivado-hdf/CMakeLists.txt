@@ -13,6 +13,14 @@ include(../cmake_utils/file_functions.cmake)
 
 
 get_filename_component(bdscript scripts/system_bd.tcl REALPATH)
+
+add_vivado_bd_devel_project(
+  PRJNAME bdprj
+  PARTNAME ${partname}
+  BDSCRIPT ${bdscript}
+  BOARDNAME ${boardname}
+  )
+
 add_vivado_bd_hdf(
   PRJNAME bdprj
   PARTNAME ${partname}
