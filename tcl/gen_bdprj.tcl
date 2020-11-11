@@ -16,7 +16,8 @@ if {[diction::hasDuplicates [diction::getKeys $argv]]} {
 }
 
 set requiredKeys [list builddir prjname partname bdscript]
-set allowedKeys [list boardname target_language vhdlbdwrapper\
+set allowedKeys [list boardname target_language  bdscriptwrapper\
+		     vhdlbdwrapper\
 		     verilogbdwrapper \
 		     xcifiles \
 		     ip_repo_dirs\
@@ -106,20 +107,14 @@ if {[diction::checkForKeyPair unscopedlateconstraints {*}$argv]} {
     vivprj::add_const_files_to_set false late [diction::getDef unscopedlateconstraints {*}$argv]
 }
 
-source [diction::getDef bdscript {*}$argv]
-
-if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
-    vivprj::add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
-} elseif {[diction::checkForKeyPair verilogbdwrapper {*}$argv]} {
-    vivprj::add_files_to_set sources_1 Verilog [diction::getDef verilogbdwrapper {*}$argv]
-} else {
-    set dirext .srcs
-    make_wrapper -files [get_files *.bd] -top
-    add_files -norecurse [file normalize [glob $prjname$dirext/sources_1/bd/*/hdl/*.v*]]
-}
-
 if {[diction::checkForKeyPair xcifiles {*}$argv]} {
     vivprj::add_files_to_set sources_1 "IP" [diction::getDef xcifiles {*}$argv]
+}
+
+if {[diction::checkForKeyPair bdscriptwrapper {*}$argv]} {
+    source [diction::getDef bdscriptwrapper {*}$argv]
+} else {
+    source [diction::getDef bdscript {*}$argv]
 }
 
 report_ip_status -name ip_status
@@ -137,5 +132,16 @@ if {[diction::checkForKeyPair postbdgen_scripts {*}$argv]} {
 	source $filename
     }
 }
+
+if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
+    vivprj::add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
+} elseif {[diction::checkForKeyPair verilogbdwrapper {*}$argv]} {
+    vivprj::add_files_to_set sources_1 Verilog [diction::getDef verilogbdwrapper {*}$argv]
+} else {
+    set dirext .srcs
+    make_wrapper -files [get_files *.bd] -top
+    add_files -norecurse [file normalize [glob $prjname$dirext/sources_1/bd/*/hdl/*.v*]]
+}
+
 
 puts "Completed Execution of $argv0"

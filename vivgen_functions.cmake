@@ -494,6 +494,8 @@ function(add_vivado_bd_hdf)
     PARTNAME
     BDSCRIPT
     BOARDNAME
+    BDSCRIPTWRAPPER
+    BDSCRIPTWRAPPER_GEN
     HDFFILE_OUTPUT
     )
   set(src_file_types
@@ -546,10 +548,18 @@ function(add_vivado_bd_hdf)
     endforeach()
   endforeach()
 
+  if(NOT ${genbd_BDSCRIPTWRAPPER} STREQUAL "")
+    if(NOT EXISTS ${genbd_BDSCRIPTWRAPPER})
+      message(SEND_ERROR "missing file ${genbd_BDSCRIPTWRAPPER}")
+    endif()
+  endif()
+
   foreach(file_type ${src_file_types})
     set(${file_type} ${genhdf_${file_type}} 
       ${genhdf_${file_type}_GEN})
   endforeach()
+  set(BDSCRIPTWRAPPER ${genbd_BDSCRIPTWRAPPER} 
+      ${genbd_BDSCRIPTWRAPPER_GEN})
 
 
   set(xci_depends "")
@@ -579,7 +589,7 @@ function(add_vivado_bd_hdf)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
-    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -boardname "${genhdf_BOARDNAME}" -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -boardname "${genhdf_BOARDNAME}" -bdscript ${genhdf_BDSCRIPT} -bdscriptwrapper ${BDSCRIPTWRAPPER} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
     DEPENDS ${genbdprjscript} ${genbdhdf_defaultscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS} ${xci_depends}
     )
 
@@ -596,6 +606,8 @@ function(add_vivado_bd_devel_project)
     PARTNAME
     BDSCRIPT
     BOARDNAME
+    BDSCRIPTWRAPPER
+    BDSCRIPTWRAPPER_GEN
     )
   set(src_file_types
     UNSCOPEDEARLYXDC
@@ -634,6 +646,8 @@ function(add_vivado_bd_devel_project)
     message(STATUS "genbd PARTNAME ${genbd_PARTNAME}")
     message(STATUS "genbd BDSCRIPT ${genbd_BDSCRIPT}")
     message(STATUS "genbd BOARDNAME ${genbd_BOARDNAME}")
+    message(STATUS "genbd BDSCRIPTWRAPPER ${genbd_BDSCRIPTWRAPPER}")
+    message(STATUS "genbd BDSCRIPTWRAPPER_GEN ${genbd_BDSCRIPTWRAPPER_GEN}")    
     message(STATUS "genbd POSTBDGENSCRIPTS ${genbd_POSTBDGENSCRIPTS}")
   endif()
 
@@ -647,10 +661,18 @@ function(add_vivado_bd_devel_project)
     endforeach()
   endforeach()
 
+  if(NOT ${genbd_BDSCRIPTWRAPPER} STREQUAL "")
+    if(NOT EXISTS ${genbd_BDSCRIPTWRAPPER})
+      message(SEND_ERROR "missing file ${genbd_BDSCRIPTWRAPPER}")
+    endif()
+  endif()
+
   foreach(file_type ${src_file_types})
     set(${file_type} ${genbd_${file_type}} 
       ${genbd_${file_type}_GEN})
   endforeach()
+  set(BDSCRIPTWRAPPER ${genbd_BDSCRIPTWRAPPER} 
+      ${genbd_BDSCRIPTWRAPPER_GEN})
 
 
   set(xci_depends "")
@@ -674,7 +696,7 @@ function(add_vivado_bd_devel_project)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/devel_prjs)
   add_custom_target(${genbd_PRJNAME}_develbdprj
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
-    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genbd_PRJNAME} -partname ${genbd_PARTNAME} -boardname "${genbd_BOARDNAME}" -bdscript ${genbd_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/bin/${genbd_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/ip_repo -xcifiles ${genbd_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genbd_PRJNAME} -partname ${genbd_PARTNAME} -boardname "${genbd_BOARDNAME}" -bdscript ${genbd_BDSCRIPT} -bdscriptwrapper ${BDSCRIPTWRAPPER} -hdfout ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/bin/${genbd_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/ip_repo -xcifiles ${genbd_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
     DEPENDS ${genbdprjscript} ${cmdlinedictprocsscript} ${genbd_DEPENDS} ${xci_depends}
     )
 endfunction()
