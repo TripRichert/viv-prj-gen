@@ -579,7 +579,7 @@ function(add_vivado_bd_hdf)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${prjbuilddir}/bdprj_${genhdf_PRJNAME}
-    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genhdf_PRJNAME} -partname ${genhdf_PARTNAME} -boardname "${genhdf_BOARDNAME}" -bdscript ${genhdf_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/ip_repo -xcifiles ${genhdf_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
     DEPENDS ${genbdprjscript} ${genbdhdf_defaultscript} ${cmdlinedictprocsscript} ${genhdf_DEPENDS} ${xci_depends}
     )
 
@@ -674,7 +674,7 @@ function(add_vivado_bd_devel_project)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/devel_prjs)
   add_custom_target(${genbd_PRJNAME}_develbdprj
     COMMAND ${CMAKE_COMMAND} -E make_directory ${prjbuilddir}
-    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genbd_PRJNAME} -partname ${genbd_PARTNAME} -bdscript ${genbd_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/bin/${genbd_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/ip_repo -xcifiles ${genbd_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
+    COMMAND vivado -mode batch -source ${genbdprjscript} -tclargs -builddir ${prjbuilddir} -prjname ${genbd_PRJNAME} -partname ${genbd_PARTNAME} -boardname "${genbd_BOARDNAME}" -bdscript ${genbd_BDSCRIPT} -hdfout ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/bin/${genbd_PRJNAME}.hdf -ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/ip_repo -xcifiles ${genbd_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -postbdgen_scripts ${POSTBDGENSCRIPTS}
     DEPENDS ${genbdprjscript} ${cmdlinedictprocsscript} ${genbd_DEPENDS} ${xci_depends}
     )
 endfunction()
