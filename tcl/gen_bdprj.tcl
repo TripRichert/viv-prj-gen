@@ -20,7 +20,7 @@ set allowedKeys [list boardname target_language  bdscriptwrapper\
 		     vhdlbdwrapper\
 		     verilogbdwrapper \
 		     xcifiles \
-		     ip_repo_dirs\
+		     ip_repo_dirs fake_ip_repo_dirs\
 		     scopedearlyconstraints scopednormalconstraints \
 		     scopedlateconstraints unscopedearlyconstraints \
 		     unscopednormalconstraints unscopedlateconstraints \
