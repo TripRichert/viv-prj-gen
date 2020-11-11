@@ -584,8 +584,10 @@ function(add_vivado_bd_hdf)
 
   set(POSTBDGENSCRIPTS ${genhdf_POSTBDGENSCRIPTS})
   list(APPEND POSTBDGENSCRIPTS ${genbdhdf_defaultscript})
-  
-  set(fake_ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_FAKEPARTNAME}/ip_repo)
+
+  if(NOT "${genhdf_FAKEPARTNAME}" STREQUAL "")
+    set(fake_ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_FAKEPARTNAME}/ip_repo)
+  endif()
   
   set(hdffile_output ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/bin/${genhdf_PRJNAME}.hdf)
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genhdf_PARTNAME}/genprjs)
@@ -698,7 +700,10 @@ function(add_vivado_bd_devel_project)
   endforeach()
 
   set(POSTBDGENSCRIPTS ${genbd_POSTBDGENSCRIPTS})
-  set(fake_ip_repo_dirs ${CMAKE_BINARY_DIR}/${genhdf_FAKEPARTNAME}/ip_repo)
+
+  if(NOT "${genbd_FAKEPARTNAME}" STREQUAL "")
+    set(fake_ip_repo_dirs ${CMAKE_BINARY_DIR}/${genbd_FAKEPARTNAME}/ip_repo)
+  endif()
 
   set(prjbuilddir ${CMAKE_BINARY_DIR}/${genbd_PARTNAME}/devel_prjs)
   add_custom_target(${genbd_PRJNAME}_develbdprj
