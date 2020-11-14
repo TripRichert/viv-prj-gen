@@ -89,26 +89,26 @@ if {[diction::checkForKeyPair ip_repo_dirs {*}$argv]} {
 update_ip_catalog -rebuild
 
 if {[diction::checkForKeyPair scopedearlyconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set true early [diction::getDef scopedearlyconstraints {*}$argv]
+    vivprj::add_const_files_to_set true early {*}[diction::getDef scopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopednormalconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set true normal [diction::getDef scopednormalconstraints {*}$argv]
+    vivprj::add_const_files_to_set true normal {*}[diction::getDef scopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair scopedlateconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set true late [diction::getDef scopedlateconstraints {*}$argv]
+    vivprj::add_const_files_to_set true late {*}[diction::getDef scopedlateconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedearlyconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set false early [diction::getDef unscopedearlyconstraints {*}$argv]
+    vivprj::add_const_files_to_set false early {*}[diction::getDef unscopedearlyconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopednormalconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set false normal [diction::getDef unscopednormalconstraints {*}$argv]
+    vivprj::add_const_files_to_set false normal {*}[diction::getDef unscopednormalconstraints {*}$argv]
 }
 if {[diction::checkForKeyPair unscopedlateconstraints {*}$argv]} {
-    vivprj::add_const_files_to_set false late [diction::getDef unscopedlateconstraints {*}$argv]
+    vivprj::add_const_files_to_set false late {*}[diction::getDef unscopedlateconstraints {*}$argv]
 }
 
 if {[diction::checkForKeyPair xcifiles {*}$argv]} {
-    vivprj::add_files_to_set sources_1 "IP" [diction::getDef xcifiles {*}$argv]
+    vivprj::add_files_to_set sources_1 "IP" {*}[diction::getDef xcifiles {*}$argv]
 }
 
 if {[diction::checkForKeyPair bdscriptwrapper {*}$argv]} {
