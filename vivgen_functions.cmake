@@ -512,6 +512,7 @@ function(add_vivado_bd_hdf)
     list(APPEND gen_file_types ${file_type}_GEN)
   endforeach()
   set(list_args
+    ${src_file_types}
     ${gen_file_types}
     POSTBDGENSCRIPTS
     XCIFILES_GEN
@@ -629,6 +630,7 @@ function(add_vivado_bd_devel_project)
     list(APPEND gen_file_types ${file_type}_GEN)
   endforeach()
   set(list_args
+    ${src_file_types}
     ${gen_file_types}
     POSTBDGENSCRIPTS
     XCIFILES_GEN
