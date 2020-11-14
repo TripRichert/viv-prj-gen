@@ -127,12 +127,6 @@ export_ip_user_files -of_objects [get_files *.bd]
 report_ip_status -name ip_status
 update_ip_catalog -rebuild -scan_changes
 
-if {[diction::checkForKeyPair postbdgen_scripts {*}$argv]} {
-    foreach filename [diction::getDef postbdgen_scripts {*}$argv] {
-	source $filename
-    }
-}
-
 if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
     vivprj::add_files_to_set sources_1 VHDL [diction::getDef vhdlbdwrapper {*}$argv]
 } elseif {[diction::checkForKeyPair verilogbdwrapper {*}$argv]} {
@@ -142,6 +136,14 @@ if {[diction::checkForKeyPair vhdlbdwrapper {*}$argv]} {
     make_wrapper -files [get_files *.bd] -top
     add_files -norecurse [file normalize [glob $prjname$dirext/sources_1/bd/*/hdl/*.v*]]
 }
+
+
+if {[diction::checkForKeyPair postbdgen_scripts {*}$argv]} {
+    foreach filename [diction::getDef postbdgen_scripts {*}$argv] {
+	source $filename
+    }
+}
+
 
 
 puts "Completed Execution of $argv0"
