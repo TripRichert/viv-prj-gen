@@ -57,9 +57,13 @@ fuseSoC:: python based wrapper around edalize, is a package manager
 
 link: https://github.com/olofk/fusesoc
 
-Ruckus:: a makefile base tool with similar goals to viv-prj-gen
+Ruckus:: a makefile based tool with similar goals to viv-prj-gen
 
 link: https://github.com/slaclab/ruckus
+
+rules_vivado:: a bazel based tool for managing verilog projects with vivado.  Uses a socket to control vivado from the build tool, rather than a tcl script.
+
+link: https://github.com/agoessling/rules_vivado
 
 ttask:: tcl based, vendor agnostic, supports building bits files and simulation
 
