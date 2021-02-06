@@ -11,6 +11,10 @@ endif::[]
 
 == Introduction
 
+I haven't touched this project in a while, and I don't plan to start spending more time maintaining it.
+
+If someone reports a bug, I'll try to find time to look at it.  But, consider this project mostly abandoned.
+
 === Goal
 
 Vivado projects can be difficult to version control. Vivado generates a lot of files and constantly touches files to add time stamps.  Tracking changes in these files can be difficult.
