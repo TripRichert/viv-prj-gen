@@ -3,10 +3,10 @@
 include(CMakeParseArguments)
 
 # tcl script for generating vivado projects
-file(GLOB genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
+set(genvivprjscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_prj.tcl")
 
 #file used to parse commandline arguments
-file(GLOB cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/tcl_utils/cmdline_dict.tcl")
+set(cmdlinedictprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/tcl_utils/cmdline_dict.tcl")
 
 function(add_vivado_devel_project)
   set(options NOVHDL2008)
@@ -84,6 +84,18 @@ function(add_vivado_devel_project)
   endif()
 
   file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${genviv_PARTNAME}/devel_prjs")
+
+  if("${genvivprjscript}" STREQUAL "")
+    message(FATAL_ERROR "genvivprjscript variable not set in scope of add_vivado_devel_project.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${genvivprjscript}")
+    message(FATAL_ERROR "project generation script ${genvivprjscript} not found")
+  endif()
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_devel_project.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+    
   
   add_custom_target(${genviv_PRJNAME}_genvivprj
     COMMAND vivado -mode batch -source ${genvivprjscript} -tclargs -prjname ${genviv_PRJNAME} -partname ${genviv_PARTNAME} ${vhdlfileopts} -verilogsynthfiles ${VERILOGSYNTHFILES} -verilogsimfiles ${VERILOGSIMFILES} -systemverilogsynthfiles ${SVSYNTHFILES} -systemverilogsimfiles ${SVSIMFILES} -xcifiles ${XCIFILES} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} -datafiles ${DATAFILES} -builddir "${CMAKE_BINARY_DIR}/${genviv_PARTNAME}/devel_prjs"
@@ -91,7 +103,7 @@ function(add_vivado_devel_project)
     )
 endfunction()
 
-file(GLOB cpyxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/cpy_xci.tcl)
+set(cpyxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/cpy_xci.tcl)
 function(copy_vivado_xcifile)
   set(options VERILOG)
   set(args
@@ -128,6 +140,13 @@ function(copy_vivado_xcifile)
   endif()
 
   get_filename_component(xciname ${cpyxci_XCIPATH} NAME_WE)
+
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of copy_vivado_xcifile.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
   
   add_custom_command(OUTPUT ${cpyxci_DESTDIR}/${xciname}/${xciname}.xci ${cpyxci_DESTDIR}/${xciname}/${xciname}.stamp
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${cpyxci_DESTDIR}/${xciname}
@@ -149,11 +168,11 @@ function(copy_vivado_xcifile)
 endfunction()
 
 #default nonproject file scripts
-file(GLOB default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_synth.tcl")
-file(GLOB default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_place.tcl")
-file(GLOB default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_route.tcl")
-file(GLOB default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
-file(GLOB nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
+set(default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_synth.tcl")
+set(default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_place.tcl")
+set(default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_route.tcl")
+set(default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
+set(nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
 
 function(add_vivado_nonprj_bitfile)
   set(options VHDL2008)
@@ -287,6 +306,13 @@ function(add_vivado_nonprj_bitfile)
     endif()
   endforeach()
 
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_nonprj_bitfile.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
+  
   set(bitfile_output "vivnonprj_${vivnonprj_PRJNAME}/${vivnonprj_PRJNAME}.bit")
   add_custom_command(OUTPUT "${bitfile_output}"
     COMMAND vivado -mode batch -source ${nonprjbuildscript} -tclargs -prjname ${vivnonprj_PRJNAME} -partname ${vivnonprj_PARTNAME} -topname ${vivnonprj_TOPNAME} -vhdlsynthfiles ${VHDLFILES} -verilogsynthfiles ${VERILOGFILES} -svsynthfiles ${SYSTEMVERILOGFILES} -xcifiles ${vivnonprj_XCIFILES_GEN} -unscopedearlyconstraints ${UNSCOPEDEARLYXDC} -unscopednormalconstraints ${UNSCOPEDNORMALXDC} -unscopedlateconstraints ${UNSCOPEDLATEXDC} -scopedearlyconstraints ${SCOPEDEARLYXDC} -scopednormalconstraints ${SCOPEDNORMALXDC} -scopedlateconstraints ${SCOPEDLATEXDC} ${miscparamkey} ${miscparamstring} -buildscripts ${scriptlist} ${vhdl2008option} -builddir ${CMAKE_BINARY_DIR}
@@ -297,8 +323,8 @@ function(add_vivado_nonprj_bitfile)
   endif()
 endfunction()
 
-file(GLOB genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
-file(GLOB vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.tcl")
+set(genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
+set(vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.tcl")
 
 function(add_vivado_xact_ip)
   set(options NODELETE)
@@ -414,6 +440,13 @@ function(add_vivado_xact_ip)
     string(REPLACE ";" " " miscparamstring "${miscparamstring}")
   endif()
 
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_xact_ip.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
+  
   add_custom_command(OUTPUT ${ipdir}/component.xml ${ipdir}/xgui ${ipdir}/${genip_IPNAME}.stamp
     COMMAND vivado -mode batch -source ${genipscript} -tclargs -ipname ${genip_IPNAME} -partname ${genip_PARTNAME} -vhdlsynthfiles ${newvhdlfiles} -verilogsynthfiles ${newverilogfiles} -svsynthfiles ${newsvfiles} -topname ${genip_TOPNAME} -ipdir ${ipdir} -preipxscripts ${genip_PREIPXSCRIPTS} -postipxscripts ${genip_POSTIPXSCRIPTS} ${miscparamkey} {${miscparamstring}} ${laststring}
     COMMAND ${CMAKE_COMMAND} -E touch ${ipdir}/${genip_IPNAME}.stamp
@@ -426,7 +459,7 @@ function(add_vivado_xact_ip)
 
 endfunction()
 
-file(GLOB genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
+set(genxciscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xci.tcl)
 function(add_vivado_xcifile)
   set(options VERILOG)
   set(args
@@ -465,6 +498,13 @@ function(add_vivado_xcifile)
     set(targetlangstr "")
   endif()
 
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_xcifile.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
+  
   add_custom_command(OUTPUT ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.xci ${xcidir}/${genxci_XCINAME}/${genxci_XCINAME}.stamp
     COMMAND ${CMAKE_COMMAND} -E make_directory ${xcidir}
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${xcidir}/${genxci_XCINAME}
@@ -484,8 +524,8 @@ function(add_vivado_xcifile)
     )
 endfunction()
 
-file(GLOB genbdprjscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdprj.tcl)
-file(GLOB genbdhdf_defaultscript ${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/gen_bdhdf.tcl)
+set(genbdprjscript ${CMAKE_CURRENT_LIST_DIR}/tcl/gen_bdprj.tcl)
+set(genbdhdf_defaultscript ${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/gen_bdhdf.tcl)
 
 function(add_vivado_bd_hdf)
   set(options VERILOG)
@@ -582,6 +622,13 @@ function(add_vivado_bd_hdf)
       endif()
     endif()
   endforeach()
+
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_bd_hdf.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
 
   set(POSTBDGENSCRIPTS ${genhdf_POSTBDGENSCRIPTS})
   list(APPEND POSTBDGENSCRIPTS ${genbdhdf_defaultscript})
@@ -700,6 +747,13 @@ function(add_vivado_bd_devel_project)
       endif()
     endif()
   endforeach()
+
+  if("${cmdlinedictprocsscript}" STREQUAL "")
+    message(FATAL_ERROR "cmdlinedictprocsscript variable not set in scope of add_vivado_bd_devel_project.\nDid you forget to include vivgen_functions.cmake ?")
+  elseif(NOT EXISTS "${cmdlinedictprocsscript}")
+    message(FATAL_ERROR "cmdline dictionary processing script ${cmdlinedictprocsscript} not found")
+  endif()
+
 
   set(POSTBDGENSCRIPTS ${genbd_POSTBDGENSCRIPTS})
 
