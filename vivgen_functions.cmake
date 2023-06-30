@@ -171,7 +171,7 @@ endfunction()
 set(default_synthfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_synth.tcl")
 set(default_placefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_place.tcl")
 set(default_routefile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_route.tcl")
-set(default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonpjr_writebit.tcl")
+set(default_wrbitfile "${CMAKE_CURRENT_LIST_DIR}/tcl/default_scripts/nonprj_writebit.tcl")
 set(nonprjbuildscript "${CMAKE_CURRENT_LIST_DIR}/tcl/buildnonprj.tcl")
 
 function(add_vivado_nonprj_bitfile)
@@ -324,7 +324,7 @@ function(add_vivado_nonprj_bitfile)
 endfunction()
 
 set(genipscript "${CMAKE_CURRENT_LIST_DIR}/tcl/gen_xactip.tcl")
-set(vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_proces/vivprj.tcl")
+set(vivprjprocsscript "${CMAKE_CURRENT_LIST_DIR}/tcl/helper_procs/vivprj.tcl")
 
 function(add_vivado_xact_ip)
   set(options NODELETE)
